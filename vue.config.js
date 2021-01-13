@@ -2,7 +2,7 @@ module.exports = {
   // 部署应用包时的基本 URL
   publicPath: '',
   // 打包输出文件夹名
-  outputDir: 'kilin-dist',
+  outputDir: 'dist',
   // 禁用 eslint
   lintOnSave: false,
   pages: {
@@ -15,7 +15,7 @@ module.exports = {
       filename: 'index.html',
       // 当使用 title 选项时，
       // template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
-      title: 'Kilin Blog',
+      title: 'Restaurant',
     }
   },
   devServer: {
