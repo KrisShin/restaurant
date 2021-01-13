@@ -1,7 +1,3 @@
-from flask_sqlalchemy import SQLAlchemy
- 
-db = SQLAlchemy()
-
 class DBConfig(object):
     """配置参数"""
     # 设置连接数据库的URL

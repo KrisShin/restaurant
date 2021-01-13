@@ -1,6 +1,7 @@
 from flask import Flask
-from .db_config import DBConfig, db
-from flask_migrate import Migrate
+from .db_config import DBConfig
+from flask_sqlalchemy import SQLAlchemy
+from .global_params import DB
 
 
 def create_app():
@@ -22,7 +23,6 @@ def create_app():
     # app.register_blueprint(blueprint=route_admin, url_prefix='/admin')
 
     app.config['SECRET_KEY'] = 'q7t4gfsg*nj978*n!2%^.uo18sgr'
+    DB = SQLAlchemy(app)
 
-    db.init_app(app)
-    migrate = Migrate(app, db)
     return app
