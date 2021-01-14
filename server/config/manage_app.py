@@ -1,6 +1,6 @@
 from flask import Flask
 from .db_config import DBConfig
-from .global_params import DB
+from .global_params import DB as db
 from user.views import user
 
 
@@ -16,7 +16,7 @@ def create_app():
     )
 
     register_blueprint(app)
-
+    db.init_app(app)
     return app
 
 
