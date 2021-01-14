@@ -1,7 +1,10 @@
 from flask import Flask
+from flask_login import LoginManager
 from .db_config import DBConfig
 from .global_params import DB as db
 from user.views import user
+from dish.views import dish
+from order.views import order
 
 
 def create_app():
@@ -17,9 +20,15 @@ def create_app():
 
     register_blueprint(app)
     db.init_app(app)
+    
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = 'login'
     return app
 
 
 def register_blueprint(app):
     '''注册路由蓝图'''
     app.register_blueprint(user)
+    app.register_blueprint(dish)
+    app.register_blueprint(order)

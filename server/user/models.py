@@ -29,6 +29,14 @@ class User(db.Model):
     def __init__(self, *args, **kwargs):
         super(User, self).__init__(**kwargs)
 
+    def keys(self):
+        '''serilize object keys'''
+        return ('nickname', 'age', 'gender',)
+
+    def __getitem__(self, item):
+        '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''
+        return getattr(self, item)
+
 
 class Address(db.Model):
     __tablename__ = "tb_address"
