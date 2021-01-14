@@ -35,7 +35,5 @@ class Tag(db.Model):
         super(Tag, self).__init__(**kwargs)
 
 
-dish_tag_table = db.Table('rs_dish_tag',
-                          db.Column('dish_id', db.Integer, db.ForeignKey(
-                              'tb_dish.id'), primary_key=True),
-                          db.Column('tag_id', db.Integer, db.ForeignKey('tb_tag.id'), primary_key=True))
+dish_tag_table = db.Table('rs_dish_tag', db.Column('dish_id', db.Integer, db.ForeignKey(
+    'tb_dish.id'), primary_key=True), db.Column('tag_id', db.Integer, db.ForeignKey('tb_tag.id'), primary_key=True))
