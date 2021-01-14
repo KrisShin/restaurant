@@ -13,7 +13,7 @@
 ```json
 {
 	"nickname": nickname,
-	"gender": true/false // true-男/flase-女
+	"gender": true/false, // true-男/flase-女
 	"age":18,
 	"phone": "13433334444",
 	"password": "password"
@@ -27,7 +27,10 @@
 ```json
 {
   	"success": true,
-  	"info": "OK",
+    "info": "OK",
+    "data":{
+        "phone":"13433334444"
+    }
 }
 ```
 
@@ -62,7 +65,7 @@
   	"info": "OK",
     "data": {
         "user_id": user_id,
-        "name": nickname,
+        "nickname": nickname,
         "is_vip": true/false,
         "is_active": true/false,
         "is_new": true/false,
@@ -117,7 +120,7 @@
 	"success": true,
 	"info": "OK",
 	"data": {
-        "name": nickname,
+        "nickname": nickname,
         "is_vip": true/false,
         "is_active": true/false,
         "is_new": true/false,
@@ -156,7 +159,7 @@
 	"success": true,
 	"info": "OK",
 	"data": {
-        "name": "nickname",
+        "nickname": "nickname",
         "is_vip": true/false,
         "is_active": true/false,
         "is_new": true/false,
