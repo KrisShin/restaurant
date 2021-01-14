@@ -3,6 +3,8 @@ from flask_migrate import Migrate, MigrateCommand
 from config.manage_app import create_app
 from config.global_params import DB as db
 import user.models
+import dish.models
+import order.models
 
 
 if __name__ == '__main__':

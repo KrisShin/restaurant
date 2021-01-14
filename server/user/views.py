@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from .models import User
+from .models import User, Address
 from utils.util import make_password
 from config.global_params import DB as db
 
