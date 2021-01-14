@@ -1,6 +1,6 @@
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from .manage_app import create_app, DB as db
+from manage_app import create_app, DB as db
 
 
 if __name__ == '__main__':

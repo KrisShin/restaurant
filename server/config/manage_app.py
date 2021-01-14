@@ -1,7 +1,7 @@
 from flask import Flask
-from .db_config import DBConfig
+from db_config import DBConfig
 from flask_sqlalchemy import SQLAlchemy
-from .global_params import DB
+from global_params import DB
 
 
 def create_app():
