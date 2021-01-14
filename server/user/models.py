@@ -47,7 +47,5 @@ class Address(db.Model):
         super(Address, self).__init__(**kwargs)
 
 
-user_tag_table = db.Table('rs_user_tag',
-                          db.Column('user_id', db.Integer, db.ForeignKey(
-                              'tb_user.id'), primary_key=True),
-                          db.Column('tag_id', db.Integer, db.ForeignKey('tb_tag.id'), primary_key=True))
+user_tag_table = db.Table('rs_user_tag', db.Column('user_id', db.Integer, db.ForeignKey(
+    'tb_user.id'), primary_key=True), db.Column('tag_id', db.Integer, db.ForeignKey('tb_tag.id'), primary_key=True))
