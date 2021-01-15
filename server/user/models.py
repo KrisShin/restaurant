@@ -37,7 +37,7 @@ class User(db.Model):
 
     def keys(self):
         '''serilize object keys'''
-        return ('user_id', 'nickname', 'gender', 'is_vip', 'is_active', 'is_new', 'balance')
+        return ('id', 'nickname', 'gender', 'is_vip', 'is_active', 'is_new', 'balance')
 
     def __getitem__(self, item):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''

@@ -11,7 +11,7 @@ user = Blueprint('User', __name__, url_prefix='/user')
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(user_id)
+    return User.query.filter_by(id=user_id).first()
 
 
 @user.route('/register', methods=['POST'])
@@ -91,7 +91,9 @@ def user_login():
         return jsonify({'success': False, 'info': '密码错误'})
 
     login_user(user)
-    return jsonify({})
+    resp = dict(user)
+    print(resp)
+    return jsonify({"success": True, "info": "", "data": resp})
 
 
 @user.route('/logout', methods=['POST', 'GET'])
@@ -125,7 +127,7 @@ def send_captcha_email():
 def test():
     if request.method == "GET":
         user = User.query.filter_by(id=1).first()
-        print(user.nickname, current_user.nickname)
+        print(user.id, current_user.get_id())
         return jsonify({'msg': 'method GET ok'})
 
     if request.method == "POST":
