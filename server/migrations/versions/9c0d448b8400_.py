@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 0a89eb8763eb
+Revision ID: 9c0d448b8400
 Revises: 
-Create Date: 2021-01-15 17:55:36.009209
+Create Date: 2021-01-15 23:41:12.143157
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '0a89eb8763eb'
+revision = '9c0d448b8400'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -49,7 +49,7 @@ def upgrade():
     sa.Column('role', sa.Enum('user', 'admin', name='role_enum'), nullable=True),
     sa.Column('is_new', sa.Boolean(), nullable=True),
     sa.Column('is_vip', sa.Boolean(), nullable=True),
-    sa.Column('is_actice', sa.Boolean(), nullable=True),
+    sa.Column('is_active', sa.Boolean(), nullable=True),
     sa.Column('balance', sa.Float(), nullable=True),
     sa.Column('create_time', sa.DateTime(), nullable=True),
     sa.Column('update_time', sa.DateTime(), nullable=True),
@@ -85,10 +85,11 @@ def upgrade():
     )
     op.create_table('order',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('create_time', sa.DateTime(), nullable=True),
     sa.Column('money', sa.Float(), nullable=True),
     sa.Column('status', sa.Integer(), nullable=True),
     sa.Column('note', sa.String(length=256), nullable=True),
+    sa.Column('create_time', sa.DateTime(), nullable=True),
+    sa.Column('update_time', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('address_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['address_id'], ['address.id'], ),
@@ -99,6 +100,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('content', sa.String(length=512), nullable=True),
     sa.Column('rate', sa.Enum('good', 'ok', 'bad', name='rate_enum'), nullable=True),
+    sa.Column('create_time', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('order_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['order_id'], ['order.id'], ),

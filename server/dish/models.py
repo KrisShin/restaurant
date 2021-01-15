@@ -2,6 +2,11 @@ from datetime import datetime
 from config.global_params import db
 
 
+tags = db.Table('rs_dish_tag',
+                db.Column('dish_id', db.Integer, db.ForeignKey('dish.id'), primary_key=True),
+                db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True))
+
+
 class Dish(db.Model):
     __tablename__ = "dish"
 
@@ -14,7 +19,9 @@ class Dish(db.Model):
     discount = db.Column(db.Integer)
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime, default=datetime.now)
-    tags = db.relationship("Tag", back_populates='dish')
+
+    tags = db.relationship('Tag', secondary=tags, lazy='subquery',
+                           backref=db.backref('dishes', lazy=True))  # 标签(口味偏好) n:n
 
     def __init__(self, *args, **kwargs):
         super(Dish, self).__init__(**kwargs)
@@ -28,12 +35,5 @@ class Tag(db.Model):
     name = db.Column(db.String(32))  # 标签字数不能超过8个字
     create_time = db.Column(db.DateTime, default=datetime.now)
 
-    users = db.relationship("User", back_populates='tag')
-    dishes = db.relationship("Dish", back_populates='tag')
-
     def __init__(self, *args, **kwargs):
         super(Tag, self).__init__(**kwargs)
-
-
-dish_tag_table = db.Table('rs_dish_tag', db.Column('dish_id', db.Integer, db.ForeignKey('dish.id'), primary_key=True),
-                          db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True))

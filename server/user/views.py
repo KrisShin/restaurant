@@ -29,16 +29,17 @@ def user_register():
     data = request.get_json()
     nickname = data.get('nickname')
     phone = data.get('phone')
+    gender = data.get('gender')
+    age = data.get('age')
+    email = data.get('email')
 
     # check phone number
     reg_phone = r'^1[3-9]\d{9}$'
     if not re.match(reg_phone, phone):
         return jsonify({'success': False, 'info': '手机号格式错误'})
 
-    gender = data.get('gender')
     password = make_password(data.get('password'))
-    age = data.get('age')
-    user = User(nickname=nickname, phone=phone, age=age,
+    user = User(nickname=nickname, phone=phone, age=age, email=email,
                 password=password, gender=gender, avatar='/static/avatar/default.jpg')
     db.session.add(user)
     db.session.commit()
@@ -116,21 +117,18 @@ def send_captcha_email():
         'subject': f'恰了木有验证码',
         'content': f'<div>感谢您使用恰了木有APP, 您的验证码为</div><span style="font-size: 30px;font-weight: 600;background: #313131;color: #6dc4ff;">{captcha}</span><div>请在5分钟之内完成验证</div>'}
     r.set_val(f'user_{user.id}:get_captcha', captcha, 300)
-    # sender.send(email, mail)
-    print(captcha)
+    sender.send(email, mail)
     return jsonify({'success': True, 'info': ''})
 
 
 @user.route('/test', methods=['POST', 'GET'])
 def test():
     if request.method == "GET":
-        user = User.query.get(id=1)
-        print(user)
+        user = User.query.filter_by(id=1).first()
+        print(user.nickname, current_user.nickname)
         return jsonify({'msg': 'method GET ok'})
 
     if request.method == "POST":
-        r.set_val("hello", 123, 10)
-        print('ok')
         data = request.get_json()
         nickname = data.get('nickname')
         phone = data.get('phone')
