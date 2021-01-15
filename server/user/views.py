@@ -106,38 +106,40 @@ def send_captcha_email():
     email = data.get('email')
     if not email:
         return jsonify({'success': False, 'info': '请输入你注册绑定的邮箱'})
-    # user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).first()
 
-    if r.get_val(f'user_1:get_captcha'):
+    if r.get_val(f'user_{user.id}:get_captcha'):
         return jsonify({'success': False, 'info': '验证码已发送, 请稍后再试'})
 
     captcha = get_captcha()
     mail = {
         'subject': f'恰了木有验证码',
         'content': f'<div>感谢您使用恰了木有APP, 您的验证码为</div><span style="font-size: 30px;font-weight: 600;background: #313131;color: #6dc4ff;">{captcha}</span><div>请在5分钟之内完成验证</div>'}
-    r.set_val(f'user_1:get_captcha', captcha, 300)
-    sender.send(email, mail)
+    r.set_val(f'user_{user.id}:get_captcha', captcha, 300)
+    # sender.send(email, mail)
+    print(captcha)
     return jsonify({'success': True, 'info': ''})
 
 
 @user.route('/test', methods=['POST', 'GET'])
 def test():
     if request.method == "GET":
-        print(r.get_val('hello'))
+        user = User.query.get(id=1)
+        print(user)
         return jsonify({'msg': 'method GET ok'})
 
     if request.method == "POST":
         r.set_val("hello", 123, 10)
         print('ok')
-        # data = request.get_json()
-        # nickname = data.get('nickname')
-        # phone = data.get('phone')
-        # gender = data.get('gender')
-        # password = make_password(data.get('password'))
-        # age = data.get('age')
-        # user = User(nickname=nickname, phone=phone, age=age,
-        #             password=password, gender=gender, avatar='/static/avatar/default.jpg')
-        # db.session.add(user)
-        # db.session.commit()
+        data = request.get_json()
+        nickname = data.get('nickname')
+        phone = data.get('phone')
+        gender = data.get('gender')
+        password = make_password(data.get('password'))
+        age = data.get('age')
+        user = User(nickname=nickname, phone=phone, age=age,
+                    password=password, gender=gender, avatar='/static/avatar/default.jpg')
+        db.session.add(user)
+        db.session.commit()
 
         return jsonify({'msg': 'OK'})

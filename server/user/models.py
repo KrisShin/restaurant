@@ -4,7 +4,7 @@ from dish.models import Tag
 
 
 class User(db.Model):
-    __tablename__ = 'tb_user'
+    __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
     nickname = db.Column(db.String(128))
@@ -23,15 +23,15 @@ class User(db.Model):
     balance = db.Column(db.Float, default=0.0)  # 余额
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime, default=datetime.now)
-    address = db.relationship("Address", backref="user")
-    tags = db.relationship("Tag", backref="tag")  # 标签(口味偏好) n:n
+    address = db.relationship("Address", back_populates="user")
+    tags = db.relationship("Tag", back_populates="user")  # 标签(口味偏好) n:n
 
     def __init__(self, *args, **kwargs):
         super(User, self).__init__(**kwargs)
 
     def keys(self):
         '''serilize object keys'''
-        return ('nickname', 'age', 'gender',)
+        return ('user_id', 'nickname', 'gender', 'is_vip', 'is_active', 'is_new', 'balance')
 
     def __getitem__(self, item):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''
@@ -39,7 +39,7 @@ class User(db.Model):
 
 
 class Address(db.Model):
-    __tablename__ = "tb_address"
+    __tablename__ = "address"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     phone = db.Column(db.String(11), nullable=False)
@@ -48,12 +48,12 @@ class Address(db.Model):
     update_time = db.Column(db.DateTime, default=datetime.now)
     is_delete = db.Column(db.Boolean, default=0)  # 是否已删除
 
-    user_id = db.Column(db.Integer, db.ForeignKey('tb_user.id'))
-    user = db.relationship("User", backref="address")
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship("User", back_populates="address")
 
     def __init__(self, *args, **kwargs):
         super(Address, self).__init__(**kwargs)
 
 
 user_tag_table = db.Table('rs_user_tag', db.Column('user_id', db.Integer, db.ForeignKey(
-    'tb_user.id'), primary_key=True), db.Column('tag_id', db.Integer, db.ForeignKey('tb_tag.id'), primary_key=True))
+    'user.id'), primary_key=True), db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True))
