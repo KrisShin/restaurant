@@ -108,14 +108,14 @@ def send_captcha_email():
         return jsonify({'success': False, 'info': '请输入你注册绑定的邮箱'})
     # user = User.query.filter_by(email=email).first()
 
-    # if r.get_val(f'user_{user.id}:get_captcha'):
-    #     return jsonify({'success': False, 'info': '验证码已发送, 请稍后再试'})
+    if r.get_val(f'user_1:get_captcha'):
+        return jsonify({'success': False, 'info': '验证码已发送, 请稍后再试'})
 
     captcha = get_captcha()
     mail = {
         'subject': f'恰了木有验证码',
-        'content': f'感谢您使用恰了木有APP, 您的验证码为{captcha}, 请在5分钟之内完成验证'}
-    # r.set_val(f'user_{user.id}:get_captcha', captcha, 300)
+        'content': f'<div>感谢您使用恰了木有APP, 您的验证码为</div><span style="font-size: 30px;font-weight: 600;background: #313131;color: #6dc4ff;">{captcha}</span><div>请在5分钟之内完成验证</div>'}
+    r.set_val(f'user_1:get_captcha', captcha, 300)
     sender.send(email, mail)
     return jsonify({'success': True, 'info': ''})
 

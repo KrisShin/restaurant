@@ -46,7 +46,7 @@ class SendServer(object):
         message['To'] = receiver
         text = mail['content']
         content = MIMEText(
-            f'<html><body><pre>{text}</pre></body></html>', 'html', 'utf-8')
+            f'<html><body>{text}</body></html>', 'html', 'utf-8')
         message.attach(content)
 
         return message
