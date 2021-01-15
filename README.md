@@ -4,34 +4,24 @@
 一个私人餐饮管理项目
 
 #### 软件架构
-软件架构说明
+web管理端+移动端使用Vue
+后台使用flask
 
+数据库使用postgresql
+缓存使用redis
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+##### server端
+首先进入server
+1.  pip install -r server/requirements
+2.  修改config/settings.py redis的主机和端口密码
+3.  修改config/db_config.py postgresql的主机和端口用户密码
+4.  使用flask-migrate 运行migrate.py 迁移数据库(具体教程自行百度)
+5.  python manage.py 运行服务
+6.  退出server, 导入db_data文件夹的测试数据
+7.  默认管理员账户admin, 密码admin123, 默认用户:user, 密码:user123
 
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+##### front端
+首先进入front
+1.  npm i
