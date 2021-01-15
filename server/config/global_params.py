@@ -1,5 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_redis import FlaskRedis
 
 
 # sqlalchemy object
-DB = SQLAlchemy()
+db = SQLAlchemy()
+
+# redis client
+redis = FlaskRedis()

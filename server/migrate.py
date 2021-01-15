@@ -1,7 +1,7 @@
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from config.manage_app import create_app
-from config.global_params import DB as db
+from config.global_params import db
 import user.models
 import dish.models
 import order.models

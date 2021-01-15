@@ -2,8 +2,9 @@ from flask import Blueprint, jsonify, request, session
 from flask_login import current_user, login_required, login_user, logout_user
 from .models import User, Address
 from utils.util import make_password, check_password
-from config.global_params import DB as db
+from config.global_params import db
 import re
+from utils.rest_redis import r
 
 user = Blueprint('User', __name__, url_prefix='/user')
 
@@ -97,18 +98,21 @@ def user_logout():
 @user.route('/test', methods=['POST', 'GET'])
 def test():
     if request.method == "GET":
+        print(r.get_val('hello'))
         return jsonify({'msg': 'method GET ok'})
 
     if request.method == "POST":
-        data = request.get_json()
-        nickname = data.get('nickname')
-        phone = data.get('phone')
-        gender = data.get('gender')
-        password = make_password(data.get('password'))
-        age = data.get('age')
-        user = User(nickname=nickname, phone=phone, age=age,
-                    password=password, gender=gender, avatar='/static/avatar/default.jpg')
-        db.session.add(user)
-        db.session.commit()
+        r.set_val("hello", 123, 10)
+        print('ok')
+        # data = request.get_json()
+        # nickname = data.get('nickname')
+        # phone = data.get('phone')
+        # gender = data.get('gender')
+        # password = make_password(data.get('password'))
+        # age = data.get('age')
+        # user = User(nickname=nickname, phone=phone, age=age,
+        #             password=password, gender=gender, avatar='/static/avatar/default.jpg')
+        # db.session.add(user)
+        # db.session.commit()
 
         return jsonify({'msg': 'OK'})

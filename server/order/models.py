@@ -1,5 +1,5 @@
 from datetime import datetime
-from config.global_params import DB as db
+from config.global_params import  db
 from dish.models import Dish
 
 
