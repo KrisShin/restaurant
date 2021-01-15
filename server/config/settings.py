@@ -13,3 +13,6 @@ REDIS_PWD = ''#'R3D1Sus#r'
 REDIS_HOST = 'localhost'
 REDIS_PORT = '16379'
 REDIS_DB = 0
+
+EMAIL_ACCOUNT = '2855829886@qq.com'
+EMAIL_AUTH = 'tdlzctihcooodgbc'

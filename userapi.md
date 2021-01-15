@@ -258,7 +258,6 @@
 
 ```json
 {
-    "user_id": user_id,
     "email": "123123@321.com"
 }
 

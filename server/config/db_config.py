@@ -5,7 +5,7 @@ class DBConfig(object):
     user = 'restuser'
     password = 'R35Tus#r'
     database = 'restaurant'
-    host = 'localhost'
+    host = '127.0.0.1'
     port = '35432'
 
     # 数据库url

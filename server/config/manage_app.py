@@ -1,7 +1,6 @@
 from flask import Flask
-from flask_login import LoginManager
 from .db_config import DBConfig
-from .global_params import db, redis
+from .global_params import db, redis, login_manager
 from .settings import REDIS_HOST, REDIS_PORT, REDIS_USER, REDIS_PWD, REDIS_DB
 from user.views import user
 from dish.views import dish
@@ -24,7 +23,7 @@ def create_app():
     db.init_app(app)
     redis.init_app(app)
 
-    login_manager = LoginManager()
+    
     login_manager.init_app(app)
     login_manager.login_view = 'login'
     return app

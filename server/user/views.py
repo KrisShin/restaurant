@@ -1,12 +1,17 @@
 from flask import Blueprint, jsonify, request, session
 from flask_login import current_user, login_required, login_user, logout_user
 from .models import User, Address
-from utils.util import make_password, check_password
-from config.global_params import db
+from utils.util import make_password, check_password, get_captcha, sender
+from config.global_params import db, login_manager
 import re
 from utils.rest_redis import r
 
 user = Blueprint('User', __name__, url_prefix='/user')
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
 
 
 @user.route('/register', methods=['POST'])
@@ -93,6 +98,26 @@ def user_login():
 def user_logout():
     logout_user()
     return jsonify({'sucess': True, 'info': ''})
+
+
+@user.route('/email_captcha', methods=['POST'])
+def send_captcha_email():
+    data = request.get_json()
+    email = data.get('email')
+    if not email:
+        return jsonify({'success': False, 'info': '请输入你注册绑定的邮箱'})
+    # user = User.query.filter_by(email=email).first()
+
+    # if r.get_val(f'user_{user.id}:get_captcha'):
+    #     return jsonify({'success': False, 'info': '验证码已发送, 请稍后再试'})
+
+    captcha = get_captcha()
+    mail = {
+        'subject': f'恰了木有验证码',
+        'content': f'感谢您使用恰了木有APP, 您的验证码为{captcha}, 请在5分钟之内完成验证'}
+    # r.set_val(f'user_{user.id}:get_captcha', captcha, 300)
+    sender.send(email, mail)
+    return jsonify({'success': True, 'info': ''})
 
 
 @user.route('/test', methods=['POST', 'GET'])
