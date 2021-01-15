@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from .models import Dish, Tag
 from utils.util import make_password
-from config.global_params import DB as db
+from config.global_params import  db
 
 dish = Blueprint('Dish', __name__, url_prefix='/user')
 

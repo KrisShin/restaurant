@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
-from .models import User
+# from .models import User
 from utils.util import make_password
-from config.global_params import DB as db
+from config.global_params import  db
 
 order = Blueprint('Order', __name__, url_prefix='/order')
 

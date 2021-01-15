@@ -1,10 +1,10 @@
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from config.manage_app import create_app
-from config.global_params import DB as db
-import user.models
-import dish.models
-import order.models
+from config.global_params import db
+from user.models import User, Address
+from dish.models import Dish, Tag
+from order.models import Order, Comment
 
 
 if __name__ == '__main__':
