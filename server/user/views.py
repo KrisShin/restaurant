@@ -60,7 +60,7 @@ def user_login():
             "user_id": user_id,
             "nickname": nickname,
             "is_vip": true/false,
-            "is_active": true/false,
+            "is_email_active": true/false,
             "is_new": true/false,
             "gender": true/false,
             "balance": 0.00,
@@ -92,7 +92,8 @@ def user_login():
 
     login_user(user)
     resp = dict(user)
-    print(resp)
+    resp['user_id'] = resp['id']
+    del resp['id']
     return jsonify({"success": True, "info": "", "data": resp})
 
 
@@ -121,6 +122,32 @@ def send_captcha_email():
     r.set_val(f'user_{user.id}:get_captcha', captcha, 300)
     sender.send(email, mail)
     return jsonify({'success': True, 'info': ''})
+
+
+@user.route('/change_pwd')
+@login_required
+def user_change_pwd():
+    '''user change password'''
+    data = request.get_json()
+    captcha = data.get('captcha')
+    old_passwd = data.get('old_password')
+    new_passwd = data.get('new_password')
+
+    if old_passwd == new_passwd:
+        return jsonify({'success': False, 'info': '新密码不能与原密码相同'})
+    real_captch = r.get_val(f'user_{current_user.id}:get_captcha')
+
+    if captcha != real_captch:
+        return jsonify({'success': False, 'info': '验证码错误'})
+
+    if not check_password(old_passwd, current_user.password):
+        return jsonify({'success': False, 'info': '密码错误'})
+
+    user = User.query.filter_by(id=current_user.id).first()
+    user.password = make_password(new_passwd)
+    db.session.commit()
+    logout_user()
+    return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
 
 @user.route('/test', methods=['POST', 'GET'])
