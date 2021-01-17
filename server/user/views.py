@@ -155,6 +155,38 @@ def user_change_pwd():
     return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
 
+@user.route('/profile', methods=['POST'])
+@login_required
+def user_profile():
+    '''check user profile'''
+    user = User.query.filter_by(id=current_user.id).first()
+    resp = dict(user)
+    resp['user_id'] = resp['id']
+    del resp['id']
+    return jsonify({'success': True, 'data': resp})
+
+
+@user.route('/edit_profile', methods=['POST'])
+@login_required
+def user_edit():
+    '''user edit profile'''
+    data = request.get_json()
+    avatar = data.get('avatar')
+    age = data.get('age')
+    # TODO: tags edit
+
+    user = User.query.filter_by(id=current_user.id).first()
+    user.avatar = avatar
+    user.age = age
+    db.session.commit()
+
+    current_user.avatar = avatar
+    current_user.age = age
+    current_user.save()
+
+    return jsonify({'success': True})
+
+
 @user.route('/test', methods=['POST', 'GET'])
 def test():
     if request.method == "GET":
