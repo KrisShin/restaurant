@@ -38,6 +38,10 @@ def user_register():
     if not re.match(reg_phone, phone):
         return jsonify({'success': False, 'info': '手机号格式错误'})
 
+    user = User.query.filter_by(phone=phone).first()
+    if user:
+        return jsonify()
+
     password = make_password(data.get('password'))
     user = User(nickname=nickname, phone=phone, age=age, email=email,
                 password=password, gender=gender, avatar='/static/avatar/default.jpg')
