@@ -5,6 +5,7 @@ from utils.util import make_password, check_password, get_captcha, sender
 from config.global_params import db, login_manager
 import re
 from utils.rest_redis import r
+from config.status_code import *
 
 user = Blueprint('User', __name__, url_prefix='/user')
 
@@ -36,7 +37,7 @@ def user_register():
     # check phone number
     reg_phone = r'^1[3-9]\d{9}$'
     if not re.match(reg_phone, phone):
-        return jsonify({'success': False, 'info': '手机号格式错误'})
+        return jsonify({'success': False, 'info': '手机号格式错误', 'code': WRONG_PHONE_FORMAT})
 
     user = User.query.filter_by(phone=phone).first()
     if user:
@@ -89,10 +90,10 @@ def user_login():
 
     user = User.query.filter_by(phone=phone).first()
     if not user:
-        return jsonify({'success': False, 'info': '用户未注册'})
+        return jsonify({'success': False, 'info': '用户未注册', 'code': USER_NOT_EXIST})
 
     if not check_password(password, user.password):
-        return jsonify({'success': False, 'info': '密码错误'})
+        return jsonify({'success': False, 'info': '密码错误', 'code': WRONG_PASSWORD})
 
     login_user(user)
     resp = dict(user)
@@ -113,11 +114,11 @@ def send_captcha_email():
     data = request.get_json()
     email = data.get('email')
     if not email:
-        return jsonify({'success': False, 'info': '请输入你注册绑定的邮箱'})
+        return jsonify({'success': False, 'info': '请输入你注册绑定的邮箱', 'code': EMAIL_NOT_EXIST})
     user = User.query.filter_by(email=email).first()
 
     if r.get_val(f'user_{user.id}:get_captcha'):
-        return jsonify({'success': False, 'info': '验证码已发送, 请稍后再试'})
+        return jsonify({'success': False, 'info': '验证码已发送, 请稍后再试', 'code': CAPTCHA_SENDED})
 
     captcha = get_captcha()
     mail = {
@@ -138,14 +139,14 @@ def user_change_pwd():
     new_passwd = data.get('new_password')
 
     if old_passwd == new_passwd:
-        return jsonify({'success': False, 'info': '新密码不能与原密码相同'})
+        return jsonify({'success': False, 'info': '新密码不能与原密码相同', 'code': SAME_PASSWORD})
     real_captch = r.get_val(f'user_{current_user.id}:get_captcha')
 
     if captcha != real_captch:
-        return jsonify({'success': False, 'info': '验证码错误'})
+        return jsonify({'success': False, 'info': '验证码错误', 'code': WRONG_CAPTCHA})
 
     if not check_password(old_passwd, current_user.password):
-        return jsonify({'success': False, 'info': '密码错误'})
+        return jsonify({'success': False, 'info': '密码错误', 'code': WRONG_PASSWORD})
 
     user = User.query.filter_by(id=current_user.id).first()
     user.password = make_password(new_passwd)
