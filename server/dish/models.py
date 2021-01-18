@@ -32,7 +32,7 @@ class Tag(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     weight = db.Column(db.Integer, default=1)  # 权重:选的人越多, 权重越高
-    name = db.Column(db.String(32))  # 标签字数不能超过8个字
+    name = db.Column(db.String(32), unique=True)  # 标签字数不能超过8个字
     create_time = db.Column(db.DateTime, default=datetime.now)
 
     def __init__(self, *args, **kwargs):

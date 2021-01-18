@@ -207,3 +207,4 @@ def test():
         db.session.commit()
 
         return jsonify({'msg': 'OK'})
+
