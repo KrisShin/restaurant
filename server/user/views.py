@@ -176,12 +176,13 @@ def user_edit():
     # TODO: tags edit
 
     user = User.query.filter_by(id=current_user.id).first()
-    user.avatar = avatar
-    user.age = age
+    if avatar:
+        user.avatar = avatar
+        current_user.avatar = avatar
+    if age:
+        user.age = age
+        current_user.age = age
     db.session.commit()
-
-    current_user.avatar = avatar
-    current_user.age = age
     current_user.save()
 
     return jsonify({'success': True})
@@ -191,7 +192,7 @@ def user_edit():
 def test():
     if request.method == "GET":
         user = User.query.filter_by(id=1).first()
-        print(user.id, current_user.get_id())
+        print(user.age, current_user.age)
         return jsonify({'msg': 'method GET ok'})
 
     if request.method == "POST":

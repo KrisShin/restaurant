@@ -403,7 +403,7 @@ COPY public.address (id, name, phone, location, create_time, update_time, is_del
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
-79e3e9061c1a
+366b862f9d6f
 \.
 
 
@@ -452,6 +452,8 @@ COPY public.rs_dish_tag (dish_id, tag_id) FROM stdin;
 --
 
 COPY public.rs_user_tag (user_id, tag_id) FROM stdin;
+1	3
+1	7
 \.
 
 
@@ -487,7 +489,7 @@ COPY public.tag (id, weight, name, create_time) FROM stdin;
 --
 
 COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, role, is_new, is_vip, is_email_active, balance, create_time, update_time) FROM stdin;
-1	admin	11	13533555533	/static/avatar/default.jpg	krisshin@88.com	73ea1c92bb54f5fd20c354f501add709	f	user	t	f	f	0	2021-01-18 11:12:31.127513	2021-01-18 11:12:31.127513
+1	admin	18	13533555533	\N	krisshin@88.com	73ea1c92bb54f5fd20c354f501add709	f	user	t	f	f	0	2021-01-18 11:12:31.127513	2021-01-18 11:12:31.127513
 \.
 
 
@@ -558,14 +560,6 @@ ALTER TABLE ONLY public.comment
 
 
 --
--- Name: dish dish_name_key; Type: CONSTRAINT; Schema: public; Owner: restuser
---
-
-ALTER TABLE ONLY public.dish
-    ADD CONSTRAINT dish_name_key UNIQUE (name);
-
-
---
 -- Name: dish dish_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
 --
 
@@ -603,6 +597,14 @@ ALTER TABLE ONLY public.rs_dish_tag
 
 ALTER TABLE ONLY public.rs_user_tag
     ADD CONSTRAINT rs_user_tag_pkey PRIMARY KEY (user_id, tag_id);
+
+
+--
+-- Name: tag tag_name_key; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.tag
+    ADD CONSTRAINT tag_name_key UNIQUE (name);
 
 
 --
