@@ -228,8 +228,8 @@ def user_add_tags():
 @user.route('/test', methods=['POST', 'GET'])
 def test():
     if request.method == "GET":
-        user = User.query.filter_by(id=1).first()
-        print(user.age, current_user.age)
+        # user = User.query.filter_by(id=1).first()
+        # print(user.age, current_user.age)
         return jsonify({'msg': 'method GET ok'})
 
     if request.method == "POST":
@@ -244,4 +244,4 @@ def test():
         # db.session.add(user)
         # db.session.commit()
 
-        return jsonify({'msg': 'OK'})
+        return jsonify({'msg': 'method POST OK'})
