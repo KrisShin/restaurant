@@ -225,8 +225,10 @@ def user_add_tags():
     return jsonify({'success': True})
 
 
-@user.route('/test', methods=['POST', 'GET'])
+@user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
 def test():
+    data = request.get_json()
+    print(request.method, data)
     if request.method == "GET":
         # user = User.query.filter_by(id=1).first()
         # print(user.age, current_user.age)
@@ -245,3 +247,11 @@ def test():
         # db.session.commit()
 
         return jsonify({'msg': 'method POST OK'})
+    if request.method == "PUT":
+        # user = User.query.filter_by(id=1).first()
+        # print(user.age, current_user.age)
+        return jsonify({'msg': 'method PUT ok'})
+    if request.method == "DELETE":
+        # user = User.query.filter_by(id=1).first()
+        # print(user.age, current_user.age)
+        return jsonify({'msg': 'method DELETE ok'})

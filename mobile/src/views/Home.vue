@@ -1,7 +1,10 @@
 <template>
   <div id="home">
     {{ a }}
-    <van-button @click="hello">123</van-button>
+    <van-button @click="test_get">get</van-button>
+    <van-button @click="test_post">post</van-button>
+    <van-button @click="test_put">put</van-button>
+    <van-button @click="test_del">del</van-button>
     <div v-if="a">
       <router-link to="/login">login</router-link> /
       <router-link to="/register">register</router-link>
@@ -20,6 +23,7 @@
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 import { Button, Col, Row } from "vant";
+import { getAPI, postAPI, putAPI, delAPI } from "../apis/user.apis";
 
 export default {
   name: "Home",
@@ -34,8 +38,41 @@ export default {
     [Col.name]: Col,
   },
   methods: {
-    hello: function () {
-      this.a = !this.a;
+    test_get: function () {
+      getAPI({ test: 123 })
+        .then((resp) => {
+          console.log(resp);
+        })
+        .catch((resp) => {
+          console.error(resp);
+        });
+    },
+    test_post: function () {
+      postAPI({ test: 123 })
+        .then((resp) => {
+          console.log(resp);
+        })
+        .catch((resp) => {
+          console.error(resp);
+        });
+    },
+    test_put: function () {
+      putAPI({ test: 123 })
+        .then((resp) => {
+          console.log(resp);
+        })
+        .catch((resp) => {
+          console.error(resp);
+        });
+    },
+    test_del: function () {
+      delAPI({ test: 123 })
+        .then((resp) => {
+          console.log(resp);
+        })
+        .catch((resp) => {
+          console.error(resp);
+        });
     },
   },
 };
