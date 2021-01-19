@@ -38,7 +38,7 @@ def user_register():
     # check phone number
     reg_phone = r'^1[3-9]\d{9}$'
     if not re.match(reg_phone, phone):
-        return jsonify({'success': False, 'info': '手机号格式错误', 'code': WRONG_PHONE_FORMAT})
+        return jsonify({'success': False, 'code': WRONG_PHONE_FORMAT})
 
     user = User.query.filter_by(phone=phone).first()
     if user:
@@ -93,15 +93,16 @@ def user_login():
 
     user = User.query.filter_by(phone=phone).first()
     if not user:
-        return jsonify({'success': False, 'info': '用户未注册', 'code': USER_NOT_EXIST})
+        return jsonify({'success': False, 'code': USER_NOT_EXIST})
 
     if not check_password(password, user.password):
-        return jsonify({'success': False, 'info': '密码错误', 'code': WRONG_PASSWORD})
+        return jsonify({'success': False, 'code': WRONG_PASSWORD})
 
     login_user(user)
     resp = dict(user)
     resp['user_id'] = resp['id']
     resp['balance'] = user.account.balance
+    resp['is_vip'] = user.account.is_vip
     del resp['id']
     return jsonify({"success": True, "info": "", "data": resp})
 
@@ -110,7 +111,7 @@ def user_login():
 @login_required
 def user_logout():
     logout_user()
-    return jsonify({'sucess': True, 'info': ''})
+    return jsonify({'sucess': True})
 
 
 @user.route('/email_captcha', methods=['POST'])
@@ -118,11 +119,11 @@ def send_captcha_email():
     data = request.get_json()
     email = data.get('email')
     if not email:
-        return jsonify({'success': False, 'info': '请输入你注册绑定的邮箱', 'code': EMAIL_NOT_EXIST})
+        return jsonify({'success': False, 'code': EMAIL_NOT_EXIST})
     user = User.query.filter_by(email=email).first()
 
     if r.get_val(f'user_{user.id}:captcha'):
-        return jsonify({'success': False, 'info': '验证码已发送, 请稍后再试', 'code': CAPTCHA_SENDED})
+        return jsonify({'success': False, 'code': CAPTCHA_SENDED})
 
     captcha = get_captcha()
     mail = {
@@ -130,7 +131,7 @@ def send_captcha_email():
         'content': f'<div>感谢您使用恰了木有APP, 您的验证码为</div><span style="font-size: 30px;font-weight: 600;background: #313131;color: #6dc4ff;">{captcha}</span><div>请在5分钟之内完成验证</div>'}
     r.set_val(f'user_{user.id}:get_captcha', captcha, 300)
     sender.send(email, mail)
-    return jsonify({'success': True, 'info': ''})
+    return jsonify({'success': True})
 
 
 @user.route('/change_pwd')
@@ -143,14 +144,14 @@ def user_change_pwd():
     new_passwd = data.get('new_password')
 
     if old_passwd == new_passwd:
-        return jsonify({'success': False, 'info': '新密码不能与原密码相同', 'code': SAME_PASSWORD})
+        return jsonify({'success': False, 'code': SAME_PASSWORD})
     real_captch = r.get_val(f'user_{current_user.id}:get_captcha')
 
     if captcha != real_captch:
-        return jsonify({'success': False, 'info': '验证码错误', 'code': WRONG_CAPTCHA})
+        return jsonify({'success': False, 'code': WRONG_CAPTCHA})
 
     if not check_password(old_passwd, current_user.password):
-        return jsonify({'success': False, 'info': '密码错误', 'code': WRONG_PASSWORD})
+        return jsonify({'success': False, 'code': WRONG_PASSWORD})
 
     user = User.query.filter_by(id=current_user.id).first()
     user.password = make_password(new_passwd)
@@ -209,6 +210,21 @@ def user_edit_email():
     return jsonify({'success': True})
 
 
+@user.route('/add_tags', methods=['POST'])
+@login_required
+def user_add_tags():
+    data = request.get_json()
+    tags = data.get('tags')
+
+    tag_list = list()
+    for tag in tags:
+        t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
+        tag_list.append(t)
+    current_user.tags = tag_list
+    db.session.commit()
+    return jsonify({'success': True})
+
+
 @user.route('/test', methods=['POST', 'GET'])
 def test():
     if request.method == "GET":
@@ -217,15 +233,15 @@ def test():
         return jsonify({'msg': 'method GET ok'})
 
     if request.method == "POST":
-        data = request.get_json()
-        nickname = data.get('nickname')
-        phone = data.get('phone')
-        gender = data.get('gender')
-        password = make_password(data.get('password'))
-        age = data.get('age')
-        user = User(nickname=nickname, phone=phone, age=age,
-                    password=password, gender=gender, avatar='/static/avatar/default.jpg')
-        db.session.add(user)
-        db.session.commit()
+        # data = request.get_json()
+        # nickname = data.get('nickname')
+        # phone = data.get('phone')
+        # gender = data.get('gender')
+        # password = make_password(data.get('password'))
+        # age = data.get('age')
+        # user = User(nickname=nickname, phone=phone, age=age,
+        #             password=password, gender=gender, avatar='/static/avatar/default.jpg')
+        # db.session.add(user)
+        # db.session.commit()
 
         return jsonify({'msg': 'OK'})
