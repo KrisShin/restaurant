@@ -1,4 +1,4 @@
-# restaurant
+# mobile
 
 ## Project setup
 ```
