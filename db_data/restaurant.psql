@@ -60,6 +60,44 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: account; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public.account (
+    id integer NOT NULL,
+    user_id integer,
+    is_vip boolean,
+    start_time timestamp without time zone,
+    end_time timestamp without time zone,
+    balance double precision
+);
+
+
+ALTER TABLE public.account OWNER TO restuser;
+
+--
+-- Name: account_id_seq; Type: SEQUENCE; Schema: public; Owner: restuser
+--
+
+CREATE SEQUENCE public.account_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.account_id_seq OWNER TO restuser;
+
+--
+-- Name: account_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: restuser
+--
+
+ALTER SEQUENCE public.account_id_seq OWNED BY public.account.id;
+
+
+--
 -- Name: address; Type: TABLE; Schema: public; Owner: restuser
 --
 
@@ -149,6 +187,43 @@ ALTER SEQUENCE public.comment_id_seq OWNED BY public.comment.id;
 
 
 --
+-- Name: discount; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public.discount (
+    id integer NOT NULL,
+    discount_type integer,
+    start_time timestamp without time zone,
+    end_time timestamp without time zone,
+    discount integer
+);
+
+
+ALTER TABLE public.discount OWNER TO restuser;
+
+--
+-- Name: discount_id_seq; Type: SEQUENCE; Schema: public; Owner: restuser
+--
+
+CREATE SEQUENCE public.discount_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.discount_id_seq OWNER TO restuser;
+
+--
+-- Name: discount_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: restuser
+--
+
+ALTER SEQUENCE public.discount_id_seq OWNED BY public.discount.id;
+
+
+--
 -- Name: dish; Type: TABLE; Schema: public; Owner: restuser
 --
 
@@ -158,10 +233,9 @@ CREATE TABLE public.dish (
     price double precision,
     amount integer,
     description character varying(256),
-    discount_type integer,
-    discount integer,
     create_time timestamp without time zone,
-    update_time timestamp without time zone
+    update_time timestamp without time zone,
+    discount_id integer
 );
 
 
@@ -316,9 +390,7 @@ CREATE TABLE public."user" (
     gender boolean,
     role public.role_enum,
     is_new boolean,
-    is_vip boolean,
     is_email_active boolean,
-    balance double precision,
     create_time timestamp without time zone,
     update_time timestamp without time zone
 );
@@ -349,6 +421,13 @@ ALTER SEQUENCE public.user_id_seq OWNED BY public."user".id;
 
 
 --
+-- Name: account id; Type: DEFAULT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.account ALTER COLUMN id SET DEFAULT nextval('public.account_id_seq'::regclass);
+
+
+--
 -- Name: address id; Type: DEFAULT; Schema: public; Owner: restuser
 --
 
@@ -360,6 +439,13 @@ ALTER TABLE ONLY public.address ALTER COLUMN id SET DEFAULT nextval('public.addr
 --
 
 ALTER TABLE ONLY public.comment ALTER COLUMN id SET DEFAULT nextval('public.comment_id_seq'::regclass);
+
+
+--
+-- Name: discount id; Type: DEFAULT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.discount ALTER COLUMN id SET DEFAULT nextval('public.discount_id_seq'::regclass);
 
 
 --
@@ -391,6 +477,15 @@ ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_
 
 
 --
+-- Data for Name: account; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public.account (id, user_id, is_vip, start_time, end_time, balance) FROM stdin;
+1	1	f	\N	\N	500.579999999999984
+\.
+
+
+--
 -- Data for Name: address; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
@@ -403,7 +498,7 @@ COPY public.address (id, name, phone, location, create_time, update_time, is_del
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
-366b862f9d6f
+78f4a410e1e2
 \.
 
 
@@ -416,10 +511,18 @@ COPY public.comment (id, content, rate, create_time, user_id, order_id) FROM std
 
 
 --
+-- Data for Name: discount; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public.discount (id, discount_type, start_time, end_time, discount) FROM stdin;
+\.
+
+
+--
 -- Data for Name: dish; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public.dish (id, name, price, amount, description, discount_type, discount, create_time, update_time) FROM stdin;
+COPY public.dish (id, name, price, amount, description, create_time, update_time, discount_id) FROM stdin;
 \.
 
 
@@ -488,9 +591,16 @@ COPY public.tag (id, weight, name, create_time) FROM stdin;
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, role, is_new, is_vip, is_email_active, balance, create_time, update_time) FROM stdin;
-1	admin	18	13533555533	\N	krisshin@88.com	73ea1c92bb54f5fd20c354f501add709	f	user	t	f	f	0	2021-01-18 11:12:31.127513	2021-01-18 11:12:31.127513
+COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, role, is_new, is_email_active, create_time, update_time) FROM stdin;
+1	admin	18	13533555533	\N	krisshin@88.com	73ea1c92bb54f5fd20c354f501add709	f	user	t	f	2021-01-18 11:12:31.127513	2021-01-18 11:12:31.127513
 \.
+
+
+--
+-- Name: account_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
+--
+
+SELECT pg_catalog.setval('public.account_id_seq', 1, true);
 
 
 --
@@ -505,6 +615,13 @@ SELECT pg_catalog.setval('public.address_id_seq', 1, false);
 --
 
 SELECT pg_catalog.setval('public.comment_id_seq', 1, false);
+
+
+--
+-- Name: discount_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
+--
+
+SELECT pg_catalog.setval('public.discount_id_seq', 1, false);
 
 
 --
@@ -536,6 +653,14 @@ SELECT pg_catalog.setval('public.user_id_seq', 1, true);
 
 
 --
+-- Name: account account_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.account
+    ADD CONSTRAINT account_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: address address_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
 --
 
@@ -557,6 +682,14 @@ ALTER TABLE ONLY public.alembic_version
 
 ALTER TABLE ONLY public.comment
     ADD CONSTRAINT comment_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: discount discount_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.discount
+    ADD CONSTRAINT discount_pkey PRIMARY KEY (id);
 
 
 --
@@ -640,6 +773,14 @@ ALTER TABLE ONLY public."user"
 
 
 --
+-- Name: account account_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.account
+    ADD CONSTRAINT account_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id);
+
+
+--
 -- Name: address address_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
 --
 
@@ -661,6 +802,14 @@ ALTER TABLE ONLY public.comment
 
 ALTER TABLE ONLY public.comment
     ADD CONSTRAINT comment_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id);
+
+
+--
+-- Name: dish dish_discount_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.dish
+    ADD CONSTRAINT dish_discount_id_fkey FOREIGN KEY (discount_id) REFERENCES public.discount(id);
 
 
 --
