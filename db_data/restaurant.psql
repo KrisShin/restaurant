@@ -1,0 +1,882 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.15 (Ubuntu 10.15-0ubuntu0.18.04.1)
+-- Dumped by pg_dump version 10.15 (Ubuntu 10.15-0ubuntu0.18.04.1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: rate_enum; Type: TYPE; Schema: public; Owner: restuser
+--
+
+CREATE TYPE public.rate_enum AS ENUM (
+    'good',
+    'ok',
+    'bad'
+);
+
+
+ALTER TYPE public.rate_enum OWNER TO restuser;
+
+--
+-- Name: role_enum; Type: TYPE; Schema: public; Owner: restuser
+--
+
+CREATE TYPE public.role_enum AS ENUM (
+    'user',
+    'admin'
+);
+
+
+ALTER TYPE public.role_enum OWNER TO restuser;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: account; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public.account (
+    id integer NOT NULL,
+    user_id integer,
+    is_vip boolean,
+    start_time timestamp without time zone,
+    end_time timestamp without time zone,
+    balance double precision
+);
+
+
+ALTER TABLE public.account OWNER TO restuser;
+
+--
+-- Name: account_id_seq; Type: SEQUENCE; Schema: public; Owner: restuser
+--
+
+CREATE SEQUENCE public.account_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.account_id_seq OWNER TO restuser;
+
+--
+-- Name: account_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: restuser
+--
+
+ALTER SEQUENCE public.account_id_seq OWNED BY public.account.id;
+
+
+--
+-- Name: address; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public.address (
+    id integer NOT NULL,
+    name character varying(128) NOT NULL,
+    phone character varying(11) NOT NULL,
+    location character varying(512) NOT NULL,
+    create_time timestamp without time zone,
+    update_time timestamp without time zone,
+    is_delete boolean,
+    user_id integer
+);
+
+
+ALTER TABLE public.address OWNER TO restuser;
+
+--
+-- Name: address_id_seq; Type: SEQUENCE; Schema: public; Owner: restuser
+--
+
+CREATE SEQUENCE public.address_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.address_id_seq OWNER TO restuser;
+
+--
+-- Name: address_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: restuser
+--
+
+ALTER SEQUENCE public.address_id_seq OWNED BY public.address.id;
+
+
+--
+-- Name: alembic_version; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public.alembic_version (
+    version_num character varying(32) NOT NULL
+);
+
+
+ALTER TABLE public.alembic_version OWNER TO restuser;
+
+--
+-- Name: comment; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public.comment (
+    id integer NOT NULL,
+    content character varying(512),
+    rate public.rate_enum,
+    create_time timestamp without time zone,
+    user_id integer,
+    order_id integer
+);
+
+
+ALTER TABLE public.comment OWNER TO restuser;
+
+--
+-- Name: comment_id_seq; Type: SEQUENCE; Schema: public; Owner: restuser
+--
+
+CREATE SEQUENCE public.comment_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.comment_id_seq OWNER TO restuser;
+
+--
+-- Name: comment_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: restuser
+--
+
+ALTER SEQUENCE public.comment_id_seq OWNED BY public.comment.id;
+
+
+--
+-- Name: discount; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public.discount (
+    id integer NOT NULL,
+    discount_type integer,
+    start_time timestamp without time zone,
+    end_time timestamp without time zone,
+    discount integer
+);
+
+
+ALTER TABLE public.discount OWNER TO restuser;
+
+--
+-- Name: discount_id_seq; Type: SEQUENCE; Schema: public; Owner: restuser
+--
+
+CREATE SEQUENCE public.discount_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.discount_id_seq OWNER TO restuser;
+
+--
+-- Name: discount_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: restuser
+--
+
+ALTER SEQUENCE public.discount_id_seq OWNED BY public.discount.id;
+
+
+--
+-- Name: dish; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public.dish (
+    id integer NOT NULL,
+    name character varying(128) NOT NULL,
+    price double precision,
+    amount integer,
+    description character varying(256),
+    create_time timestamp without time zone,
+    update_time timestamp without time zone,
+    discount_id integer
+);
+
+
+ALTER TABLE public.dish OWNER TO restuser;
+
+--
+-- Name: dish_id_seq; Type: SEQUENCE; Schema: public; Owner: restuser
+--
+
+CREATE SEQUENCE public.dish_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.dish_id_seq OWNER TO restuser;
+
+--
+-- Name: dish_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: restuser
+--
+
+ALTER SEQUENCE public.dish_id_seq OWNED BY public.dish.id;
+
+
+--
+-- Name: order; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public."order" (
+    id integer NOT NULL,
+    money double precision,
+    status integer,
+    note character varying(256),
+    create_time timestamp without time zone,
+    update_time timestamp without time zone,
+    user_id integer,
+    address_id integer
+);
+
+
+ALTER TABLE public."order" OWNER TO restuser;
+
+--
+-- Name: order_id_seq; Type: SEQUENCE; Schema: public; Owner: restuser
+--
+
+CREATE SEQUENCE public.order_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.order_id_seq OWNER TO restuser;
+
+--
+-- Name: order_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: restuser
+--
+
+ALTER SEQUENCE public.order_id_seq OWNED BY public."order".id;
+
+
+--
+-- Name: rs_dish_order; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public.rs_dish_order (
+    dish_id integer NOT NULL,
+    order_id integer NOT NULL
+);
+
+
+ALTER TABLE public.rs_dish_order OWNER TO restuser;
+
+--
+-- Name: rs_dish_tag; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public.rs_dish_tag (
+    dish_id integer NOT NULL,
+    tag_id integer NOT NULL
+);
+
+
+ALTER TABLE public.rs_dish_tag OWNER TO restuser;
+
+--
+-- Name: rs_user_tag; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public.rs_user_tag (
+    user_id integer NOT NULL,
+    tag_id integer NOT NULL
+);
+
+
+ALTER TABLE public.rs_user_tag OWNER TO restuser;
+
+--
+-- Name: tag; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public.tag (
+    id integer NOT NULL,
+    weight integer,
+    name character varying(32),
+    create_time timestamp without time zone
+);
+
+
+ALTER TABLE public.tag OWNER TO restuser;
+
+--
+-- Name: tag_id_seq; Type: SEQUENCE; Schema: public; Owner: restuser
+--
+
+CREATE SEQUENCE public.tag_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tag_id_seq OWNER TO restuser;
+
+--
+-- Name: tag_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: restuser
+--
+
+ALTER SEQUENCE public.tag_id_seq OWNED BY public.tag.id;
+
+
+--
+-- Name: user; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public."user" (
+    id integer NOT NULL,
+    nickname character varying(128),
+    age integer,
+    phone character varying(11) NOT NULL,
+    avatar character varying(512),
+    email character varying(128),
+    password character varying(128) NOT NULL,
+    gender boolean,
+    role public.role_enum,
+    is_new boolean,
+    is_email_active boolean,
+    create_time timestamp without time zone,
+    update_time timestamp without time zone
+);
+
+
+ALTER TABLE public."user" OWNER TO restuser;
+
+--
+-- Name: user_id_seq; Type: SEQUENCE; Schema: public; Owner: restuser
+--
+
+CREATE SEQUENCE public.user_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.user_id_seq OWNER TO restuser;
+
+--
+-- Name: user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: restuser
+--
+
+ALTER SEQUENCE public.user_id_seq OWNED BY public."user".id;
+
+
+--
+-- Name: account id; Type: DEFAULT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.account ALTER COLUMN id SET DEFAULT nextval('public.account_id_seq'::regclass);
+
+
+--
+-- Name: address id; Type: DEFAULT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.address ALTER COLUMN id SET DEFAULT nextval('public.address_id_seq'::regclass);
+
+
+--
+-- Name: comment id; Type: DEFAULT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.comment ALTER COLUMN id SET DEFAULT nextval('public.comment_id_seq'::regclass);
+
+
+--
+-- Name: discount id; Type: DEFAULT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.discount ALTER COLUMN id SET DEFAULT nextval('public.discount_id_seq'::regclass);
+
+
+--
+-- Name: dish id; Type: DEFAULT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.dish ALTER COLUMN id SET DEFAULT nextval('public.dish_id_seq'::regclass);
+
+
+--
+-- Name: order id; Type: DEFAULT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public."order" ALTER COLUMN id SET DEFAULT nextval('public.order_id_seq'::regclass);
+
+
+--
+-- Name: tag id; Type: DEFAULT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.tag ALTER COLUMN id SET DEFAULT nextval('public.tag_id_seq'::regclass);
+
+
+--
+-- Name: user id; Type: DEFAULT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_id_seq'::regclass);
+
+
+--
+-- Data for Name: account; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public.account (id, user_id, is_vip, start_time, end_time, balance) FROM stdin;
+1	1	f	\N	\N	500.579999999999984
+\.
+
+
+--
+-- Data for Name: address; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public.address (id, name, phone, location, create_time, update_time, is_delete, user_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: alembic_version; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public.alembic_version (version_num) FROM stdin;
+78f4a410e1e2
+\.
+
+
+--
+-- Data for Name: comment; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public.comment (id, content, rate, create_time, user_id, order_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: discount; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public.discount (id, discount_type, start_time, end_time, discount) FROM stdin;
+\.
+
+
+--
+-- Data for Name: dish; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public.dish (id, name, price, amount, description, create_time, update_time, discount_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: order; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public."order" (id, money, status, note, create_time, update_time, user_id, address_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: rs_dish_order; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public.rs_dish_order (dish_id, order_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: rs_dish_tag; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public.rs_dish_tag (dish_id, tag_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: rs_user_tag; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public.rs_user_tag (user_id, tag_id) FROM stdin;
+1	3
+1	7
+\.
+
+
+--
+-- Data for Name: tag; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public.tag (id, weight, name, create_time) FROM stdin;
+1	1	蛋糕	2021-01-18 11:47:01.640015
+2	1	奶茶	2021-01-18 11:47:01.642433
+3	1	碳酸饮料	2021-01-18 11:47:01.644337
+4	1	偏甜	2021-01-18 11:47:01.646718
+5	1	咸香	2021-01-18 11:47:01.647717
+6	1	香辣	2021-01-18 11:47:01.648712
+7	1	麻辣	2021-01-18 11:47:01.650707
+8	1	特辣	2021-01-18 11:47:01.651707
+9	1	微辣	2021-01-18 11:47:01.652701
+10	1	中辣	2021-01-18 11:47:01.653701
+11	1	广东辣	2021-01-18 11:47:01.655693
+12	1	少油	2021-01-18 11:47:01.657689
+13	1	少盐	2021-01-18 11:47:01.659683
+14	1	少糖	2021-01-18 11:47:01.660682
+15	1	甜点	2021-01-18 11:47:01.66168
+16	1	海鲜	2021-01-18 11:47:01.663672
+17	1	生鲜	2021-01-18 11:47:01.664669
+18	1	五香	2021-01-18 11:47:01.665667
+19	1	糖醋	2021-01-18 11:47:01.667661
+\.
+
+
+--
+-- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, role, is_new, is_email_active, create_time, update_time) FROM stdin;
+1	admin	18	13533555533	\N	krisshin@88.com	73ea1c92bb54f5fd20c354f501add709	f	user	t	f	2021-01-18 11:12:31.127513	2021-01-18 11:12:31.127513
+\.
+
+
+--
+-- Name: account_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
+--
+
+SELECT pg_catalog.setval('public.account_id_seq', 1, true);
+
+
+--
+-- Name: address_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
+--
+
+SELECT pg_catalog.setval('public.address_id_seq', 1, false);
+
+
+--
+-- Name: comment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
+--
+
+SELECT pg_catalog.setval('public.comment_id_seq', 1, false);
+
+
+--
+-- Name: discount_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
+--
+
+SELECT pg_catalog.setval('public.discount_id_seq', 1, false);
+
+
+--
+-- Name: dish_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
+--
+
+SELECT pg_catalog.setval('public.dish_id_seq', 1, false);
+
+
+--
+-- Name: order_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
+--
+
+SELECT pg_catalog.setval('public.order_id_seq', 1, false);
+
+
+--
+-- Name: tag_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
+--
+
+SELECT pg_catalog.setval('public.tag_id_seq', 19, true);
+
+
+--
+-- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
+--
+
+SELECT pg_catalog.setval('public.user_id_seq', 1, true);
+
+
+--
+-- Name: account account_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.account
+    ADD CONSTRAINT account_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: address address_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.address
+    ADD CONSTRAINT address_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: alembic_version alembic_version_pkc; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.alembic_version
+    ADD CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num);
+
+
+--
+-- Name: comment comment_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.comment
+    ADD CONSTRAINT comment_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: discount discount_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.discount
+    ADD CONSTRAINT discount_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: dish dish_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.dish
+    ADD CONSTRAINT dish_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: order order_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public."order"
+    ADD CONSTRAINT order_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rs_dish_order rs_dish_order_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.rs_dish_order
+    ADD CONSTRAINT rs_dish_order_pkey PRIMARY KEY (dish_id, order_id);
+
+
+--
+-- Name: rs_dish_tag rs_dish_tag_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.rs_dish_tag
+    ADD CONSTRAINT rs_dish_tag_pkey PRIMARY KEY (dish_id, tag_id);
+
+
+--
+-- Name: rs_user_tag rs_user_tag_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.rs_user_tag
+    ADD CONSTRAINT rs_user_tag_pkey PRIMARY KEY (user_id, tag_id);
+
+
+--
+-- Name: tag tag_name_key; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.tag
+    ADD CONSTRAINT tag_name_key UNIQUE (name);
+
+
+--
+-- Name: tag tag_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.tag
+    ADD CONSTRAINT tag_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user user_email_key; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public."user"
+    ADD CONSTRAINT user_email_key UNIQUE (email);
+
+
+--
+-- Name: user user_phone_key; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public."user"
+    ADD CONSTRAINT user_phone_key UNIQUE (phone);
+
+
+--
+-- Name: user user_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public."user"
+    ADD CONSTRAINT user_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: account account_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.account
+    ADD CONSTRAINT account_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id);
+
+
+--
+-- Name: address address_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.address
+    ADD CONSTRAINT address_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id);
+
+
+--
+-- Name: comment comment_order_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.comment
+    ADD CONSTRAINT comment_order_id_fkey FOREIGN KEY (order_id) REFERENCES public."order"(id);
+
+
+--
+-- Name: comment comment_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.comment
+    ADD CONSTRAINT comment_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id);
+
+
+--
+-- Name: dish dish_discount_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.dish
+    ADD CONSTRAINT dish_discount_id_fkey FOREIGN KEY (discount_id) REFERENCES public.discount(id);
+
+
+--
+-- Name: order order_address_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public."order"
+    ADD CONSTRAINT order_address_id_fkey FOREIGN KEY (address_id) REFERENCES public.address(id);
+
+
+--
+-- Name: order order_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public."order"
+    ADD CONSTRAINT order_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id);
+
+
+--
+-- Name: rs_dish_order rs_dish_order_dish_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.rs_dish_order
+    ADD CONSTRAINT rs_dish_order_dish_id_fkey FOREIGN KEY (dish_id) REFERENCES public.dish(id);
+
+
+--
+-- Name: rs_dish_order rs_dish_order_order_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.rs_dish_order
+    ADD CONSTRAINT rs_dish_order_order_id_fkey FOREIGN KEY (order_id) REFERENCES public."order"(id);
+
+
+--
+-- Name: rs_dish_tag rs_dish_tag_dish_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.rs_dish_tag
+    ADD CONSTRAINT rs_dish_tag_dish_id_fkey FOREIGN KEY (dish_id) REFERENCES public.dish(id);
+
+
+--
+-- Name: rs_dish_tag rs_dish_tag_tag_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.rs_dish_tag
+    ADD CONSTRAINT rs_dish_tag_tag_id_fkey FOREIGN KEY (tag_id) REFERENCES public.tag(id);
+
+
+--
+-- Name: rs_user_tag rs_user_tag_tag_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.rs_user_tag
+    ADD CONSTRAINT rs_user_tag_tag_id_fkey FOREIGN KEY (tag_id) REFERENCES public.tag(id);
+
+
+--
+-- Name: rs_user_tag rs_user_tag_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.rs_user_tag
+    ADD CONSTRAINT rs_user_tag_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+

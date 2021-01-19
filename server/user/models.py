@@ -2,12 +2,13 @@ from datetime import datetime
 from config.global_params import db
 from dish.models import Tag
 from order.models import Order, Comment
+from flask_login import UserMixin
 
 tags = db.Table('rs_user_tag', db.Column('user_id', db.Integer, db.ForeignKey(
     'user.id'), primary_key=True), db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True))
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -20,9 +21,8 @@ class User(db.Model):
     gender = db.Column(db.Boolean, default=0)  # 性别 0-女/ 1-男
     role = db.Column(db.Enum('user', 'admin', name='role_enum'), default='user') # 权限user(用户)/admin(管理员)
     is_new = db.Column(db.Boolean, default=1)  # 0-否/ 1-是
-    is_vip = db.Column(db.Boolean, default=0)
-    is_active = db.Column(db.Boolean, default=0)  # 是否已激活
-    balance = db.Column(db.Float, default=0.0)  # 余额
+    account = db.relationship("Account", backref="user", lazy=True, uselist=False)
+    is_email_active = db.Column(db.Boolean, default=0)  # 是否已激活
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime, default=datetime.now)
 
@@ -37,7 +37,7 @@ class User(db.Model):
 
     def keys(self):
         '''serilize object keys'''
-        return ('user_id', 'nickname', 'gender', 'is_vip', 'is_active', 'is_new', 'balance')
+        return ('id', 'nickname', 'gender', 'is_vip', 'is_email_active', 'is_new', 'phone', 'age')
 
     def __getitem__(self, item):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''
@@ -60,3 +60,18 @@ class Address(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Address, self).__init__(**kwargs)
+
+
+class Account(db.Model):
+    __tablename__ = "account"
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    is_vip = db.Column(db.Boolean, default=0)
+    start_time = db.Column(db.DateTime, default=datetime.now)
+    end_time = db.Column(db.DateTime)
+    balance = db.Column(db.Float, default=0.0)  # 余额
+
+    def __init__(self, *args, **kwargs):
+        super(Account, self).__init__(**kwargs)
+
