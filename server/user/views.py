@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request, session
 from flask_login import current_user, login_required, login_user, logout_user
-from .models import User, Address
+from .models import User, Address, Account
+from dish.models import Tag
 from utils.util import make_password, check_password, get_captcha, sender
 from config.global_params import db, login_manager
 import re
@@ -46,7 +47,9 @@ def user_register():
     password = make_password(data.get('password'))
     user = User(nickname=nickname, phone=phone, age=age, email=email,
                 password=password, gender=gender, avatar='/static/avatar/default.jpg')
+    account = Account(user_id=user.id)
     db.session.add(user)
+    db.session.add(account)
     db.session.commit()
 
     return jsonify({'success': True,
@@ -98,6 +101,7 @@ def user_login():
     login_user(user)
     resp = dict(user)
     resp['user_id'] = resp['id']
+    resp['balance'] = user.account.balance
     del resp['id']
     return jsonify({"success": True, "info": "", "data": resp})
 

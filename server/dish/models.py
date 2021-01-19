@@ -15,8 +15,8 @@ class Dish(db.Model):
     price = db.Column(db.Float, default=0.01)
     amount = db.Column(db.Integer, default=0)  # 销量
     description = db.Column(db.String(256))
-    discount_type = db.Column(db.Integer)  # 0-没有折扣/1-折扣/2-买一送一/3-第二件半价
-    discount = db.Column(db.Integer)
+    
+    discount_id = db.Column(db.Integer, db.ForeignKey('discount.id'))
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime, default=datetime.now)
 
@@ -37,3 +37,18 @@ class Tag(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Tag, self).__init__(**kwargs)
+
+
+class Discount(db.Model):
+    __tablename__ = 'discount'
+
+    id = db.Column(db.Integer, primary_key=True)
+    discount_type = db.Column(db.Integer)  # 0-没有折扣/1-折扣/2-买一送一/3-第二件半价
+    start_time = db.Column(db.DateTime, default=datetime.now)
+    end_time = db.Column(db.DateTime)
+    discount = db.Column(db.Integer)
+
+    dishes = db.relationship("Dish", backref="discount", lazy=True)
+    
+    def __init__(self, *args, **kwargs):
+        super(Discount, self).__init__(**kwargs)
