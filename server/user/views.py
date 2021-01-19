@@ -117,7 +117,7 @@ def send_captcha_email():
         return jsonify({'success': False, 'info': '请输入你注册绑定的邮箱', 'code': EMAIL_NOT_EXIST})
     user = User.query.filter_by(email=email).first()
 
-    if r.get_val(f'user_{user.id}:get_captcha'):
+    if r.get_val(f'user_{user.id}:captcha'):
         return jsonify({'success': False, 'info': '验证码已发送, 请稍后再试', 'code': CAPTCHA_SENDED})
 
     captcha = get_captcha()
@@ -175,16 +175,33 @@ def user_edit():
     age = data.get('age')
     # TODO: tags edit
 
-    user = User.query.filter_by(id=current_user.id).first()
     if avatar:
-        user.avatar = avatar
         current_user.avatar = avatar
     if age:
-        user.age = age
         current_user.age = age
     db.session.commit()
-    current_user.save()
 
+    return jsonify({'success': True})
+
+
+@user.route('/change_email', methods=['POST'])
+@login_required
+def user_edit_email():
+    data = request.get_json()
+    captcha = data.get('captcha')
+    email = data.get('email')
+    real_cap = r.get_val(f'user_{current_user.id}:captcha')
+    if not real_cap:
+        return jsonify({'success': False, 'code': CAPTCHA_EXPIRED})
+    if (not captcha) or (captcha != real_cap):
+        return jsonify({'success': False, 'code': WRONG_CAPTCHA})
+
+    user = User.query.filter_by(email=email).first()
+    if user:
+        return jsonify({'success': False, 'code': USER_EXISTED})
+
+    current_user.email = email
+    db.session.commit()
     return jsonify({'success': True})
 
 
@@ -208,4 +225,3 @@ def test():
         db.session.commit()
 
         return jsonify({'msg': 'OK'})
-
