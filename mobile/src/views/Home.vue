@@ -1,7 +1,7 @@
 <template>
   <div id="home">
     {{ a }}
-    <Button @click="hello">123</Button>
+    <van-button @click="hello">123</van-button>
     <div v-if="a">
       <router-link to="/login">login</router-link> /
       <router-link to="/register">register</router-link>
@@ -19,8 +19,7 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
-import { Button } from "vant";
-import { Col, Row } from "vant";
+import { Button, Col, Row } from "vant";
 
 export default {
   name: "Home",
@@ -30,9 +29,9 @@ export default {
     };
   },
   components: {
-    Button,
-    Col,
-    Row,
+    [Button.name]: Button,
+    [Row.name]: Row,
+    [Col.name]: Col,
   },
   methods: {
     hello: function () {
