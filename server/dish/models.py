@@ -18,7 +18,7 @@ class Dish(db.Model):
     
     discount_id = db.Column(db.Integer, db.ForeignKey('discount.id'))
     create_time = db.Column(db.DateTime, default=datetime.now)
-    update_time = db.Column(db.DateTime, default=datetime.now)
+    update_time = db.Column(db.DateTime)
 
     tags = db.relationship('Tag', secondary=tags, lazy='subquery',
                            backref=db.backref('dishes', lazy=True))  # 标签(口味偏好) n:n

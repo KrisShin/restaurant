@@ -15,7 +15,7 @@ class Order(db.Model):
     status = db.Column(db.Integer, default=1)  # 1-待支付/2-已支付/3-已接单/4-已完成/0-已取消
     note = db.Column(db.String(256))  # 备注
     create_time = db.Column(db.DateTime, default=datetime.now)
-    update_time = db.Column(db.DateTime, default=datetime.now)
+    update_time = db.Column(db.DateTime)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     address_id = db.Column(db.Integer, db.ForeignKey('address.id'))

@@ -7,6 +7,7 @@ from config.global_params import db, login_manager
 import re
 from utils.rest_redis import r
 from config.status_code import *
+from flask_cors import cross_origin
 
 user = Blueprint('User', __name__, url_prefix='/user')
 
@@ -107,14 +108,14 @@ def user_login():
     return jsonify({"success": True, "info": "", "data": resp})
 
 
-@user.route('/logout', methods=['POST', 'GET'])
+@user.route('/logout', methods=['POST'])
 @login_required
 def user_logout():
     logout_user()
     return jsonify({'sucess': True})
 
 
-@user.route('/email_captcha', methods=['POST'])
+@user.route('/email_captcha', methods=['PUT'])
 def send_captcha_email():
     data = request.get_json()
     email = data.get('email')
@@ -134,7 +135,7 @@ def send_captcha_email():
     return jsonify({'success': True})
 
 
-@user.route('/change_pwd')
+@user.route('/change_pwd', methods=['PUT'])
 @login_required
 def user_change_pwd():
     '''user change password'''
@@ -160,7 +161,7 @@ def user_change_pwd():
     return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
 
-@user.route('/profile', methods=['POST'])
+@user.route('/profile', methods=['GET'])
 @login_required
 def user_profile():
     '''check user profile'''
@@ -171,7 +172,7 @@ def user_profile():
     return jsonify({'success': True, 'data': resp})
 
 
-@user.route('/edit_profile', methods=['POST'])
+@user.route('/edit_profile', methods=['PUT'])
 @login_required
 def user_edit():
     '''user edit profile'''
@@ -189,7 +190,7 @@ def user_edit():
     return jsonify({'success': True})
 
 
-@user.route('/change_email', methods=['POST'])
+@user.route('/change_email', methods=['PUT'])
 @login_required
 def user_edit_email():
     data = request.get_json()
@@ -223,6 +224,22 @@ def user_add_tags():
     current_user.tags = tag_list
     db.session.commit()
     return jsonify({'success': True})
+
+
+@user.route('upload_avatar', methods=['POST'])
+def user_avatar():
+    data = request.get_json()
+    base64_str = data.get('avatar')
+    filename = 'testfile'
+    undeal_str, img_content = base64_str.split(',')
+    ext = r'.' + undeal_str[11:-7]
+    filename += ext
+    import base64, os
+    from config.settings import BASE_DIR
+    with open(f'statics/avatar/{filename}', 'wb') as img_p:
+        img = base64.b64decode(img_content)
+        img_p.write(img)
+    return jsonify({'msg': 'ok', 'avatar': f'/static/avatar/{filename}'})
 
 
 @user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
