@@ -18,3 +18,7 @@ export function putAPI(params) {
 export function delAPI(params) {
     return http.delete(`${BASE_API}/user/test`, params)
 }
+
+export function uploadAvatarApi(params) {
+    return http.post(`${BASE_API}/user/upload_avatar`, params)
+}

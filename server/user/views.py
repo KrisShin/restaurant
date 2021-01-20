@@ -212,21 +212,36 @@ def user_edit_email():
 
 
 @user.route('/add_tags', methods=['POST'])
-# @login_required
+@login_required
 def user_add_tags():
-    # data = request.get_json()
-    # tags = data.get('tags')
+    data = request.get_json()
+    tags = data.get('tags')
 
-    # tag_list = list()
-    # for tag in tags:
-    #     t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
-    #     tag_list.append(t)
-    # current_user.tags = tag_list
-    # db.session.commit()
+    tag_list = list()
+    for tag in tags:
+        t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
+        tag_list.append(t)
+    current_user.tags = tag_list
+    db.session.commit()
     return jsonify({'success': True})
 
 
-@cross_origin
+@user.route('upload_avatar', methods=['POST'])
+def user_avatar():
+    data = request.get_json()
+    base64_str = data.get('avatar')
+    filename = 'testfile'
+    undeal_str, img_content = base64_str.split(',')
+    ext = r'.' + undeal_str[11:-7]
+    filename += ext
+    import base64, os
+    from config.settings import BASE_DIR
+    with open(f'statics/avatar/{filename}', 'wb') as img_p:
+        img = base64.b64decode(img_content)
+        img_p.write(img)
+    return jsonify({'msg': 'ok', 'avatar': f'/static/avatar/{filename}'})
+
+
 @user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
 def test():
     data = request.get_json()
