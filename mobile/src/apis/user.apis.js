@@ -10,7 +10,7 @@ export function getAPI(params) {
     return http.get(`${BASE_API}/user/test`, params)
 }
 export function postAPI(params) {
-    return http.post(`${BASE_API}/user/test`, params)
+    return http.post(`${BASE_API}/user/add_tags`, params)
 }
 export function putAPI(params) {
     return http.put(`${BASE_API}/user/test`, params)

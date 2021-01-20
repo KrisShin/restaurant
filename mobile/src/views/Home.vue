@@ -5,6 +5,7 @@
     <van-button @click="test_post">post</van-button>
     <van-button @click="test_put">put</van-button>
     <van-button @click="test_del">del</van-button>
+    <img src="http://127.0.0.1:9096/static/avatar/default.jpg">
     <div v-if="a">
       <router-link to="/login">login</router-link> /
       <router-link to="/register">register</router-link>

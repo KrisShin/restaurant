@@ -108,14 +108,14 @@ def user_login():
     return jsonify({"success": True, "info": "", "data": resp})
 
 
-@user.route('/logout', methods=['POST', 'GET'])
+@user.route('/logout', methods=['POST'])
 @login_required
 def user_logout():
     logout_user()
     return jsonify({'sucess': True})
 
 
-@user.route('/email_captcha', methods=['POST'])
+@user.route('/email_captcha', methods=['PUT'])
 def send_captcha_email():
     data = request.get_json()
     email = data.get('email')
@@ -135,7 +135,7 @@ def send_captcha_email():
     return jsonify({'success': True})
 
 
-@user.route('/change_pwd')
+@user.route('/change_pwd', methods=['PUT'])
 @login_required
 def user_change_pwd():
     '''user change password'''
@@ -161,7 +161,7 @@ def user_change_pwd():
     return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
 
-@user.route('/profile', methods=['POST'])
+@user.route('/profile', methods=['GET'])
 @login_required
 def user_profile():
     '''check user profile'''
@@ -172,7 +172,7 @@ def user_profile():
     return jsonify({'success': True, 'data': resp})
 
 
-@user.route('/edit_profile', methods=['POST'])
+@user.route('/edit_profile', methods=['PUT'])
 @login_required
 def user_edit():
     '''user edit profile'''
@@ -190,7 +190,7 @@ def user_edit():
     return jsonify({'success': True})
 
 
-@user.route('/change_email', methods=['POST'])
+@user.route('/change_email', methods=['PUT'])
 @login_required
 def user_edit_email():
     data = request.get_json()
@@ -212,31 +212,30 @@ def user_edit_email():
 
 
 @user.route('/add_tags', methods=['POST'])
-@login_required
+# @login_required
 def user_add_tags():
-    data = request.get_json()
-    tags = data.get('tags')
+    # data = request.get_json()
+    # tags = data.get('tags')
 
-    tag_list = list()
-    for tag in tags:
-        t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
-        tag_list.append(t)
-    current_user.tags = tag_list
-    db.session.commit()
+    # tag_list = list()
+    # for tag in tags:
+    #     t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
+    #     tag_list.append(t)
+    # current_user.tags = tag_list
+    # db.session.commit()
     return jsonify({'success': True})
+
 
 @cross_origin
 @user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
 def test():
-    data = request.args
-    print(data.get('test'))
+    data = request.get_json()
+    print(request.method, data)
     if request.method == "GET":
         # user = User.query.filter_by(id=1).first()
         # print(user.age, current_user.age)
         return jsonify({'msg': 'method GET ok'})
 
-    data = request.get_json()
-    print(request.method, data)
     if request.method == "POST":
         # data = request.get_json()
         # nickname = data.get('nickname')
