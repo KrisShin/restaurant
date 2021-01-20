@@ -7,6 +7,7 @@ from config.global_params import db, login_manager
 import re
 from utils.rest_redis import r
 from config.status_code import *
+from flask_cors import cross_origin
 
 user = Blueprint('User', __name__, url_prefix='/user')
 
@@ -224,16 +225,18 @@ def user_add_tags():
     db.session.commit()
     return jsonify({'success': True})
 
-
+@cross_origin
 @user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
 def test():
-    data = request.get_json()
-    print(request.method, data)
+    data = request.args
+    print(data.get('test'))
     if request.method == "GET":
         # user = User.query.filter_by(id=1).first()
         # print(user.age, current_user.age)
         return jsonify({'msg': 'method GET ok'})
 
+    data = request.get_json()
+    print(request.method, data)
     if request.method == "POST":
         # data = request.get_json()
         # nickname = data.get('nickname')

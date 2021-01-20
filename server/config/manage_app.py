@@ -5,6 +5,7 @@ from .settings import REDIS_HOST, REDIS_PORT, REDIS_USER, REDIS_PWD, REDIS_DB
 from user.views import user
 from dish.views import dish
 from order.views import order
+from flask_cors import CORS
 
 
 def create_app():
@@ -23,7 +24,8 @@ def create_app():
     db.init_app(app)
     redis.init_app(app)
 
-    
+    CORS(app, supports_credentials=True)
+
     login_manager.init_app(app)
     login_manager.login_view = 'login'
     return app
