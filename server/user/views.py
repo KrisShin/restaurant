@@ -92,8 +92,9 @@ def user_login():
     data = request.get_json()
     phone = data.get('phone')
     password = data.get('password')
+    print(type(phone), phone, type(password), password)
 
-    user = User.query.filter_by(phone=phone).first()
+    user = User.query.filter(User.phone == phone).first()
     if not user:
         return jsonify({'success': False, 'code': USER_NOT_EXIST})
 
@@ -234,6 +235,7 @@ def user_add_tags():
 
 
 @user.route('/upload_avatar', methods=['POST'])
+@login_required
 def user_avatar():
     data = request.get_json()
     base64_str = data.get('avatar')

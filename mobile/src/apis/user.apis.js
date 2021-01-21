@@ -5,20 +5,23 @@ import BASE_API from '../utils/settings'
  *  @param '/testIp'代表vue-cil中config，index.js中配置的代理
  */
 
+export function userLoginAPI(data) {
+    return http.post(`${BASE_API}/user/login`, data)
+}
 // testAPI
-export function getAPI(params) {
-    return http.get(`${BASE_API}/user/test`, params)
-}
-export function postAPI(params) {
-    return http.post(`${BASE_API}/user/add_tags`, params)
-}
-export function putAPI(params) {
-    return http.put(`${BASE_API}/user/test`, params)
-}
-export function delAPI(params) {
-    return http.delete(`${BASE_API}/user/test`, params)
-}
+// export function getAPI(params) {
+//     return http.get(`${BASE_API}/user/test`, params)
+// }
+// export function postAPI(params) {
+//     return http.post(`${BASE_API}/user/add_tags`, params)
+// }
+// export function putAPI(params) {
+//     return http.put(`${BASE_API}/user/test`, params)
+// }
+// export function delAPI(params) {
+//     return http.delete(`${BASE_API}/user/test`, params)
+// }
 
-export function uploadAvatarApi(params) {
-    return http.post(`${BASE_API}/user/upload_avatar`, params)
-}
+// export function uploadAvatarApi(params) {
+//     return http.post(`${BASE_API}/user/upload_avatar`, params)
+// }

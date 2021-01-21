@@ -23,7 +23,7 @@ def check_password(password, real_password) -> bool:
 
 
 def gen_filename(ext):
-    return uuid4() + ext
+    return uuid4().hex + ext
 
 
 def save_img(path, base64_str):
