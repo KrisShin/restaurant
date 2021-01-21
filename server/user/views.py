@@ -180,8 +180,14 @@ def user_edit():
     data = request.get_json()
     avatar = data.get('avatar')
     age = data.get('age')
-    # TODO: tags edit
+    tags = data.get('tags')
 
+    if tags:
+        tag_list = list()
+        for tag in tags:
+            t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
+            tag_list.append(t)
+        current_user.tags = tag_list
     if avatar:
         current_user.avatar = avatar
     if age:
@@ -227,7 +233,7 @@ def user_add_tags():
     return jsonify({'success': True})
 
 
-@user.route('upload_avatar', methods=['POST'])
+@user.route('/upload_avatar', methods=['POST'])
 def user_avatar():
     data = request.get_json()
     base64_str = data.get('avatar')
@@ -235,7 +241,7 @@ def user_avatar():
     current_user.avatar = avatar_path
 
     db.session.commit()
-    return jsonify({'msg': 'ok'})
+    return jsonify({'success': True})
 
 
 @user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
