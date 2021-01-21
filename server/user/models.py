@@ -24,7 +24,7 @@ class User(db.Model, UserMixin):
     account = db.relationship("Account", backref="user", lazy=True, uselist=False)
     is_email_active = db.Column(db.Boolean, default=0)  # 是否已激活
     create_time = db.Column(db.DateTime, default=datetime.now)
-    update_time = db.Column(db.DateTime, default=datetime.now)
+    update_time = db.Column(db.DateTime)
 
     address = db.relationship("Address", backref="user", lazy=True)
     comments = db.relationship("Comment", backref="user", lazy=True)
@@ -37,7 +37,7 @@ class User(db.Model, UserMixin):
 
     def keys(self):
         '''serilize object keys'''
-        return ('id', 'nickname', 'gender', 'is_vip', 'is_email_active', 'is_new', 'phone', 'age')
+        return ('id', 'nickname', 'gender', 'is_email_active', 'is_new', 'phone', 'age')
 
     def __getitem__(self, item):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''
@@ -51,7 +51,7 @@ class Address(db.Model):
     phone = db.Column(db.String(11), nullable=False)
     location = db.Column(db.String(512), nullable=False)  # 昵称
     create_time = db.Column(db.DateTime, default=datetime.now)
-    update_time = db.Column(db.DateTime, default=datetime.now)
+    update_time = db.Column(db.DateTime)
     is_delete = db.Column(db.Boolean, default=0)  # 是否已删除
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

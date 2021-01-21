@@ -1,16 +1,18 @@
 from flask import Flask
 from .db_config import DBConfig
 from .global_params import db, redis, login_manager
-from .settings import REDIS_HOST, REDIS_PORT, REDIS_USER, REDIS_PWD, REDIS_DB
+from .settings import REDIS_HOST, REDIS_PORT, REDIS_USER, REDIS_PWD, REDIS_DB, STATIC_FOLDER, STATIC_PATH
 from user.views import user
 from dish.views import dish
 from order.views import order
+from flask_cors import CORS
 
 
 def create_app():
     '''Create an application of flask'''
 
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder=STATIC_FOLDER,
+                static_url_path=STATIC_PATH)
     app.config.from_object(DBConfig)
     app.config.update(
         DEBUG=True,
@@ -23,7 +25,8 @@ def create_app():
     db.init_app(app)
     redis.init_app(app)
 
-    
+    CORS(app, supports_credentials=True)
+
     login_manager.init_app(app)
     login_manager.login_view = 'login'
     return app

@@ -7,6 +7,7 @@ from config.global_params import db, login_manager
 import re
 from utils.rest_redis import r
 from config.status_code import *
+from flask_cors import cross_origin
 
 user = Blueprint('User', __name__, url_prefix='/user')
 
@@ -38,7 +39,7 @@ def user_register():
     # check phone number
     reg_phone = r'^1[3-9]\d{9}$'
     if not re.match(reg_phone, phone):
-        return jsonify({'success': False, 'info': '手机号格式错误', 'code': WRONG_PHONE_FORMAT})
+        return jsonify({'success': False, 'code': WRONG_PHONE_FORMAT})
 
     user = User.query.filter_by(phone=phone).first()
     if user:
@@ -93,36 +94,37 @@ def user_login():
 
     user = User.query.filter_by(phone=phone).first()
     if not user:
-        return jsonify({'success': False, 'info': '用户未注册', 'code': USER_NOT_EXIST})
+        return jsonify({'success': False, 'code': USER_NOT_EXIST})
 
     if not check_password(password, user.password):
-        return jsonify({'success': False, 'info': '密码错误', 'code': WRONG_PASSWORD})
+        return jsonify({'success': False, 'code': WRONG_PASSWORD})
 
     login_user(user)
     resp = dict(user)
     resp['user_id'] = resp['id']
     resp['balance'] = user.account.balance
+    resp['is_vip'] = user.account.is_vip
     del resp['id']
     return jsonify({"success": True, "info": "", "data": resp})
 
 
-@user.route('/logout', methods=['POST', 'GET'])
+@user.route('/logout', methods=['POST'])
 @login_required
 def user_logout():
     logout_user()
-    return jsonify({'sucess': True, 'info': ''})
+    return jsonify({'sucess': True})
 
 
-@user.route('/email_captcha', methods=['POST'])
+@user.route('/email_captcha', methods=['PUT'])
 def send_captcha_email():
     data = request.get_json()
     email = data.get('email')
     if not email:
-        return jsonify({'success': False, 'info': '请输入你注册绑定的邮箱', 'code': EMAIL_NOT_EXIST})
+        return jsonify({'success': False, 'code': EMAIL_NOT_EXIST})
     user = User.query.filter_by(email=email).first()
 
     if r.get_val(f'user_{user.id}:captcha'):
-        return jsonify({'success': False, 'info': '验证码已发送, 请稍后再试', 'code': CAPTCHA_SENDED})
+        return jsonify({'success': False, 'code': CAPTCHA_SENDED})
 
     captcha = get_captcha()
     mail = {
@@ -130,10 +132,10 @@ def send_captcha_email():
         'content': f'<div>感谢您使用恰了木有APP, 您的验证码为</div><span style="font-size: 30px;font-weight: 600;background: #313131;color: #6dc4ff;">{captcha}</span><div>请在5分钟之内完成验证</div>'}
     r.set_val(f'user_{user.id}:get_captcha', captcha, 300)
     sender.send(email, mail)
-    return jsonify({'success': True, 'info': ''})
+    return jsonify({'success': True})
 
 
-@user.route('/change_pwd')
+@user.route('/change_pwd', methods=['PUT'])
 @login_required
 def user_change_pwd():
     '''user change password'''
@@ -143,14 +145,14 @@ def user_change_pwd():
     new_passwd = data.get('new_password')
 
     if old_passwd == new_passwd:
-        return jsonify({'success': False, 'info': '新密码不能与原密码相同', 'code': SAME_PASSWORD})
+        return jsonify({'success': False, 'code': SAME_PASSWORD})
     real_captch = r.get_val(f'user_{current_user.id}:get_captcha')
 
     if captcha != real_captch:
-        return jsonify({'success': False, 'info': '验证码错误', 'code': WRONG_CAPTCHA})
+        return jsonify({'success': False, 'code': WRONG_CAPTCHA})
 
     if not check_password(old_passwd, current_user.password):
-        return jsonify({'success': False, 'info': '密码错误', 'code': WRONG_PASSWORD})
+        return jsonify({'success': False, 'code': WRONG_PASSWORD})
 
     user = User.query.filter_by(id=current_user.id).first()
     user.password = make_password(new_passwd)
@@ -159,7 +161,7 @@ def user_change_pwd():
     return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
 
-@user.route('/profile', methods=['POST'])
+@user.route('/profile', methods=['GET'])
 @login_required
 def user_profile():
     '''check user profile'''
@@ -170,7 +172,7 @@ def user_profile():
     return jsonify({'success': True, 'data': resp})
 
 
-@user.route('/edit_profile', methods=['POST'])
+@user.route('/edit_profile', methods=['PUT'])
 @login_required
 def user_edit():
     '''user edit profile'''
@@ -188,7 +190,7 @@ def user_edit():
     return jsonify({'success': True})
 
 
-@user.route('/change_email', methods=['POST'])
+@user.route('/change_email', methods=['PUT'])
 @login_required
 def user_edit_email():
     data = request.get_json()
@@ -209,23 +211,64 @@ def user_edit_email():
     return jsonify({'success': True})
 
 
-@user.route('/test', methods=['POST', 'GET'])
+@user.route('/add_tags', methods=['POST'])
+@login_required
+def user_add_tags():
+    data = request.get_json()
+    tags = data.get('tags')
+
+    tag_list = list()
+    for tag in tags:
+        t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
+        tag_list.append(t)
+    current_user.tags = tag_list
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@user.route('upload_avatar', methods=['POST'])
+def user_avatar():
+    data = request.get_json()
+    base64_str = data.get('avatar')
+    filename = 'testfile'
+    undeal_str, img_content = base64_str.split(',')
+    ext = r'.' + undeal_str[11:-7]
+    filename += ext
+    import base64, os
+    from config.settings import BASE_DIR
+    with open(f'statics/avatar/{filename}', 'wb') as img_p:
+        img = base64.b64decode(img_content)
+        img_p.write(img)
+    return jsonify({'msg': 'ok', 'avatar': f'/static/avatar/{filename}'})
+
+
+@user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
 def test():
+    data = request.get_json()
+    print(request.method, data)
     if request.method == "GET":
-        user = User.query.filter_by(id=1).first()
-        print(user.age, current_user.age)
+        # user = User.query.filter_by(id=1).first()
+        # print(user.age, current_user.age)
         return jsonify({'msg': 'method GET ok'})
 
     if request.method == "POST":
-        data = request.get_json()
-        nickname = data.get('nickname')
-        phone = data.get('phone')
-        gender = data.get('gender')
-        password = make_password(data.get('password'))
-        age = data.get('age')
-        user = User(nickname=nickname, phone=phone, age=age,
-                    password=password, gender=gender, avatar='/static/avatar/default.jpg')
-        db.session.add(user)
-        db.session.commit()
+        # data = request.get_json()
+        # nickname = data.get('nickname')
+        # phone = data.get('phone')
+        # gender = data.get('gender')
+        # password = make_password(data.get('password'))
+        # age = data.get('age')
+        # user = User(nickname=nickname, phone=phone, age=age,
+        #             password=password, gender=gender, avatar='/static/avatar/default.jpg')
+        # db.session.add(user)
+        # db.session.commit()
 
-        return jsonify({'msg': 'OK'})
+        return jsonify({'msg': 'method POST OK'})
+    if request.method == "PUT":
+        # user = User.query.filter_by(id=1).first()
+        # print(user.age, current_user.age)
+        return jsonify({'msg': 'method PUT ok'})
+    if request.method == "DELETE":
+        # user = User.query.filter_by(id=1).first()
+        # print(user.age, current_user.age)
+        return jsonify({'msg': 'method DELETE ok'})
