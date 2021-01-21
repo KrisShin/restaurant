@@ -2,12 +2,13 @@ from flask import Blueprint, jsonify, request, session
 from flask_login import current_user, login_required, login_user, logout_user
 from .models import User, Address, Account
 from dish.models import Tag
-from utils.util import make_password, check_password, get_captcha, sender
+from utils.util import make_password, check_password, get_captcha, sender, gen_filename, save_img
 from config.global_params import db, login_manager
 import re
 from utils.rest_redis import r
 from config.status_code import *
 from flask_cors import cross_origin
+
 
 user = Blueprint('User', __name__, url_prefix='/user')
 
@@ -230,16 +231,11 @@ def user_add_tags():
 def user_avatar():
     data = request.get_json()
     base64_str = data.get('avatar')
-    filename = 'testfile'
-    undeal_str, img_content = base64_str.split(',')
-    ext = r'.' + undeal_str[11:-7]
-    filename += ext
-    import base64, os
-    from config.settings import BASE_DIR
-    with open(f'statics/avatar/{filename}', 'wb') as img_p:
-        img = base64.b64decode(img_content)
-        img_p.write(img)
-    return jsonify({'msg': 'ok', 'avatar': f'/static/avatar/{filename}'})
+    avatar_path = save_img('avatar', base64_str)
+    current_user.avatar = avatar_path
+
+    db.session.commit()
+    return jsonify({'msg': 'ok'})
 
 
 @user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
