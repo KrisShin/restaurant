@@ -1,21 +1,19 @@
 from flask import Blueprint, jsonify, request, session
-from flask_login import current_user, login_required, login_user, logout_user
 from .models import User, Address, Account
 from dish.models import Tag
 from utils.util import make_password, check_password, get_captcha, sender, gen_filename, save_img
-from config.global_params import db, login_manager
+from config.global_params import db
 import re
 from utils.rest_redis import r
 from config.status_code import *
+from config.settings import KEY
 from flask_cors import cross_origin
+import jwt
+from datetime import datetime, timedelta
+from utils.wraps import auth, get_userId
 
 
 user = Blueprint('User', __name__, url_prefix='/user')
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.filter_by(id=user_id).first()
 
 
 @user.route('/register', methods=['POST'])
@@ -92,29 +90,18 @@ def user_login():
     data = request.get_json()
     phone = data.get('phone')
     password = data.get('password')
-    print(type(phone), phone, type(password), password)
 
-    user = User.query.filter(User.phone == phone).first()
+    user = User.query.filter_by(phone=phone).first()
     if not user:
         return jsonify({'success': False, 'code': USER_NOT_EXIST})
 
     if not check_password(password, user.password):
         return jsonify({'success': False, 'code': WRONG_PASSWORD})
 
-    login_user(user)
-    resp = dict(user)
-    resp['user_id'] = resp['id']
-    resp['balance'] = user.account.balance
-    resp['is_vip'] = user.account.is_vip
-    del resp['id']
-    return jsonify({"success": True, "info": "", "data": resp})
+    Authorization = jwt.encode(
+        {'user_id': user.id, 'exp': datetime.now() + timedelta(hours=2), 'role': user.role}, KEY, 'HS256')
 
-
-@user.route('/logout', methods=['POST'])
-@login_required
-def user_logout():
-    logout_user()
-    return jsonify({'sucess': True})
+    return jsonify({"success": True, "info": "",  'token': Authorization})
 
 
 @user.route('/email_captcha', methods=['PUT'])
@@ -138,7 +125,6 @@ def send_captcha_email():
 
 
 @user.route('/change_pwd', methods=['PUT'])
-@login_required
 def user_change_pwd():
     '''user change password'''
     data = request.get_json()
@@ -159,12 +145,10 @@ def user_change_pwd():
     user = User.query.filter_by(id=current_user.id).first()
     user.password = make_password(new_passwd)
     db.session.commit()
-    logout_user()
     return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
 
 @user.route('/profile', methods=['GET'])
-@login_required
 def user_profile():
     '''check user profile'''
     user = User.query.filter_by(id=current_user.id).first()
@@ -175,7 +159,6 @@ def user_profile():
 
 
 @user.route('/edit_profile', methods=['PUT'])
-@login_required
 def user_edit():
     '''user edit profile'''
     data = request.get_json()
@@ -199,7 +182,6 @@ def user_edit():
 
 
 @user.route('/change_email', methods=['PUT'])
-@login_required
 def user_edit_email():
     data = request.get_json()
     captcha = data.get('captcha')
@@ -220,7 +202,6 @@ def user_edit_email():
 
 
 @user.route('/add_tags', methods=['POST'])
-@login_required
 def user_add_tags():
     data = request.get_json()
     tags = data.get('tags')
@@ -235,7 +216,6 @@ def user_add_tags():
 
 
 @user.route('/upload_avatar', methods=['POST'])
-@login_required
 def user_avatar():
     data = request.get_json()
     base64_str = data.get('avatar')
@@ -246,10 +226,18 @@ def user_avatar():
     return jsonify({'success': True})
 
 
+@user.route('/logout', methods=['POST'])
+@auth
+def user_logout():
+    print(get_userId(request))
+    return jsonify({'sucess': True})
+
+
 @user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
+@auth
 def test():
     data = request.get_json()
-    print(request.method, data)
+    print(get_userId(request))
     if request.method == "GET":
         # user = User.query.filter_by(id=1).first()
         # print(user.age, current_user.age)

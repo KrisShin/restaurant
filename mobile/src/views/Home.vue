@@ -27,17 +27,25 @@
     </div>
     <div>
       <van-tabbar v-model="active" v-if="is_login">
-        <van-tabbar-item icon="hot-o" @click="hello"> 推荐 </van-tabbar-item>
-        <van-tabbar-item icon="shopping-cart-o" badge="20">
+        <van-tabbar-item name="recommend" icon="hot-o" @click="hello">
+          推荐
+        </van-tabbar-item>
+        <van-tabbar-item name="cart" icon="shopping-cart-o" badge="20">
           购物车
         </van-tabbar-item>
-        <van-tabbar-item icon="user-o" badge="20">我的</van-tabbar-item>
+        <van-tabbar-item name="my" icon="user-o" badge="20">
+          我的
+        </van-tabbar-item>
       </van-tabbar>
       <van-tabbar v-model="active" v-else>
-        <van-tabbar-item icon="hot-o" @click="onClickToLogin">
+        <van-tabbar-item name="login" icon="hot-o" @click="onClickToLogin">
           登录
         </van-tabbar-item>
-        <van-tabbar-item icon="hot-o" @click="onClickToRegister">
+        <van-tabbar-item
+          name="register"
+          icon="hot-o"
+          @click="onClickToRegister"
+        >
           注册
         </van-tabbar-item>
       </van-tabbar>
@@ -87,13 +95,7 @@ import {
   TabbarItem,
 } from "vant";
 import Vue from "vue";
-// import {
-//   getAPI,
-//   postAPI,
-//   putAPI,
-//   delAPI,
-//   uploadAvatarApi,
-// } from "../apis/user.apis";
+import { userLogoutAPI } from "../apis/user.apis";
 
 Vue.use(Tabbar);
 Vue.use(TabbarItem);
@@ -119,17 +121,21 @@ export default {
         "http://127.0.0.1:9096/static/dish/tds.jpg",
         "http://127.0.0.1:9096/static/dish/yxqz.jpg",
       ],
+      active: "login",
     };
   },
   methods: {
     onClickToLogin() {
+      this.active = "login";
       this.$router.push("/login");
     },
     onClickToRegister() {
+      this.active = "register";
       this.$router.push("/register");
     },
     onClickSearch() {
-      Toast("按钮");
+      Toast("退出登录");
+      userLogoutAPI();
     },
     // test_get: function () {
     //   getAPI({ test: 123 })

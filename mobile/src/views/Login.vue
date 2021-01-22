@@ -3,7 +3,7 @@
     <van-nav-bar title="恰了木有-登录" @click-left="onClickReturn" left-arrow />
     <div>
       <!-- 输入手机号，调起手机号键盘 -->
-      <van-field v-model="phone" type="tel" label="手机号" />
+      <van-field v-model="phone" type="tel" maxlength="11" label="手机号" />
       <!-- 输入密码 -->
       <van-field v-model="password" type="password" label="密码" />
     </div>
@@ -15,6 +15,7 @@
       <span style="font-size: 11px">
         没有账号?
         <router-link to="/register">注册</router-link>
+        {{ this.$store.state.token }}
       </span>
     </van-row>
     <div></div>
@@ -39,18 +40,24 @@ export default {
       password: "",
     };
   },
-  
+
   methods: {
     onClickReturn() {
       this.$router.go(-1);
     },
     onClickLogin() {
       var _this = this;
-      userLoginAPI({ phone: this.phone, password: this.password })
+      this.$store.dispatch("common/setToken", { token: "123" });
+      userLoginAPI({ phone: this.phone, password: this.password, login: true })
         .then((resp) => {
           if (resp.data.success) {
             Toast("登陆成功");
-            this.$router.push("/");
+            _this.$store.dispatch({ type: "setToken" });
+            
+            // _this.userToken = res.data.data.body.token;
+            // // 将用户token保存到vuex中
+            // _this.changeLogin({ Authorization: _this.userToken });
+            // this.$router.push("/");
           }
           if (resp.data.code == 1001) {
             // 用户不存在
@@ -58,8 +65,8 @@ export default {
             this.$router.push("/register?phone=" + _this.phone);
           } else if (resp.data.code == 1004) {
             // 密码错误
-            _this.password = ''
-            Toast('密码错误')
+            _this.password = "";
+            Toast("密码错误");
           }
         })
         .catch((err) => {
