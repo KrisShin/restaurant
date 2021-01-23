@@ -3,7 +3,7 @@
     <van-nav-bar title="恰了木有-登录" @click-left="onClickReturn" left-arrow />
     <div>
       <!-- 输入手机号，调起手机号键盘 -->
-      <van-field v-model="phone" type="tel" maxlength="11" label="手机号" />
+      <van-field v-model="phone" type="text" maxlength="11" label="手机号" />
       <!-- 输入密码 -->
       <van-field v-model="password" type="password" label="密码" />
     </div>

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Blueprint, jsonify, request, session
 from .models import User, Address, Account
 from dish.models import Tag
