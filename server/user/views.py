@@ -235,13 +235,16 @@ def user_logout():
 
 
 @user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
-@auth
+# @auth
 def test():
-    data = request.get_json()
-    print(get_userId(request))
+    # data = request.get_json()
+    # print(get_userId(request))
     if request.method == "GET":
         # user = User.query.filter_by(id=1).first()
         # print(user.age, current_user.age)
+        user = User.query.filter_by(id=1).first()
+        user.password = make_password("admin123")
+        db.session.commit()
         return jsonify({'msg': 'method GET ok'})
 
     if request.method == "POST":

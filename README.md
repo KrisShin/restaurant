@@ -28,4 +28,4 @@ web管理端+移动端使用Vue
 
 
 数据库备份(系统命令)
-pg_dump -U postgres -h localhost -p 5432 -f E:/dumppostgres.sql -v postgres
+pg_dump -U restuser -p 35432 -f db_data/restaurant.psql
