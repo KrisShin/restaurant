@@ -468,6 +468,10 @@ ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_
 
 COPY public.account (id, user_id, is_vip, start_time, end_time, balance) FROM stdin;
 1	1	f	\N	\N	500.579999999999984
+4	5	f	2021-01-26 00:06:08.026358	\N	0
+2	3	f	2021-01-25 23:59:15.675769	\N	0
+3	4	f	2021-01-26 00:03:34.627109	\N	0
+5	6	f	2021-01-26 00:10:26.806766	\N	0
 \.
 
 
@@ -578,7 +582,11 @@ COPY public.tag (id, weight, name, create_time) FROM stdin;
 --
 
 COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, role, is_new, is_email_active, create_time, update_time) FROM stdin;
-1	kris	21	13355553333	\N	krisshin@88.com	73ea1c92bb54f5fd20c354f501add709	f	admin	t	f	2021-01-24 01:00:55	\N
+1	kris	21	13355553333	/static/avatar/OIP.jpeg	krisshin@88.com	73ea1c92bb54f5fd20c354f501add709	f	admin	t	f	2021-01-24 01:00:55	\N
+3	kris	120	13233334444	/static/avatar/default.jpg	2855829886@qq.com	bd204bca717db2893f2c70cd62a71bdb	f	user	t	f	2021-01-25 23:59:15.670682	\N
+4	admin	6	13433334444	/static/avatar/default.jpg	1251124312@qq.com	73ea1c92bb54f5fd20c354f501add709	f	user	t	f	2021-01-26 00:03:34.626408	\N
+5	test	12	14343434343	/static/avatar/default.jpg	666@qq.com	d9aad98fed83cc216be1157d6c282882	f	user	t	f	2021-01-26 00:06:08.025096	\N
+6	test1	32	14344443333	/static/avatar/default.jpg	777@123.com	6ec48fc9bc5ff3561b9320efe6d71e63	f	user	t	f	2021-01-26 00:10:26.805808	\N
 \.
 
 
@@ -586,7 +594,7 @@ COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, r
 -- Name: account_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.account_id_seq', 1, true);
+SELECT pg_catalog.setval('public.account_id_seq', 5, true);
 
 
 --
@@ -635,7 +643,7 @@ SELECT pg_catalog.setval('public.tag_id_seq', 20, true);
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.user_id_seq', 2, true);
+SELECT pg_catalog.setval('public.user_id_seq', 6, true);
 
 
 --
