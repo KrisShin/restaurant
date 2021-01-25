@@ -7,7 +7,7 @@ from config.global_params import db
 import re
 from utils.rest_redis import r
 from config.status_code import *
-from config.settings import KEY
+from config.settings import KEY, HTTP_HOST
 from flask_cors import cross_origin
 import jwt
 from datetime import datetime, timedelta
@@ -158,38 +158,43 @@ def user_profile():
     resp['user_id'] = resp['id']
     del resp['id']
     resp['balance'] = user.account.balance
+    resp['avatar'] = HTTP_HOST + resp['avatar']
     return jsonify({'success': True, 'data': resp})
 
 
 @user.route('/edit_profile', methods=['PUT'])
+@auth
 def user_edit():
     '''user edit profile'''
     data = request.get_json()
     avatar = data.get('avatar')
     age = data.get('age')
     tags = data.get('tags')
+    user = User.query.filter_by(id=get_userId(request)).first()
 
     if tags:
         tag_list = list()
         for tag in tags:
             t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
             tag_list.append(t)
-        current_user.tags = tag_list
+        user.tags = tag_list
     if avatar:
-        current_user.avatar = avatar
+        user.avatar = avatar
     if age:
-        current_user.age = age
+        user.age = age
     db.session.commit()
 
     return jsonify({'success': True})
 
 
 @user.route('/change_email', methods=['PUT'])
+@auth
 def user_edit_email():
     data = request.get_json()
     captcha = data.get('captcha')
     email = data.get('email')
-    real_cap = r.get_val(f'user_{current_user.id}:captcha')
+    user = User.query.filter_by(id=get_userId(request)).first()
+    real_cap = r.get_val(f'user_{user.id}:captcha')
     if not real_cap:
         return jsonify({'success': False, 'code': CAPTCHA_EXPIRED})
     if (not captcha) or (captcha != real_cap):
@@ -199,31 +204,36 @@ def user_edit_email():
     if user:
         return jsonify({'success': False, 'code': USER_EXISTED})
 
-    current_user.email = email
+    user.email = email
     db.session.commit()
     return jsonify({'success': True})
 
 
 @user.route('/add_tags', methods=['POST'])
+@auth
 def user_add_tags():
     data = request.get_json()
     tags = data.get('tags')
+    user = User.query.filter_by(id=get_userId(request)).first()
 
     tag_list = list()
     for tag in tags:
         t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
         tag_list.append(t)
-    current_user.tags = tag_list
+    user.tags = tag_list
     db.session.commit()
     return jsonify({'success': True})
 
 
 @user.route('/upload_avatar', methods=['POST'])
+@auth
 def user_avatar():
     data = request.get_json()
     base64_str = data.get('avatar')
     avatar_path = save_img('avatar', base64_str)
-    current_user.avatar = avatar_path
+    user = User.query.filter_by(id=get_userId(request)).first()
+
+    user.avatar = avatar_path
 
     db.session.commit()
     return jsonify({'success': True})

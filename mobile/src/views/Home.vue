@@ -91,8 +91,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
 import {
   NavBar,
   Icon,
@@ -137,7 +135,6 @@ export default {
       userInfoAPI().then((resp) => {
         this.active = "recommend";
         this.user_info = resp.data.data;
-        this.user_info.avatar = this.$BASE_API + this.user_info.avatar;
       });
     }
   },
