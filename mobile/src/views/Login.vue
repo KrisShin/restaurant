@@ -15,7 +15,6 @@
       <span style="font-size: 11px">
         没有账号?
         <router-link to="/register">注册</router-link>
-        {{ this.$store.state.token }}
       </span>
     </van-row>
     <div></div>
@@ -47,22 +46,19 @@ export default {
     },
     onClickLogin() {
       var _this = this;
-      this.$store.dispatch("common/setToken", { token: "123" });
       userLoginAPI({ phone: this.phone, password: this.password, login: true })
         .then((resp) => {
           if (resp.data.success) {
             Toast("登陆成功");
-            _this.$store.dispatch({ type: "setToken" });
-            
-            // _this.userToken = res.data.data.body.token;
-            // // 将用户token保存到vuex中
-            // _this.changeLogin({ Authorization: _this.userToken });
-            // this.$router.push("/");
+            _this.$store.dispatch("common/setToken", resp.data.token);
+            setTimeout(() => {
+              _this.$router.push("/");
+            }, 2000);
           }
           if (resp.data.code == 1001) {
             // 用户不存在
             Toast("用户不存在");
-            this.$router.push("/register?phone=" + _this.phone);
+            _this.$router.push("/register?phone=" + _this.phone);
           } else if (resp.data.code == 1004) {
             // 密码错误
             _this.password = "";

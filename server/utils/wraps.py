@@ -25,7 +25,7 @@ def auth(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         auth = request.headers.get('Authorization')
-        status, auth_s, user_id, role_enum = jwt_auth(auth.encode())
+        status, auth_s, _, role = jwt_auth(auth.encode())
         if status == 200 and auth_s and role:
             return func(*args, **kwargs)
         else:

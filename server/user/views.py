@@ -135,27 +135,29 @@ def user_change_pwd():
 
     if old_passwd == new_passwd:
         return jsonify({'success': False, 'code': SAME_PASSWORD})
-    real_captch = r.get_val(f'user_{current_user.id}:get_captcha')
+    real_captch = r.get_val(f'user_{get_userId(request)}:get_captcha')
 
     if captcha != real_captch:
         return jsonify({'success': False, 'code': WRONG_CAPTCHA})
 
-    if not check_password(old_passwd, current_user.password):
+    user = User.query.filter_by(id=get_userId(request)).first()
+    if not check_password(old_passwd, user.password):
         return jsonify({'success': False, 'code': WRONG_PASSWORD})
 
-    user = User.query.filter_by(id=current_user.id).first()
     user.password = make_password(new_passwd)
     db.session.commit()
     return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
 
 @user.route('/profile', methods=['GET'])
+@auth
 def user_profile():
     '''check user profile'''
-    user = User.query.filter_by(id=current_user.id).first()
+    user = User.query.filter_by(id=get_userId(request)).first()
     resp = dict(user)
     resp['user_id'] = resp['id']
     del resp['id']
+    resp['balance'] = user.account.balance
     return jsonify({'success': True, 'data': resp})
 
 

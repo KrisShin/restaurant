@@ -1,7 +1,18 @@
 <template>
   <div id="home">
     <van-nav-bar title="恰了木有" @click-right="onClickSearch">
-      <template #left>
+      <template #left v-if="is_login">
+        <van-image
+          width="35"
+          height="35"
+          round
+          fit="cover"
+          lazy-load
+          :src="user_info.avatar"
+        />
+        <div>{{user_info.nickname}}</div>
+      </template>
+      <template #left v-else>
         <van-image
           width="40"
           height="40"
@@ -10,6 +21,7 @@
           lazy-load
           src="http://127.0.0.1:9096/static/avatar/default.jpg"
         />
+        <div>请登录</div>
       </template>
       <template #right>
         <van-icon name="search" size="18" />
@@ -27,9 +39,7 @@
     </div>
     <div>
       <van-tabbar v-model="active" v-if="is_login">
-        <van-tabbar-item name="recommend" icon="hot-o" @click="hello">
-          推荐
-        </van-tabbar-item>
+        <van-tabbar-item name="recommend" icon="hot-o"> 推荐 </van-tabbar-item>
         <van-tabbar-item name="cart" icon="shopping-cart-o" badge="20">
           购物车
         </van-tabbar-item>
@@ -95,7 +105,7 @@ import {
   TabbarItem,
 } from "vant";
 import Vue from "vue";
-import { userLogoutAPI } from "../apis/user.apis";
+import { userInfoAPI, userLogoutAPI } from "../apis/user.apis";
 
 Vue.use(Tabbar);
 Vue.use(TabbarItem);
@@ -111,18 +121,25 @@ export default {
   name: "Home",
   data: function () {
     return {
-      is_login: false,
-      avatar: [],
-      avatarContent: "",
-      a666: "",
+      is_login: this.$store.state.common.isLogin,
+      user_info: {},
       images: [
-        "http://127.0.0.1:9096/static/dish/ftq.jpg",
-        "http://127.0.0.1:9096/static/dish/hgr.jpg",
-        "http://127.0.0.1:9096/static/dish/tds.jpg",
-        "http://127.0.0.1:9096/static/dish/yxqz.jpg",
+        this.$BASE_API + "/static/dish/ftq.jpg",
+        this.$BASE_API + "/static/dish/hgr.jpg",
+        this.$BASE_API + "/static/dish/tds.jpg",
+        this.$BASE_API + "/static/dish/yxqz.jpg",
       ],
       active: "login",
     };
+  },
+  created() {
+    if (this.is_login) {
+      userInfoAPI().then((resp) => {
+        this.active = "recommend";
+        this.user_info = resp.data.data;
+        this.user_info.avatar = this.$BASE_API + this.user_info.avatar;
+      });
+    }
   },
   methods: {
     onClickToLogin() {

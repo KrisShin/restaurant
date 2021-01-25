@@ -8,8 +8,13 @@ import BASE_API from '../utils/settings'
 export function userLoginAPI(data) {
     return http.post(`${BASE_API}/user/login`, data)
 }
+
 export function userLogoutAPI(data) {
     return http.post(`${BASE_API}/user/logout`, data)
+}
+
+export function userInfoAPI(data) {
+    return http.get(`${BASE_API}/user/profile`, data)
 }
 // testAPI
 // export function getAPI(params) {

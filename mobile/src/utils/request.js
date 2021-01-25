@@ -10,7 +10,7 @@ service.interceptors.request.use(config => {
     config.headers = {
         // 'Content-Type': 'application/x-www-form-urlencoded' //配置请求头
         'Content-Type': 'application/json;charset=utf-8', //配置请求头
-        "Authorization": store.state.token
+        "Authorization": store.state.common.token
     }
     return config
 }, error => {

@@ -3,6 +3,7 @@ export default {
   namespaced: true,
   state: {
     token: '',
+    isLogin: '',
     userInfo: ''
   },
   getters: {
@@ -21,6 +22,7 @@ export default {
   mutations: {
     mutationToken(state, token) {
       state.token = token
+      state.isLogin = state.token?true:false
     },
     mutationUserInfo(state, user) {
       state.userInfo = user
