@@ -48,7 +48,7 @@ def user_register():
     password = make_password(data.get('password'))
     user = User(nickname=nickname, phone=phone, age=age, email=email,
                 password=password, gender=gender, avatar='/static/avatar/default.jpg')
-    account = Account(user_id=user.id)
+    account = Account(user=user)
     db.session.add(user)
     db.session.add(account)
     db.session.commit()
@@ -126,6 +126,7 @@ def send_captcha_email():
 
 
 @user.route('/change_pwd', methods=['PUT'])
+@auth
 def user_change_pwd():
     '''user change password'''
     data = request.get_json()

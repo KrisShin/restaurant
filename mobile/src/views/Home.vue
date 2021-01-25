@@ -10,7 +10,7 @@
           lazy-load
           :src="user_info.avatar"
         />
-        <div>{{user_info.nickname}}</div>
+        <div>{{ user_info.nickname }}</div>
       </template>
       <template #left v-else>
         <van-image
@@ -19,9 +19,10 @@
           round
           fit="cover"
           lazy-load
+          @click="onClickToLogin"
           src="http://127.0.0.1:9096/static/avatar/default.jpg"
         />
-        <div>请登录</div>
+        <div @click="onClickToLogin">请登录</div>
       </template>
       <template #right>
         <van-icon name="search" size="18" />
@@ -135,6 +136,7 @@ export default {
       userInfoAPI().then((resp) => {
         this.active = "recommend";
         this.user_info = resp.data.data;
+        
       });
     }
   },
@@ -150,6 +152,7 @@ export default {
     onClickSearch() {
       Toast("退出登录");
       userLogoutAPI();
+      this.$store.dispatch("common/setToken", null);
     },
     // test_get: function () {
     //   getAPI({ test: 123 })

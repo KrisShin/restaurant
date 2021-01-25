@@ -16,6 +16,9 @@ export function userLogoutAPI(data) {
 export function userInfoAPI(data) {
     return http.get(`${BASE_API}/user/profile`, data)
 }
+export function userRegisterAPI(data) {
+    return http.post(`${BASE_API}/user/register`, data)
+}
 // testAPI
 // export function getAPI(params) {
 //     return http.get(`${BASE_API}/user/test`, params)
