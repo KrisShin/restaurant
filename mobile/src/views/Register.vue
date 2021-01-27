@@ -57,12 +57,7 @@
   </div>
 </template>
 <script>
-import Vue from "vue";
-import { Field, NavBar } from "vant";
 import { userRegisterAPI } from "../apis/user.apis";
-
-Vue.use(NavBar);
-Vue.use(Field);
 
 export default {
   name: "Register",

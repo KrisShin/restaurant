@@ -92,28 +92,7 @@
 </template>
 
 <script>
-import {
-  NavBar,
-  Icon,
-  Image as VanImage,
-  Lazyload,
-  Swipe,
-  SwipeItem,
-  Tabbar,
-  TabbarItem,
-} from "vant";
-import Vue from "vue";
 import { userInfoAPI, userLogoutAPI } from "../apis/user.apis";
-
-Vue.use(Tabbar);
-Vue.use(TabbarItem);
-
-Vue.use(Swipe);
-Vue.use(SwipeItem);
-Vue.use(Icon);
-Vue.use(NavBar);
-Vue.use(VanImage);
-Vue.use(Lazyload);
 
 export default {
   name: "Home",

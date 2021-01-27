@@ -21,15 +21,7 @@
   </div>
 </template>
 <script>
-import Vue from "vue";
-import { Field, NavBar, Button, Col, Row } from "vant";
 import { userLoginAPI } from "../apis/user.apis";
-
-Vue.use(NavBar);
-Vue.use(Field);
-Vue.use(Button);
-Vue.use(Col);
-Vue.use(Row);
 
 export default {
   name: "Login",
