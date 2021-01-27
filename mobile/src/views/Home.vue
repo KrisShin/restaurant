@@ -95,7 +95,6 @@
 import {
   NavBar,
   Icon,
-  Toast,
   Image as VanImage,
   Lazyload,
   Swipe,
@@ -136,7 +135,6 @@ export default {
       userInfoAPI().then((resp) => {
         this.active = "recommend";
         this.user_info = resp.data.data;
-        
       });
     }
   },
@@ -150,7 +148,10 @@ export default {
       this.$router.push("/register");
     },
     onClickSearch() {
-      Toast("退出登录");
+      this.$router.push("/tags");
+    },
+    tt() {
+      this.$toast("退出登录");
       userLogoutAPI();
       this.$store.dispatch("common/setToken", null);
     },
@@ -193,7 +194,7 @@ export default {
     beforeRead(file) {
       var typeArr = ["image/jpeg", "image/png"];
       if (typeArr.indexOf(file.type) == -1) {
-        Toast("请上传 jpg或png 格式图片");
+        this.$toast("请上传 jpg或png 格式图片");
         return false;
       }
       return true;
@@ -202,18 +203,18 @@ export default {
       this.avatarContent = file.content; // 获取图片base
     },
     onOversize() {
-      Toast("文件大小不能超过 500kb");
+      this.$toast("文件大小不能超过 500kb");
     },
     // test_upavatar() {
     //   var that = this;
     //   if (this.avatar.length < 1) return;
     //   uploadAvatarApi({ avatar: this.avatarContent })
     //     .then((resp) => {
-    //       Toast("success");
+    //       this.$toast("success");
     //       that.a666 = "http://127.0.0.1:9096" + resp.data.avatar;
     //     })
     //     .catch(() => {
-    //       Toast("failed");
+    //       this.$toast("failed");
     //     });
     // },
   },

@@ -1,5 +1,5 @@
 <template>
-  <div id="Register">
+  <div id="register">
     <van-nav-bar title="恰了木有-注册" @click-left="onClickReturn" left-arrow />
     <div>
       <van-field
@@ -58,7 +58,7 @@
 </template>
 <script>
 import Vue from "vue";
-import { Field, NavBar, Toast } from "vant";
+import { Field, NavBar } from "vant";
 import { userRegisterAPI } from "../apis/user.apis";
 
 Vue.use(NavBar);
@@ -96,7 +96,7 @@ export default {
         .then((res) => {
           var data = res.data;
           if (data.success) {
-            Toast("注册成功");
+            this.$toast("注册成功");
             setTimeout(_this.$router.push("/login?phone=" + data.phone), 1000);
           }
         })

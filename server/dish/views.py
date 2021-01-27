@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request
 from .models import Dish, Tag
+from user.models import User
 from utils.util import make_password
+from utils.wraps import get_userId
 from config.global_params import db
 
 dish = Blueprint('Dish', __name__, url_prefix='/dish')
@@ -15,3 +17,22 @@ dish = Blueprint('Dish', __name__, url_prefix='/dish')
 #         db.session.add(tag)
 #         db.session.commit()
 #     return jsonify({'msg':'OK'})
+
+@dish.route('/tags', methods=['GET', 'POST'])
+def tags():
+    if request.method == 'GET':
+        ex_tags = []
+        user_id = get_userId(request)
+        ex_ids = []
+        if user_id:
+            user = User.query.filter_by(id=user_id).first()
+            ex_tags = [dict(tag) for tag in user.tags]
+            ex_ids = [tag['id'] for tag in ex_tags]
+            
+        res = [dict(tag) for tag in Tag.query.filter(Tag.id.notin_(ex_ids)).all()]
+        return jsonify({'success': True, 'data': {
+            'tags': res,
+            'exist_tags': ex_tags
+        }})
+    if request.method == 'POST':
+        return jsonify({'success': True})

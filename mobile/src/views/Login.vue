@@ -1,5 +1,5 @@
 <template>
-  <div id="Login">
+  <div id="login">
     <van-nav-bar title="恰了木有-登录" @click-left="onClickReturn" left-arrow />
     <div>
       <!-- 输入手机号，调起手机号键盘 -->
@@ -22,7 +22,7 @@
 </template>
 <script>
 import Vue from "vue";
-import { Field, NavBar, Button, Col, Row, Toast } from "vant";
+import { Field, NavBar, Button, Col, Row } from "vant";
 import { userLoginAPI } from "../apis/user.apis";
 
 Vue.use(NavBar);
@@ -49,7 +49,7 @@ export default {
       userLoginAPI({ phone: this.phone, password: this.password, login: true })
         .then((resp) => {
           if (resp.data.success) {
-            Toast("登陆成功");
+            this.$toast("登陆成功");
             _this.$store.dispatch("common/setToken", resp.data.token);
             setTimeout(() => {
               _this.$router.push("/");
@@ -57,12 +57,12 @@ export default {
           }
           if (resp.data.code == 1001) {
             // 用户不存在
-            Toast("用户不存在");
+            this.$toast("用户不存在");
             _this.$router.push("/register?phone=" + _this.phone);
           } else if (resp.data.code == 1004) {
             // 密码错误
             _this.password = "";
-            Toast("密码错误");
+            this.$toast("密码错误");
           }
         })
         .catch((err) => {
