@@ -247,6 +247,20 @@ def user_logout():
     return jsonify({'sucess': True})
 
 
+@user.route('/tags', methods=['PUT'])
+def tags():
+    if request.method == 'PUT':
+        data = request.get_json()
+        user = User.query.filter_by(id=get_userId(request)).first()
+
+        now_tags = [tag.name for tag in user.tags]
+
+        exist_tags = data.get('ex_tags')
+        user.tags = Tag.query.filter(Tag.id.in_=exist_tags).all()
+        db.session.commit()
+        return jsonify({'success': True})
+
+
 @user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
 # @auth
 def test():

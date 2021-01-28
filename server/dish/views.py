@@ -35,4 +35,11 @@ def tags():
             'exist_tags': ex_tags
         }})
     if request.method == 'POST':
-        return jsonify({'success': True})
+        data = request.get_json()
+        name = data.get('name')
+
+        tag = Tag(name=name)
+        db.session.add(tag)
+        db.session.commit()
+
+        return jsonify({'success': True, 'data': dict(tag)})
