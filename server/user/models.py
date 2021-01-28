@@ -68,7 +68,7 @@ class Account(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     is_vip = db.Column(db.Boolean, default=0)
-    start_time = db.Column(db.DateTime, default=datetime.now)
+    start_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
     balance = db.Column(db.Float, default=0.0)  # 余额
 

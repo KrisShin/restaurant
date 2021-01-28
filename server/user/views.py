@@ -256,7 +256,7 @@ def tags():
         now_tags = [tag.name for tag in user.tags]
 
         exist_tags = data.get('ex_tags')
-        user.tags = Tag.query.filter(Tag.id.in_=exist_tags).all()
+        user.tags = Tag.query.filter(Tag.id.in_==exist_tags).all()
         db.session.commit()
         return jsonify({'success': True})
 
