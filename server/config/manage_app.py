@@ -1,6 +1,6 @@
 from flask import Flask
 from .db_config import DBConfig
-from .global_params import db, redis, login_manager
+from .global_params import db, redis
 from .settings import REDIS_HOST, REDIS_PORT, REDIS_USER, REDIS_PWD, REDIS_DB, STATIC_FOLDER, STATIC_PATH
 from user.views import user
 from dish.views import dish
@@ -26,9 +26,6 @@ def create_app():
     redis.init_app(app)
 
     CORS(app, supports_credentials=True)
-
-    login_manager.init_app(app)
-    login_manager.login_view = 'login'
     return app
 
 

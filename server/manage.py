@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from config.manage_app import create_app
 
 

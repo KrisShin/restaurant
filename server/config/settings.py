@@ -10,6 +10,7 @@ STATIC_PATH = '/static'
 UPLOAD_DIR = os.path.join(BASE_DIR, 'static', 'upload')
 
 SALT = '0.3qxl9vc_j7kv!ja'
+KEY = '734&jai<,oqe).ac*'
 
 REDIS_USER = ''
 REDIS_PWD = ''#'R3D1Sus#r'
@@ -19,3 +20,5 @@ REDIS_DB = 0
 
 EMAIL_ACCOUNT = '2855829886@qq.com'
 EMAIL_AUTH = 'tdlzctihcooodgbc'
+
+HTTP_HOST = 'http://127.0.0.1:9096'

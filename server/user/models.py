@@ -1,14 +1,14 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime
 from config.global_params import db
 from dish.models import Tag
 from order.models import Order, Comment
-from flask_login import UserMixin
 
 tags = db.Table('rs_user_tag', db.Column('user_id', db.Integer, db.ForeignKey(
     'user.id'), primary_key=True), db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True))
 
 
-class User(db.Model, UserMixin):
+class User(db.Model):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -37,7 +37,7 @@ class User(db.Model, UserMixin):
 
     def keys(self):
         '''serilize object keys'''
-        return ('id', 'nickname', 'gender', 'is_email_active', 'is_new', 'phone', 'age')
+        return ('id', 'avatar','nickname', 'gender', 'is_email_active', 'is_new', 'phone', 'age')
 
     def __getitem__(self, item):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''

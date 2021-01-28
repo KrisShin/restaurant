@@ -25,3 +25,9 @@ WRONG_CAPTCHA = 1008
 
 # 验证码已过期
 CAPTCHA_EXPIRED = 1009
+
+# token过期
+TOKEN_EXPIRE = 10010
+
+# token无效
+INVALID_TOKEN = 10011

@@ -1,20 +1,20 @@
+# -*- coding: utf-8 -*-
 from flask import Blueprint, jsonify, request, session
-from flask_login import current_user, login_required, login_user, logout_user
 from .models import User, Address, Account
 from dish.models import Tag
-from utils.util import make_password, check_password, get_captcha, sender
-from config.global_params import db, login_manager
+from utils.util import make_password, check_password, get_captcha, sender, gen_filename, save_img
+from config.global_params import db
 import re
 from utils.rest_redis import r
 from config.status_code import *
+from config.settings import KEY, HTTP_HOST
 from flask_cors import cross_origin
+import jwt
+from datetime import datetime, timedelta
+from utils.wraps import auth, get_userId
+
 
 user = Blueprint('User', __name__, url_prefix='/user')
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.filter_by(id=user_id).first()
 
 
 @user.route('/register', methods=['POST'])
@@ -48,7 +48,7 @@ def user_register():
     password = make_password(data.get('password'))
     user = User(nickname=nickname, phone=phone, age=age, email=email,
                 password=password, gender=gender, avatar='/static/avatar/default.jpg')
-    account = Account(user_id=user.id)
+    account = Account(user=user)
     db.session.add(user)
     db.session.add(account)
     db.session.commit()
@@ -99,20 +99,10 @@ def user_login():
     if not check_password(password, user.password):
         return jsonify({'success': False, 'code': WRONG_PASSWORD})
 
-    login_user(user)
-    resp = dict(user)
-    resp['user_id'] = resp['id']
-    resp['balance'] = user.account.balance
-    resp['is_vip'] = user.account.is_vip
-    del resp['id']
-    return jsonify({"success": True, "info": "", "data": resp})
+    Authorization = jwt.encode(
+        {'user_id': user.id, 'exp': datetime.now() + timedelta(hours=2), 'role': user.role}, KEY, 'HS256')
 
-
-@user.route('/logout', methods=['POST'])
-@login_required
-def user_logout():
-    logout_user()
-    return jsonify({'sucess': True})
+    return jsonify({"success": True, "info": "",  'token': Authorization})
 
 
 @user.route('/email_captcha', methods=['PUT'])
@@ -136,7 +126,7 @@ def send_captcha_email():
 
 
 @user.route('/change_pwd', methods=['PUT'])
-@login_required
+@auth
 def user_change_pwd():
     '''user change password'''
     data = request.get_json()
@@ -146,57 +136,66 @@ def user_change_pwd():
 
     if old_passwd == new_passwd:
         return jsonify({'success': False, 'code': SAME_PASSWORD})
-    real_captch = r.get_val(f'user_{current_user.id}:get_captcha')
+    real_captch = r.get_val(f'user_{get_userId(request)}:get_captcha')
 
     if captcha != real_captch:
         return jsonify({'success': False, 'code': WRONG_CAPTCHA})
 
-    if not check_password(old_passwd, current_user.password):
+    user = User.query.filter_by(id=get_userId(request)).first()
+    if not check_password(old_passwd, user.password):
         return jsonify({'success': False, 'code': WRONG_PASSWORD})
 
-    user = User.query.filter_by(id=current_user.id).first()
     user.password = make_password(new_passwd)
     db.session.commit()
-    logout_user()
     return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
 
 @user.route('/profile', methods=['GET'])
-@login_required
+@auth
 def user_profile():
     '''check user profile'''
-    user = User.query.filter_by(id=current_user.id).first()
+    user = User.query.filter_by(id=get_userId(request)).first()
     resp = dict(user)
     resp['user_id'] = resp['id']
     del resp['id']
+    resp['balance'] = user.account.balance
+    resp['avatar'] = HTTP_HOST + resp['avatar']
     return jsonify({'success': True, 'data': resp})
 
 
 @user.route('/edit_profile', methods=['PUT'])
-@login_required
+@auth
 def user_edit():
     '''user edit profile'''
     data = request.get_json()
     avatar = data.get('avatar')
     age = data.get('age')
-    # TODO: tags edit
+    tags = data.get('tags')
+    user = User.query.filter_by(id=get_userId(request)).first()
 
+    if tags:
+        tag_list = list()
+        for tag in tags:
+            t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
+            tag_list.append(t)
+        user.tags = tag_list
     if avatar:
-        current_user.avatar = avatar
+        user.avatar = avatar
     if age:
-        current_user.age = age
+        user.age = age
     db.session.commit()
 
     return jsonify({'success': True})
 
 
 @user.route('/change_email', methods=['PUT'])
-@login_required
+@auth
 def user_edit_email():
     data = request.get_json()
     captcha = data.get('captcha')
     email = data.get('email')
-    real_cap = r.get_val(f'user_{current_user.id}:captcha')
+    user = User.query.filter_by(id=get_userId(request)).first()
+    real_cap = r.get_val(f'user_{user.id}:captcha')
     if not real_cap:
         return jsonify({'success': False, 'code': CAPTCHA_EXPIRED})
     if (not captcha) or (captcha != real_cap):
@@ -206,49 +205,59 @@ def user_edit_email():
     if user:
         return jsonify({'success': False, 'code': USER_EXISTED})
 
-    current_user.email = email
+    user.email = email
     db.session.commit()
     return jsonify({'success': True})
 
 
 @user.route('/add_tags', methods=['POST'])
-@login_required
+@auth
 def user_add_tags():
     data = request.get_json()
     tags = data.get('tags')
+    user = User.query.filter_by(id=get_userId(request)).first()
 
     tag_list = list()
     for tag in tags:
         t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
         tag_list.append(t)
-    current_user.tags = tag_list
+    user.tags = tag_list
     db.session.commit()
     return jsonify({'success': True})
 
 
-@user.route('upload_avatar', methods=['POST'])
+@user.route('/upload_avatar', methods=['POST'])
+@auth
 def user_avatar():
     data = request.get_json()
     base64_str = data.get('avatar')
-    filename = 'testfile'
-    undeal_str, img_content = base64_str.split(',')
-    ext = r'.' + undeal_str[11:-7]
-    filename += ext
-    import base64, os
-    from config.settings import BASE_DIR
-    with open(f'statics/avatar/{filename}', 'wb') as img_p:
-        img = base64.b64decode(img_content)
-        img_p.write(img)
-    return jsonify({'msg': 'ok', 'avatar': f'/static/avatar/{filename}'})
+    avatar_path = save_img('avatar', base64_str)
+    user = User.query.filter_by(id=get_userId(request)).first()
+
+    user.avatar = avatar_path
+
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@user.route('/logout', methods=['POST'])
+@auth
+def user_logout():
+    print(get_userId(request))
+    return jsonify({'sucess': True})
 
 
 @user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
+# @auth
 def test():
-    data = request.get_json()
-    print(request.method, data)
+    # data = request.get_json()
+    # print(get_userId(request))
     if request.method == "GET":
         # user = User.query.filter_by(id=1).first()
         # print(user.age, current_user.age)
+        user = User.query.filter_by(id=1).first()
+        user.password = make_password("admin123")
+        db.session.commit()
         return jsonify({'msg': 'method GET ok'})
 
     if request.method == "POST":

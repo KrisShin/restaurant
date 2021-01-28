@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.15 (Ubuntu 10.15-0ubuntu0.18.04.1)
--- Dumped by pg_dump version 10.15 (Ubuntu 10.15-0ubuntu0.18.04.1)
+-- Dumped from database version 11.9 (Debian 11.9-0+deb10u1)
+-- Dumped by pg_dump version 11.9 (Debian 11.9-0+deb10u1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -15,20 +15,6 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
---
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
 
 --
 -- Name: rate_enum; Type: TYPE; Schema: public; Owner: restuser
@@ -158,7 +144,7 @@ CREATE TABLE public.comment (
     rate public.rate_enum,
     create_time timestamp without time zone,
     user_id integer,
-    order_id integer
+    order_id character varying(32)
 );
 
 
@@ -233,9 +219,9 @@ CREATE TABLE public.dish (
     price double precision,
     amount integer,
     description character varying(256),
+    discount_id integer,
     create_time timestamp without time zone,
-    update_time timestamp without time zone,
-    discount_id integer
+    update_time timestamp without time zone
 );
 
 
@@ -268,7 +254,7 @@ ALTER SEQUENCE public.dish_id_seq OWNED BY public.dish.id;
 --
 
 CREATE TABLE public."order" (
-    id integer NOT NULL,
+    id character varying(32) NOT NULL,
     money double precision,
     status integer,
     note character varying(256),
@@ -309,7 +295,7 @@ ALTER SEQUENCE public.order_id_seq OWNED BY public."order".id;
 
 CREATE TABLE public.rs_dish_order (
     dish_id integer NOT NULL,
-    order_id integer NOT NULL
+    order_id character varying(32) NOT NULL
 );
 
 
@@ -482,6 +468,10 @@ ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_
 
 COPY public.account (id, user_id, is_vip, start_time, end_time, balance) FROM stdin;
 1	1	f	\N	\N	500.579999999999984
+4	5	f	2021-01-26 00:06:08.026358	\N	0
+2	3	f	2021-01-25 23:59:15.675769	\N	0
+3	4	f	2021-01-26 00:03:34.627109	\N	0
+5	6	f	2021-01-26 00:10:26.806766	\N	0
 \.
 
 
@@ -498,6 +488,7 @@ COPY public.address (id, name, phone, location, create_time, update_time, is_del
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
+09e4d40c3b05
 78f4a410e1e2
 \.
 
@@ -522,7 +513,7 @@ COPY public.discount (id, discount_type, start_time, end_time, discount) FROM st
 -- Data for Name: dish; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public.dish (id, name, price, amount, description, create_time, update_time, discount_id) FROM stdin;
+COPY public.dish (id, name, price, amount, description, discount_id, create_time, update_time) FROM stdin;
 \.
 
 
@@ -555,8 +546,6 @@ COPY public.rs_dish_tag (dish_id, tag_id) FROM stdin;
 --
 
 COPY public.rs_user_tag (user_id, tag_id) FROM stdin;
-1	3
-1	7
 \.
 
 
@@ -584,6 +573,7 @@ COPY public.tag (id, weight, name, create_time) FROM stdin;
 17	1	生鲜	2021-01-18 11:47:01.664669
 18	1	五香	2021-01-18 11:47:01.665667
 19	1	糖醋	2021-01-18 11:47:01.667661
+20	1	甜辣	2021-01-19 17:02:26.443432
 \.
 
 
@@ -592,7 +582,11 @@ COPY public.tag (id, weight, name, create_time) FROM stdin;
 --
 
 COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, role, is_new, is_email_active, create_time, update_time) FROM stdin;
-1	admin	18	13533555533	\N	krisshin@88.com	73ea1c92bb54f5fd20c354f501add709	f	user	t	f	2021-01-18 11:12:31.127513	2021-01-18 11:12:31.127513
+1	kris	21	13355553333	/static/avatar/OIP.jpeg	krisshin@88.com	73ea1c92bb54f5fd20c354f501add709	f	admin	t	f	2021-01-24 01:00:55	\N
+3	kris	120	13233334444	/static/avatar/default.jpg	2855829886@qq.com	bd204bca717db2893f2c70cd62a71bdb	f	user	t	f	2021-01-25 23:59:15.670682	\N
+4	admin	6	13433334444	/static/avatar/default.jpg	1251124312@qq.com	73ea1c92bb54f5fd20c354f501add709	f	user	t	f	2021-01-26 00:03:34.626408	\N
+5	test	12	14343434343	/static/avatar/default.jpg	666@qq.com	d9aad98fed83cc216be1157d6c282882	f	user	t	f	2021-01-26 00:06:08.025096	\N
+6	test1	32	14344443333	/static/avatar/default.jpg	777@123.com	6ec48fc9bc5ff3561b9320efe6d71e63	f	user	t	f	2021-01-26 00:10:26.805808	\N
 \.
 
 
@@ -600,7 +594,7 @@ COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, r
 -- Name: account_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.account_id_seq', 1, true);
+SELECT pg_catalog.setval('public.account_id_seq', 5, true);
 
 
 --
@@ -642,14 +636,14 @@ SELECT pg_catalog.setval('public.order_id_seq', 1, false);
 -- Name: tag_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.tag_id_seq', 19, true);
+SELECT pg_catalog.setval('public.tag_id_seq', 20, true);
 
 
 --
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.user_id_seq', 1, true);
+SELECT pg_catalog.setval('public.user_id_seq', 6, true);
 
 
 --
