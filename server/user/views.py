@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, jsonify, request, session
-from .models import User, Address, Account
-from dish.models import Tag
-from utils.util import make_password, check_password, get_captcha, sender, gen_filename, save_img
-from config.global_params import db
+from datetime import datetime, timedelta
+import jwt
 import re
-from utils.rest_redis import r
+
+from flask import Blueprint, jsonify, request, session
+from flask_cors import cross_origin
+
+from .models import User, Address, Account
+from config.global_params import db
 from config.status_code import *
 from config.settings import KEY, HTTP_HOST
-from flask_cors import cross_origin
-import jwt
-from datetime import datetime, timedelta
+from dish.models import Tag
+from utils.mail_sender import sender
+from utils.rest_redis import r
+from utils.util import make_password, check_password, get_captcha, gen_filename, save_img
 from utils.wraps import auth, get_userId
 
 
@@ -210,20 +213,20 @@ def user_edit_email():
     return jsonify({'success': True})
 
 
-@user.route('/add_tags', methods=['POST'])
-@auth
-def user_add_tags():
-    data = request.get_json()
-    tags = data.get('tags')
-    user = User.query.filter_by(id=get_userId(request)).first()
+# @user.route('/add_tags', methods=['POST'])
+# @auth
+# def user_add_tags():
+#     data = request.get_json()
+#     tags = data.get('tags')
+#     user = User.query.filter_by(id=get_userId(request)).first()
 
-    tag_list = list()
-    for tag in tags:
-        t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
-        tag_list.append(t)
-    user.tags = tag_list
-    db.session.commit()
-    return jsonify({'success': True})
+#     tag_list = list()
+#     for tag in tags:
+#         t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
+#         tag_list.append(t)
+#     user.tags = tag_list
+#     db.session.commit()
+#     return jsonify({'success': True})
 
 
 @user.route('/upload_avatar', methods=['POST'])
@@ -251,11 +254,9 @@ def user_logout():
 def tags():
     if request.method == 'PUT':
         data = request.get_json()
-        user = User.query.filter_by(id=get_userId(request)).first()
-
-        now_tags = [tag.name for tag in user.tags]
-
+        user = User.query.filter_by(id=3).first() # get_userId(request)).first()
         exist_tags = data.get('ex_tags')
+
         user.tags = Tag.query.filter(Tag.id.in_==exist_tags).all()
         db.session.commit()
         return jsonify({'success': True})

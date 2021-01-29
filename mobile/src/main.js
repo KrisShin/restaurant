@@ -4,15 +4,11 @@ import store from './store'
 import router from './router'
 import BASE_API from './utils/settings'
 import {
-  Tag, Grid, GridItem, Empty, Toast, NavBar, Field, Button, Col, Row, Icon,
-  Image as VanImage,
-  Lazyload,
-  Swipe,
-  SwipeItem,
-  Tabbar,
-  TabbarItem,
+  Tag, Grid, GridItem, Empty, Toast, NavBar,
+  Field, Button, Col, Row, Icon, Image as VanImage,
+  Lazyload, Swipe, SwipeItem, Tabbar, TabbarItem,
+  Notify
 } from "vant";
-
 
 
 Vue.config.productionTip = false
@@ -35,6 +31,7 @@ Vue.use(Icon);
 Vue.use(VanImage);
 Vue.use(Lazyload);
 Vue.use(Toast)
+Vue.use(Notify);
 
 new Vue({
   store,
