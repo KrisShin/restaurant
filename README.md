@@ -1,7 +1,7 @@
 # restaurant
 
 #### 介绍
-一个私人餐饮管理项目
+一个餐饮管理项目Demo, 后台使用python flask , 前端采用vue2, 数据库使用postgresql11, 缓存使用redis
 
 #### 软件架构
 web管理端+移动端使用Vue
