@@ -44,7 +44,7 @@
         <van-tabbar-item name="cart" icon="shopping-cart-o" badge="20">
           购物车
         </van-tabbar-item>
-        <van-tabbar-item name="my" icon="user-o" badge="20">
+        <van-tabbar-item name="my" icon="user-o" badge="20" to="/profile">
           我的
         </van-tabbar-item>
       </van-tabbar>
@@ -99,7 +99,7 @@ export default {
   data: function () {
     return {
       is_login: this.$store.state.common.isLogin,
-      user_info: {},
+      user_info: this.$store.state.common.userInfo,
       images: [
         this.$BASE_API + "/static/dish/ftq.jpg",
         this.$BASE_API + "/static/dish/hgr.jpg",
@@ -110,10 +110,12 @@ export default {
     };
   },
   created() {
-    if (this.is_login) {
+    if (!this.user_info) {
       userInfoAPI().then((resp) => {
         this.active = "recommend";
-        this.user_info = resp.data.data;
+        var user_info = resp.data.data;
+        this.$store.dispatch("common/setUserInfo", user_info);
+        this.user_info = this.$store.state.common.userInfo;
       });
     }
   },
@@ -127,7 +129,7 @@ export default {
       this.$router.push("/register");
     },
     onClickSearch() {
-      this.$router.push("/tags");
+      // this.$router.push("/tags");
     },
     tt() {
       this.$toast("退出登录");

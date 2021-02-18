@@ -77,7 +77,6 @@ export default {
   },
   methods: {
     age_formatter() {
-      console.log(this.user_form.age);
       if (this.user_form.age <= 0) return (this.user_form.age = 0);
       if (this.user_form.age >= 120) return (this.user_form.age = 120);
       return this.user_form.age;

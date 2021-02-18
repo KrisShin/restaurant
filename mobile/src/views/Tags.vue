@@ -7,7 +7,7 @@
           <span>已选标签</span>
         </van-col>
         <van-col>
-          <van-button size="mini" type="success" @click="onClickTags"
+          <van-button size="mini" type="primary" @click="onClickTags"
             >提交</van-button
           >
         </van-col>

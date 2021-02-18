@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Tags from '../views/Tags.vue'
+import Profile from '../views/Profile.vue'
 
 Vue.use(VueRouter)
 
@@ -24,6 +25,10 @@ const routes = [
     path: '/tags',
     name: 'Tags',
     component: Tags
+  }, {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile
   },
 ]
 

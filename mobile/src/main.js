@@ -4,17 +4,20 @@ import store from './store'
 import router from './router'
 import BASE_API from './utils/settings'
 import {
-  Tag, Grid, GridItem, Empty, Toast, NavBar,
+  ActionSheet, Tag, Grid, GridItem, Empty, Toast, NavBar,
   Field, Button, Col, Row, Icon, Image as VanImage,
   Lazyload, Swipe, SwipeItem, Tabbar, TabbarItem,
-  Notify
+  Notify, Cell, CellGroup
 } from "vant";
 
 
 Vue.config.productionTip = false
 Vue.prototype.$BASE_API = BASE_API
 
+Vue.use(ActionSheet);
 Vue.use(Button);
+Vue.use(Cell);
+Vue.use(CellGroup);
 Vue.use(Col);
 Vue.use(Row);
 Vue.use(Empty);

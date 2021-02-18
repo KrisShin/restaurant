@@ -246,18 +246,19 @@ def user_avatar():
 @user.route('/logout', methods=['POST'])
 @auth
 def user_logout():
-    print(get_userId(request))
     return jsonify({'sucess': True})
 
 
 @user.route('/tags', methods=['PUT'])
+@auth
 def tags():
     if request.method == 'PUT':
         data = request.get_json()
-        user = User.query.filter_by(id=3).first() # get_userId(request)).first()
+        user = User.query.filter_by(id=get_userId(request)).first()
         exist_tags = data.get('ex_tags')
 
-        user.tags = Tag.query.filter(Tag.id.in_==exist_tags).all()
+        tags = Tag.query.filter(Tag.id.in_(exist_tags)).all()
+        user.tags = tags
         db.session.commit()
         return jsonify({'success': True})
 
