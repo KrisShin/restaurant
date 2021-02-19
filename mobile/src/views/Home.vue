@@ -1,16 +1,17 @@
 <template>
   <div id="home">
     <van-nav-bar title="恰了木有" @click-right="onClickSearch">
-      <template #left v-if="is_login">
+      <template #left v-if="isLogin">
         <van-image
           width="35"
           height="35"
           round
           fit="cover"
           lazy-load
-          :src="user_info.avatar"
+          :src="userInfo.avatar"
+          @click="onclickToProfile"
         />
-        <div>{{ user_info.nickname }}</div>
+        <div>{{ userInfo.nickname }}</div>
       </template>
       <template #left v-else>
         <van-image
@@ -19,13 +20,13 @@
           round
           fit="cover"
           lazy-load
-          @click="onClickToLogin"
           src="http://127.0.0.1:9096/static/avatar/default.jpg"
+          @click="onClickToLogin"
         />
         <div @click="onClickToLogin">请登录</div>
       </template>
       <template #right>
-        <van-icon name="search" size="18" />
+        <van-icon name="search" size="18" @click="tt" />
       </template>
     </van-nav-bar>
     <div>
@@ -39,7 +40,7 @@
       </div>
     </div>
     <div>
-      <van-tabbar v-model="active" v-if="is_login">
+      <van-tabbar v-model="active" v-if="isLogin">
         <van-tabbar-item name="recommend" icon="hot-o"> 推荐 </van-tabbar-item>
         <van-tabbar-item name="cart" icon="shopping-cart-o" badge="20">
           购物车
@@ -98,8 +99,8 @@ export default {
   name: "Home",
   data: function () {
     return {
-      is_login: this.$store.state.common.isLogin,
-      user_info: this.$store.state.common.userInfo,
+      isLogin: "",
+      userInfo: "",
       images: [
         this.$BASE_API + "/static/dish/ftq.jpg",
         this.$BASE_API + "/static/dish/hgr.jpg",
@@ -110,12 +111,15 @@ export default {
     };
   },
   created() {
-    if (!this.user_info) {
+    this.isLogin = this.$store.state.common.isLogin;
+    this.userInfo = this.$store.state.common.userInfo;
+
+    if (this.isLogin && !this.userInfo) {
       userInfoAPI().then((resp) => {
         this.active = "recommend";
-        var user_info = resp.data.data;
-        this.$store.dispatch("common/setUserInfo", user_info);
-        this.user_info = this.$store.state.common.userInfo;
+        var userInfo = resp.data.data;
+        this.$store.dispatch("common/setUserInfo", userInfo);
+        this.userInfo = this.$store.state.common.userInfo;
       });
     }
   },
@@ -128,13 +132,18 @@ export default {
       this.active = "register";
       this.$router.push("/register");
     },
+    onclickToProfile() {
+      this.$router.push("/profile");
+    },
     onClickSearch() {
       // this.$router.push("/tags");
     },
     tt() {
       this.$toast("退出登录");
-      userLogoutAPI();
       this.$store.dispatch("common/setToken", null);
+      this.$store.dispatch("common/setUserInfo", null);
+      userLogoutAPI();
+      this.$router.go(0);
     },
     // test_get: function () {
     //   getAPI({ test: 123 })

@@ -72,31 +72,31 @@
   </div>
 </template>
 <script>
+import { userSendCaptchaAPI } from "../apis/user.apis.js";
 export default {
   name: "Profile",
   data() {
     return {
       active: "my",
-      userInfo: this.$store.state.common.userInfo,
+      userInfo: "",
       orderCount: 0,
       commentCount: 0,
       showActiveModal: false,
       actions: [{ name: "确认激活" }],
     };
   },
+  created: function () {
+    this.userInfo = this.$store.state.common.userInfo;
+  },
   methods: {
     clickToShowActive() {
       // console.log("123");
-      var email = "123123@123.com";
-      this.actions[0].subname = email;
+      this.actions[0].subname = this.userInfo.email;
       this.showActiveModal = !this.showActiveModal;
     },
     clickToActive() {
-      // this.$toast(this.actions[0].subname);
-      this.userInfo.email = "123123@123.com"
-      this.userInfo.is_email_active = true
-      this.$store.dispatch('common/setUserInfo', this.userInfo)
-      this.$notify('激活成功')
+      userSendCaptchaAPI()
+      this.$router.push("/auth");
     },
   },
 };

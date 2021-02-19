@@ -108,7 +108,7 @@ def user_login():
     return jsonify({"success": True, "info": "",  'token': Authorization})
 
 
-@user.route('/email_captcha', methods=['PUT'])
+@user.route('/email_captcha', methods=['POST'])
 def send_captcha_email():
     data = request.get_json()
     email = data.get('email')
@@ -195,8 +195,8 @@ def user_edit():
 @auth
 def user_edit_email():
     data = request.get_json()
-    captcha = data.get('captcha')
     email = data.get('email')
+    captcha = data.get('captcha')
     user = User.query.filter_by(id=get_userId(request)).first()
     real_cap = r.get_val(f'user_{user.id}:captcha')
     if not real_cap:

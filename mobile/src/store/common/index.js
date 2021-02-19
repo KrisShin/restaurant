@@ -12,17 +12,17 @@ export default {
   },
   actions: {
     // 定义一个设置 token 值的动作，第一个参数为 action 的形参 store 对象
-    setToken({commit}, token) {
+    setToken({ commit }, token) {
       commit('mutationToken', token)
     },
-    setUserInfo({commit}, user) {
+    setUserInfo({ commit }, user) {
       commit('mutationUserInfo', user)
     }
   },
   mutations: {
     mutationToken(state, token) {
       state.token = token
-      state.isLogin = state.token?true:false
+      state.isLogin = state.token ? true : false
     },
     mutationUserInfo(state, user) {
       state.userInfo = user

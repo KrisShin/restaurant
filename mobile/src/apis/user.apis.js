@@ -24,6 +24,14 @@ export function userTagsAPI(data) {
     return http.put(`${BASE_API}/user/tags`, data)
 }
 
+export function userSendCaptchaAPI(data) {
+    return http.post(`${BASE_API}/user/email_captcha`, data)
+}
+
+export function userChangeEmail(data) {
+    return http.put(`${BASE_API}/user/change_email`, data)
+}
+
 // export function uploadAvatarApi(params) {
 //     return http.post(`${BASE_API}/user/upload_avatar`, params)
 // }

@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Tags from '../views/Tags.vue'
 import Profile from '../views/Profile.vue'
+import Auth from '../views/Auth.vue'
 
 Vue.use(VueRouter)
 
@@ -29,7 +30,11 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: Profile
-  },
+  }, {
+    path: '/auth',
+    name: 'Auth',
+    component: Auth
+  }
 ]
 
 const router = new VueRouter({
