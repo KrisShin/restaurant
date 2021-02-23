@@ -546,6 +546,8 @@ COPY public.rs_dish_tag (dish_id, tag_id) FROM stdin;
 --
 
 COPY public.rs_user_tag (user_id, tag_id) FROM stdin;
+1	2
+1	20
 \.
 
 

@@ -7,7 +7,12 @@ class Redis(object):
 
     def get_val(self, key: str):
         res = redis.get(key)
-        return json.loads(res) if res else None
+        if res:
+            try:
+                res = json.loads(res)
+            except json.JSONDecodeError:
+                pass
+        return res
 
     def set_val(self, key: str, val, ex: int):
         try:

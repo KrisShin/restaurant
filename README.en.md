@@ -1,7 +1,7 @@
 # restaurant
 
 #### Description
-A personal restaurant program
+A restaurant program, backend user Flask framework with python, front use VueJS2, Database is PostgreSQL11, and cache with Redis
 
 #### Software Architecture
 web and h5: Vue

@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, jsonify, request, session
-from .models import User, Address, Account
-from dish.models import Tag
-from utils.util import make_password, check_password, get_captcha, sender, gen_filename, save_img
-from config.global_params import db
+from datetime import datetime, timedelta
+import jwt
 import re
-from utils.rest_redis import r
+
+from flask import Blueprint, jsonify, request, session
+from flask_cors import cross_origin
+
+from .models import User, Address, Account
+from config.global_params import db
 from config.status_code import *
 from config.settings import KEY, HTTP_HOST
-from flask_cors import cross_origin
-import jwt
-from datetime import datetime, timedelta
+from dish.models import Tag
+from utils.mail_sender import sender
+from utils.rest_redis import r
+from utils.util import make_password, check_password, get_captcha, gen_filename, save_img
 from utils.wraps import auth, get_userId
 
 
@@ -105,7 +108,7 @@ def user_login():
     return jsonify({"success": True, "info": "",  'token': Authorization})
 
 
-@user.route('/email_captcha', methods=['PUT'])
+@user.route('/email_captcha', methods=['POST'])
 def send_captcha_email():
     data = request.get_json()
     email = data.get('email')
@@ -119,8 +122,8 @@ def send_captcha_email():
     captcha = get_captcha()
     mail = {
         'subject': f'恰了木有验证码',
-        'content': f'<div>感谢您使用恰了木有APP, 您的验证码为</div><span style="font-size: 30px;font-weight: 600;background: #313131;color: #6dc4ff;">{captcha}</span><div>请在5分钟之内完成验证</div>'}
-    r.set_val(f'user_{user.id}:get_captcha', captcha, 300)
+        'content': f'<div>感谢您使用恰了木有APP, 您的验证码为</div><span style="font-size: 30px;font-weight: 600;background: #313131;color: #6dc4ff;">{captcha}</span><div>请在10分钟之内完成验证</div>'}
+    r.set_val(f'user_{user.id}:captcha', captcha, 600)
     sender.send(email, mail)
     return jsonify({'success': True})
 
@@ -192,38 +195,41 @@ def user_edit():
 @auth
 def user_edit_email():
     data = request.get_json()
-    captcha = data.get('captcha')
     email = data.get('email')
+    captcha = data.get('captcha')
     user = User.query.filter_by(id=get_userId(request)).first()
     real_cap = r.get_val(f'user_{user.id}:captcha')
     if not real_cap:
         return jsonify({'success': False, 'code': CAPTCHA_EXPIRED})
-    if (not captcha) or (captcha != real_cap):
+    if (not captcha) or (captcha != real_cap.decode()):
         return jsonify({'success': False, 'code': WRONG_CAPTCHA})
 
-    user = User.query.filter_by(email=email).first()
-    if user:
+    ex_user = User.query.filter(User.email==email,User.id!=user.id).first()
+    if ex_user:
         return jsonify({'success': False, 'code': USER_EXISTED})
 
     user.email = email
+    if not user.is_email_active:
+        user.is_email_active = True
+    user.update_time = datetime.now()
     db.session.commit()
     return jsonify({'success': True})
 
 
-@user.route('/add_tags', methods=['POST'])
-@auth
-def user_add_tags():
-    data = request.get_json()
-    tags = data.get('tags')
-    user = User.query.filter_by(id=get_userId(request)).first()
+# @user.route('/add_tags', methods=['POST'])
+# @auth
+# def user_add_tags():
+#     data = request.get_json()
+#     tags = data.get('tags')
+#     user = User.query.filter_by(id=get_userId(request)).first()
 
-    tag_list = list()
-    for tag in tags:
-        t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
-        tag_list.append(t)
-    user.tags = tag_list
-    db.session.commit()
-    return jsonify({'success': True})
+#     tag_list = list()
+#     for tag in tags:
+#         t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
+#         tag_list.append(t)
+#     user.tags = tag_list
+#     db.session.commit()
+#     return jsonify({'success': True})
 
 
 @user.route('/upload_avatar', methods=['POST'])
@@ -243,8 +249,21 @@ def user_avatar():
 @user.route('/logout', methods=['POST'])
 @auth
 def user_logout():
-    print(get_userId(request))
     return jsonify({'sucess': True})
+
+
+@user.route('/tags', methods=['PUT'])
+@auth
+def tags():
+    if request.method == 'PUT':
+        data = request.get_json()
+        user = User.query.filter_by(id=get_userId(request)).first()
+        exist_tags = data.get('ex_tags')
+
+        tags = Tag.query.filter(Tag.id.in_(exist_tags)).all()
+        user.tags = tags
+        db.session.commit()
+        return jsonify({'success': True})
 
 
 @user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])

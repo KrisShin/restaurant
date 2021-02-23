@@ -5,6 +5,7 @@
       <van-field
         v-model="user_form.nickname"
         label="昵称"
+        palceholder="请输入昵称"
         error
         required
         clearable
@@ -17,6 +18,7 @@
         error
         required
         label="手机号"
+        palceholder="请输入手机号"
         clearable
       />
       <van-field
@@ -27,11 +29,13 @@
         :formatter="age_formatter"
         format-trigger="onBlur"
         label="年龄"
+        palceholder="请输入年龄"
       />
       <van-field
         v-model="user_form.email"
         type="email"
         label="邮箱"
+        palceholder="请输入邮箱"
         error
         required
         clearable
@@ -42,6 +46,7 @@
         error
         required
         label="密码"
+        palceholder="请输入密码"
         clearable
       />
     </div>
@@ -77,7 +82,6 @@ export default {
   },
   methods: {
     age_formatter() {
-      console.log(this.user_form.age);
       if (this.user_form.age <= 0) return (this.user_form.age = 0);
       if (this.user_form.age >= 120) return (this.user_form.age = 120);
       return this.user_form.age;

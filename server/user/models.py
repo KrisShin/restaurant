@@ -37,7 +37,7 @@ class User(db.Model):
 
     def keys(self):
         '''serilize object keys'''
-        return ('id', 'avatar','nickname', 'gender', 'is_email_active', 'is_new', 'phone', 'age')
+        return ('id', 'avatar', 'email', 'nickname', 'gender', 'is_email_active', 'is_new', 'phone', 'age')
 
     def __getitem__(self, item):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''
@@ -68,7 +68,7 @@ class Account(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     is_vip = db.Column(db.Boolean, default=0)
-    start_time = db.Column(db.DateTime, default=datetime.now)
+    start_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
     balance = db.Column(db.Float, default=0.0)  # 余额
 

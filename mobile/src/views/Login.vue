@@ -3,9 +3,9 @@
     <van-nav-bar title="恰了木有-登录" @click-left="onClickReturn" left-arrow />
     <div>
       <!-- 输入手机号，调起手机号键盘 -->
-      <van-field v-model="phone" type="text" maxlength="11" label="手机号" />
+      <van-field v-model="phone" type="text" maxlength="11" label="手机号" palceholder="请输入手机号" />
       <!-- 输入密码 -->
-      <van-field v-model="password" type="password" label="密码" />
+      <van-field v-model="password" type="password" label="密码" palceholder="请输入密码" />
     </div>
 
     <van-row type="flex" justify="center">
@@ -45,7 +45,7 @@ export default {
             _this.$store.dispatch("common/setToken", resp.data.token);
             setTimeout(() => {
               _this.$router.push("/");
-            }, 2000);
+            }, 500);
           }
           if (resp.data.code == 1001) {
             // 用户不存在

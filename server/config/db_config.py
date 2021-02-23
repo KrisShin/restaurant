@@ -1,10 +1,10 @@
 class DBConfig(object):
     """配置参数"""
     # 设置连接数据库的URL
-    db_type = 'postgresql'
-    user = 'restuser'
-    password = 'R35Tus#r'
-    database = 'restaurant'
+    db_type = r'postgresql'
+    user = r'restuser'
+    password = r'R35Tus#r'
+    database = r'restaurant'
     host = '127.0.0.1'
     port = '35432'
 

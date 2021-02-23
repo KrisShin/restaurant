@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from .models import Dish, Tag
 from user.models import User
-from utils.util import make_password
+from utils.util import set_tag_color
 from utils.wraps import get_userId
 from config.global_params import db
 
@@ -29,10 +29,20 @@ def tags():
             ex_tags = [dict(tag) for tag in user.tags]
             ex_ids = [tag['id'] for tag in ex_tags]
             
-        res = [dict(tag) for tag in Tag.query.filter(Tag.id.notin_(ex_ids)).all()]
+        res = [dict(tag) for tag in Tag.query.filter(Tag.id.notin_(ex_ids)).order_by(Tag.weight.desc()).all()]
+        ex_tags = set_tag_color(ex_tags)
+        res = set_tag_color(res )
+        
         return jsonify({'success': True, 'data': {
             'tags': res,
             'exist_tags': ex_tags
         }})
     if request.method == 'POST':
-        return jsonify({'success': True})
+        data = request.get_json()
+        name = data.get('name')
+
+        tag = Tag(name=name)
+        db.session.add(tag)
+        db.session.commit()
+
+        return jsonify({'success': True, 'data': dict(tag)})
