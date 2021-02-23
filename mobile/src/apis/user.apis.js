@@ -28,7 +28,7 @@ export function userSendCaptchaAPI(data) {
     return http.post(`${BASE_API}/user/email_captcha`, data)
 }
 
-export function userChangeEmail(data) {
+export function userChangeEmailAPI(data) {
     return http.put(`${BASE_API}/user/change_email`, data)
 }
 

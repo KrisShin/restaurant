@@ -122,8 +122,8 @@ def send_captcha_email():
     captcha = get_captcha()
     mail = {
         'subject': f'恰了木有验证码',
-        'content': f'<div>感谢您使用恰了木有APP, 您的验证码为</div><span style="font-size: 30px;font-weight: 600;background: #313131;color: #6dc4ff;">{captcha}</span><div>请在5分钟之内完成验证</div>'}
-    r.set_val(f'user_{user.id}:get_captcha', captcha, 300)
+        'content': f'<div>感谢您使用恰了木有APP, 您的验证码为</div><span style="font-size: 30px;font-weight: 600;background: #313131;color: #6dc4ff;">{captcha}</span><div>请在10分钟之内完成验证</div>'}
+    r.set_val(f'user_{user.id}:captcha', captcha, 600)
     sender.send(email, mail)
     return jsonify({'success': True})
 
@@ -201,14 +201,17 @@ def user_edit_email():
     real_cap = r.get_val(f'user_{user.id}:captcha')
     if not real_cap:
         return jsonify({'success': False, 'code': CAPTCHA_EXPIRED})
-    if (not captcha) or (captcha != real_cap):
+    if (not captcha) or (captcha != real_cap.decode()):
         return jsonify({'success': False, 'code': WRONG_CAPTCHA})
 
-    user = User.query.filter_by(email=email).first()
-    if user:
+    ex_user = User.query.filter(User.email==email,User.id!=user.id).first()
+    if ex_user:
         return jsonify({'success': False, 'code': USER_EXISTED})
 
     user.email = email
+    if not user.is_email_active:
+        user.is_email_active = True
+    user.update_time = datetime.now()
     db.session.commit()
     return jsonify({'success': True})
 

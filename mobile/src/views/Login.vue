@@ -45,7 +45,7 @@ export default {
             _this.$store.dispatch("common/setToken", resp.data.token);
             setTimeout(() => {
               _this.$router.push("/");
-            }, 2000);
+            }, 500);
           }
           if (resp.data.code == 1001) {
             // 用户不存在

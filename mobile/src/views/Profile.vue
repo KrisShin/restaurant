@@ -41,16 +41,7 @@
         v-if="!userInfo.is_email_active"
         title="激活邮箱"
         @click="clickToShowActive"
-      >
-        <van-action-sheet
-          v-model="showActiveModal"
-          :actions="actions"
-          cancel-text="取消"
-          close-on-click-action
-          @select="clickToActive"
-          @cancel="clickToShowActive"
-        />
-      </van-cell>
+      />
       <van-cell title="会员充值" is-link to="/" />
     </van-cell-group>
     <van-cell-group title="订单管理">
@@ -69,6 +60,14 @@
         我的
       </van-tabbar-item>
     </van-tabbar>
+    <van-dialog
+      v-model="showActiveModal"
+      title="确认邮箱"
+      show-cancel-button
+      @confirm="confirmToActive"
+    >
+      <van-field v-model="email" />
+    </van-dialog>
   </div>
 </template>
 <script>
@@ -82,7 +81,7 @@ export default {
       orderCount: 0,
       commentCount: 0,
       showActiveModal: false,
-      actions: [{ name: "确认激活" }],
+      email: "",
     };
   },
   created: function () {
@@ -90,13 +89,32 @@ export default {
   },
   methods: {
     clickToShowActive() {
-      // console.log("123");
-      this.actions[0].subname = this.userInfo.email;
+      this.email = this.userInfo.email;
       this.showActiveModal = !this.showActiveModal;
     },
-    clickToActive() {
-      userSendCaptchaAPI()
-      this.$router.push("/auth");
+    confirmToActive() {
+      if (this.email) {
+        var reg = /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+
+        var isEmail = reg.test(this.email);
+        if (!isEmail) {
+          this.$toast("邮箱格式错误");
+        } else {
+          var _this = this;
+          userSendCaptchaAPI({ email: this.userInfo.email }).then((resp) => {
+            if (resp.data.success) {
+              _this.$router.push("/auth?email=" + this.email);
+            } else if (resp.data.code === 1006) {
+              _this.$notify({
+                message: "请勿频繁申请验证邮件",
+                type: "warning",
+              });
+            }
+          });
+        }
+      } else {
+        this.$toast("邮箱不能为空");
+      }
     },
   },
 };
