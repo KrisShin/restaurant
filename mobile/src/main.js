@@ -7,7 +7,7 @@ import {
   ActionSheet, Tag, Grid, GridItem, Empty, Toast, NavBar,
   Field, Button, Col, Row, Icon, Image as VanImage,
   Lazyload, Swipe, SwipeItem, Tabbar, TabbarItem,
-  Notify, Cell, CellGroup,Dialog
+  Notify, Cell, CellGroup,Dialog, Uploader
 } from "vant";
 
 
@@ -35,6 +35,7 @@ Vue.use(Tabbar);
 Vue.use(TabbarItem);
 Vue.use(Tag);
 Vue.use(Toast)
+Vue.use(Uploader);
 Vue.use(VanImage);
 
 new Vue({

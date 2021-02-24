@@ -13,6 +13,7 @@
           fit="cover"
           lazy-load
           :src="userInfo.avatar"
+          to="/editInfo"
         />
       </van-row>
       <van-row type="flex" justify="center" gutter="8">
@@ -36,7 +37,7 @@
       <span></span>
     </div>
     <van-cell-group title="个人管理">
-      <van-cell title="编辑信息" is-link to="/" />
+      <van-cell title="编辑信息" is-link to="/editInfo" />
       <van-cell
         v-if="!userInfo.is_email_active"
         title="激活邮箱"

@@ -32,6 +32,6 @@ export function userChangeEmailAPI(data) {
     return http.put(`${BASE_API}/user/change_email`, data)
 }
 
-// export function uploadAvatarApi(params) {
-//     return http.post(`${BASE_API}/user/upload_avatar`, params)
-// }
+export function uploadAvatarAPI(params) {
+    return http.post(`${BASE_API}/user/upload_avatar`, params)
+}

@@ -6,6 +6,7 @@ import Register from '../views/Register.vue'
 import Tags from '../views/Tags.vue'
 import Profile from '../views/Profile.vue'
 import Auth from '../views/Auth.vue'
+import EditInfo from '../views/EditInfo.vue'
 
 Vue.use(VueRouter)
 
@@ -34,6 +35,10 @@ const routes = [
     path: '/auth',
     name: 'Auth',
     component: Auth
+  }, {
+    path: '/editInfo',
+    name: 'EditInfo',
+    component: EditInfo
   }
 ]
 
