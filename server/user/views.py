@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import jwt
 import re
 
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, json, jsonify, request, session
 from flask_cors import cross_origin
 
 from .models import User, Address, Account
@@ -204,7 +204,8 @@ def user_edit_email():
     if (not captcha) or (captcha != real_cap.decode()):
         return jsonify({'success': False, 'code': WRONG_CAPTCHA})
 
-    ex_user = User.query.filter(User.email==email,User.id!=user.id).first()
+    ex_user = User.query.filter(
+        User.email == email, User.id != user.id).first()
     if ex_user:
         return jsonify({'success': False, 'code': USER_EXISTED})
 
@@ -269,6 +270,11 @@ def tags():
 @user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
 # @auth
 def test():
+    mail = {
+        'subject': f'恰了木有验证码',
+        'content': f'<div>测试啊你个**</div>'}
+    sender.send('krisshin@88.com', mail)
+    return jsonify({'msg': 'ok'})
     # data = request.get_json()
     # print(get_userId(request))
     if request.method == "GET":

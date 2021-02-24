@@ -18,6 +18,7 @@ REDIS_HOST = r'localhost'
 REDIS_PORT = r'16379'
 REDIS_DB = 0
 
+EMAIL_NICKNAME = r'恰了木有APP'
 EMAIL_ACCOUNT = r'2855829886@qq.com'
 EMAIL_AUTH = r'tdlzctihcooodgbc'
 
