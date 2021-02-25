@@ -245,7 +245,7 @@ def user_avatar():
 @user.route('/logout', methods=['POST'])
 @auth
 def user_logout():
-    return jsonify({'sucess': True})
+    return jsonify({'success': True})
 
 
 @user.route('/tags', methods=['PUT'])

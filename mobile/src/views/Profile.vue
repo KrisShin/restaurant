@@ -121,11 +121,18 @@ export default {
       }
     },
     clickToLogout() {
-      this.$toast("退出登录");
-      this.$store.dispatch("common/setToken", null);
-      this.$store.dispatch("common/setUserInfo", null);
-      userLogoutAPI();
-      this.$router.replace("/");
+      userLogoutAPI().then((resp) => {
+        if (resp.data.success) {
+          this.$notify({
+            message: "退出登录",
+            type: "success",
+            duration: 1000,
+          });
+        }
+        this.$store.dispatch("common/setToken", null);
+        this.$store.dispatch("common/setUserInfo", null);
+        this.$router.replace("/");
+      });
     },
   },
 };

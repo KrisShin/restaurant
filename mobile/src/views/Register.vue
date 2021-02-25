@@ -82,7 +82,7 @@ export default {
       return this.user_form.age;
     },
     onClickReturn() {
-      this.$router.go(-1);
+      this.$router.replace("/");
     },
     onClickRegister() {
       var _this = this;
