@@ -1,8 +1,8 @@
-from config.settings import EMAIL_ACCOUNT, EMAIL_AUTH
+from config.settings import EMAIL_ACCOUNT, EMAIL_AUTH, EMAIL_NICKNAME
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
+from email.utils import formataddr
 
 
 class SendServer(object):
@@ -24,7 +24,7 @@ class SendServer(object):
     def _compContent(self, receiver, mail):
         message = MIMEMultipart('related')
         message['Subject'] = mail['subject']
-        message['From'] = self.email
+        message['From'] = formataddr([EMAIL_NICKNAME, self.email])
         message['To'] = receiver
         text = mail['content']
         content = MIMEText(

@@ -6,7 +6,6 @@
         v-model="user_form.nickname"
         label="昵称"
         palceholder="请输入昵称"
-        error
         required
         clearable
         maxLength="20"
@@ -15,7 +14,6 @@
         v-model="user_form.phone"
         type="digit"
         maxLength="11"
-        error
         required
         label="手机号"
         palceholder="请输入手机号"
@@ -24,7 +22,6 @@
       <van-field
         v-model="user_form.age"
         type="digit"
-        error
         required
         :formatter="age_formatter"
         format-trigger="onBlur"
@@ -36,14 +33,12 @@
         type="email"
         label="邮箱"
         palceholder="请输入邮箱"
-        error
         required
         clearable
       />
       <van-field
         v-model="user_form.password"
         type="password"
-        error
         required
         label="密码"
         palceholder="请输入密码"
@@ -87,7 +82,7 @@ export default {
       return this.user_form.age;
     },
     onClickReturn() {
-      this.$router.go(-1);
+      this.$router.replace("/");
     },
     onClickRegister() {
       var _this = this;

@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { userInfoAPI, userLogoutAPI } from "../apis/user.apis";
+import { userInfoAPI } from "../apis/user.apis";
 
 export default {
   name: "Home",
@@ -139,11 +139,11 @@ export default {
       // this.$router.push("/tags");
     },
     tt() {
-      this.$toast("退出登录");
-      this.$store.dispatch("common/setToken", null);
-      this.$store.dispatch("common/setUserInfo", null);
-      userLogoutAPI();
-      this.$router.go(0);
+      // this.$toast("退出登录");
+      // this.$store.dispatch("common/setToken", null);
+      // this.$store.dispatch("common/setUserInfo", null);
+      // userLogoutAPI();
+      // this.$router.go(0);
     },
     // test_get: function () {
     //   getAPI({ test: 123 })

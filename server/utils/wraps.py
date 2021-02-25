@@ -15,7 +15,8 @@ def jwt_auth(auth, alg='HS256'):
             return 200, True, decode_auth['user_id'], admin
     except jwt.exceptions.ExpiredSignatureError:
         return TOKEN_EXPIRE, False, None, False  # token过期
-    except:
+    except Exception as e:
+        print(e)
         return INVALID_TOKEN, False, None, False
     else:
         return INVALID_TOKEN, False, None, False  # 非法的token

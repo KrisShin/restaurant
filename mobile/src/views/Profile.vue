@@ -13,6 +13,7 @@
           fit="cover"
           lazy-load
           :src="userInfo.avatar"
+          to="/editInfo"
         />
       </van-row>
       <van-row type="flex" justify="center" gutter="8">
@@ -36,7 +37,7 @@
       <span></span>
     </div>
     <van-cell-group title="个人管理">
-      <van-cell title="编辑信息" is-link to="/" />
+      <van-cell title="编辑信息" is-link to="/editInfo" />
       <van-cell
         v-if="!userInfo.is_email_active"
         title="激活邮箱"
@@ -49,6 +50,9 @@
       <van-cell title="我的评价" :value="commentCount" />
       <van-cell title="Demo" value="内容" label="描述信息" />
     </van-cell-group>
+    <van-button type="danger" block @click="clickToLogout">
+      退出登录
+    </van-button>
     <van-tabbar v-model="active">
       <van-tabbar-item name="recommend" icon="hot-o" to="/">
         推荐
@@ -71,7 +75,7 @@
   </div>
 </template>
 <script>
-import { userSendCaptchaAPI } from "../apis/user.apis.js";
+import { userSendCaptchaAPI, userLogoutAPI } from "../apis/user.apis.js";
 export default {
   name: "Profile",
   data() {
@@ -115,6 +119,20 @@ export default {
       } else {
         this.$toast("邮箱不能为空");
       }
+    },
+    clickToLogout() {
+      userLogoutAPI().then((resp) => {
+        if (resp.data.success) {
+          this.$notify({
+            message: "退出登录",
+            type: "success",
+            duration: 1000,
+          });
+        }
+        this.$store.dispatch("common/setToken", null);
+        this.$store.dispatch("common/setUserInfo", null);
+        this.$router.replace("/");
+      });
     },
   },
 };
