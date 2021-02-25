@@ -1,45 +1,44 @@
 <template>
   <div id="tags">
     <van-nav-bar title="恰了木有-标签" @click-left="onClickReturn" left-arrow />
-    <div id="choosen" flex="1">
-      <van-row>
-        <van-col>
-          <span>已选标签</span>
-        </van-col>
-        <van-col>
-          <van-button size="mini" type="primary" @click="onClickTags"
-            >提交</van-button
+    <div id="content" style="padding: 2%">
+      <div id="choosen" flex="1">
+        <van-row>
+          <van-col>
+            <span>已选标签</span>
+          </van-col>
+        </van-row>
+        <div v-if="ex_tags.length > 0">
+          <van-tag
+            v-for="(tag, index) in ex_tags"
+            :key="tag.id"
+            :color="tag.color"
+            round
+            type="primary"
+            size="medium"
+            @click="onClickRemoveTag(tag, index)"
           >
-        </van-col>
-      </van-row>
-      <div v-if="ex_tags.length > 0">
-        <van-tag
-          v-for="(tag, index) in ex_tags"
-          :key="tag.id"
-          :color="tag.color"
-          round
-          type="primary"
-          size="medium"
-          @click="onClickRemoveTag(tag, index)"
-        >
-          {{ tag.name }}
-        </van-tag>
+            {{ tag.name }}
+          </van-tag>
+        </div>
+        <van-empty v-else description="选择你的标签" />
       </div>
-      <van-empty v-else description="选择你的标签" />
-    </div>
-    <div id="allTags">
-      <span>所有标签</span>
-      <van-tag
-        v-for="(tag, index) in tags"
-        :key="tag.id"
-        :color="tag.color"
-        plain
-        round
-        size="medium"
-        @click="onClickAddTag(tag, index)"
-      >
-        {{ tag.name }}
-      </van-tag>
+      <div id="allTags">
+        <span>所有标签</span>
+        <div>
+          <van-tag
+            v-for="(tag, index) in tags"
+            :key="tag.id"
+            :color="tag.color"
+            plain
+            round
+            size="medium"
+            @click="onClickAddTag(tag, index)"
+          >
+            {{ tag.name }}
+          </van-tag>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -69,13 +68,15 @@ export default {
       //   this.$toast.success(tag.name);
       this.tags.splice(index, 1);
       this.ex_tags.push(tag);
+      this.onChangeTags();
     },
     onClickRemoveTag(tag, index) {
       //   this.$toast.fail(tag.name);
       this.ex_tags.splice(index, 1);
       this.tags.push(tag);
+      this.onChangeTags();
     },
-    onClickTags() {
+    onChangeTags() {
       if (this.ex_tags.length < 1) {
         this.$toast.fail("请至少选择一个标签");
         return;
@@ -86,7 +87,11 @@ export default {
       });
       userTagsAPI({ ex_tags: tagIds }).then((resp) => {
         if (resp.data.success) {
-          this.$notify({ message: "添加成功", background: "green" });
+          this.$notify({
+            message: "添加成功",
+            background: "green",
+            duration: 800,
+          });
         }
       });
     },

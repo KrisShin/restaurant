@@ -23,9 +23,12 @@ export default {
     mutationToken(state, token) {
       state.token = token
       state.isLogin = state.token ? true : false
+      // localStorage.setItem('token', token)
+      localStorage.setItem('isLogin', state.token ? true : false)
     },
     mutationUserInfo(state, user) {
       state.userInfo = user
+      // localStorage.setItem('userInfo', user)
     }
   }
 }

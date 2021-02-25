@@ -13,7 +13,7 @@ from config.settings import KEY, HTTP_HOST
 from dish.models import Tag
 from utils.mail_sender import sender
 from utils.rest_redis import r
-from utils.util import make_password, check_password, get_captcha, gen_filename, save_img
+from utils.util import make_password, check_password, get_captcha, gen_filename, save_img, del_invalify_image
 from utils.wraps import auth, get_userId
 
 
@@ -153,42 +153,37 @@ def user_change_pwd():
     return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
 
-@user.route('/profile', methods=['GET'])
+@user.route('/profile', methods=['GET', 'PUT'])
 @auth
 def user_profile():
     '''check user profile'''
-    user = User.query.filter_by(id=get_userId(request)).first()
-    resp = dict(user)
-    resp['user_id'] = resp['id']
-    del resp['id']
-    resp['balance'] = user.account.balance
-    resp['avatar'] = HTTP_HOST + resp['avatar']
-    return jsonify({'success': True, 'data': resp})
+    if request.method == 'GET':
+        user = User.query.filter_by(id=get_userId(request)).first()
+        resp = dict(user)
+        resp['user_id'] = resp['id']
+        del resp['id']
+        resp['balance'] = user.account.balance
+        resp['avatar'] = HTTP_HOST + resp['avatar']
+        return jsonify({'success': True, 'data': resp})
+    elif request.method == 'PUT':
+        data = request.get_json()
+        base64_str = data.get('avatar')
+        avatar_path = save_img('avatar', base64_str)
+        age = data.get('age')
+        nickname = data.get('nickname')
+        user = User.query.filter_by(id=get_userId(request)).first()
 
+        if avatar_path:
+            del_invalify_image(user.avatar)
+            user.avatar = avatar_path
+        if age:
+            user.age = age
+        if nickname:
+            user.nickname = nickname
+        user.update_time = datetime.now()
+        db.session.commit()
 
-@user.route('/edit_profile', methods=['PUT'])
-@auth
-def user_edit():
-    '''user edit profile'''
-    data = request.get_json()
-    avatar = data.get('avatar')
-    age = data.get('age')
-    tags = data.get('tags')
-    user = User.query.filter_by(id=get_userId(request)).first()
-
-    if tags:
-        tag_list = list()
-        for tag in tags:
-            t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
-            tag_list.append(t)
-        user.tags = tag_list
-    if avatar:
-        user.avatar = avatar
-    if age:
-        user.age = age
-    db.session.commit()
-
-    return jsonify({'success': True})
+        return jsonify({'success': True, 'data': {'avatar': HTTP_HOST+user.avatar}})
 
 
 @user.route('/change_email', methods=['PUT'])

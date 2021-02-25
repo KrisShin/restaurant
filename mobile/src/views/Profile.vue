@@ -50,6 +50,9 @@
       <van-cell title="我的评价" :value="commentCount" />
       <van-cell title="Demo" value="内容" label="描述信息" />
     </van-cell-group>
+    <van-button type="danger" block @click="clickToLogout">
+      退出登录
+    </van-button>
     <van-tabbar v-model="active">
       <van-tabbar-item name="recommend" icon="hot-o" to="/">
         推荐
@@ -72,7 +75,7 @@
   </div>
 </template>
 <script>
-import { userSendCaptchaAPI } from "../apis/user.apis.js";
+import { userSendCaptchaAPI, userLogoutAPI } from "../apis/user.apis.js";
 export default {
   name: "Profile",
   data() {
@@ -116,6 +119,13 @@ export default {
       } else {
         this.$toast("邮箱不能为空");
       }
+    },
+    clickToLogout() {
+      this.$toast("退出登录");
+      this.$store.dispatch("common/setToken", null);
+      this.$store.dispatch("common/setUserInfo", null);
+      userLogoutAPI();
+      this.$router.replace("/");
     },
   },
 };
