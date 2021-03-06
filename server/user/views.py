@@ -265,11 +265,11 @@ def tags():
 @user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
 # @auth
 def test():
-    mail = {
-        'subject': f'恰了木有验证码',
-        'content': f'<div>测试啊你个**</div>'}
-    sender.send('krisshin@88.com', mail)
-    return jsonify({'msg': 'ok'})
+    # mail = {
+    #     'subject': f'恰了木有验证码',
+    #     'content': f'<div>测试啊你个**</div>'}
+    # sender.send('krisshin@88.com', mail)
+    # return jsonify({'msg': 'ok'})
     # data = request.get_json()
     # print(get_userId(request))
     if request.method == "GET":

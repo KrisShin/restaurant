@@ -7,6 +7,7 @@ import Tags from '../views/Tags.vue'
 import Profile from '../views/Profile.vue'
 import Auth from '../views/Auth.vue'
 import EditInfo from '../views/EditInfo.vue'
+import ChangePwd from '../views/ChangePwd.vue'
 
 Vue.use(VueRouter)
 
@@ -48,6 +49,13 @@ const routes = [
     path: '/editInfo',
     name: 'EditInfo',
     component: EditInfo,
+    meta: {
+      requireAuth: true
+    }
+  }, {
+    path: '/changePwd',
+    name: 'ChangePwd',
+    component: ChangePwd,
     meta: {
       requireAuth: true
     }
