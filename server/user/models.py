@@ -43,6 +43,9 @@ class User(db.Model):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''
         return getattr(self, item)
 
+    def update_time(self):
+        self.update_time = datetime.datetime.now()
+
 
 class Address(db.Model):
     __tablename__ = "address"

@@ -139,7 +139,7 @@ def user_change_pwd():
     confirm_passwd = data.get('cfm_password')
 
     if confirm_passwd != new_passwd:
-        return jsonify({'success':False, 'code': WRONG_CONFIRM_PASSWORD})
+        return jsonify({'success': False, 'code': WRONG_CONFIRM_PASSWORD})
 
     if old_passwd == new_passwd:
         return jsonify({'success': False, 'code': SAME_PASSWORD})
@@ -155,6 +155,7 @@ def user_change_pwd():
         return jsonify({'success': False, 'code': WRONG_PASSWORD})
 
     user.password = make_password(new_passwd)
+    user.update_time()
     db.session.commit()
     return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
@@ -186,7 +187,7 @@ def user_profile():
             user.age = age
         if nickname:
             user.nickname = nickname
-        user.update_time = datetime.now()
+        user.update_time()
         db.session.commit()
 
         return jsonify({'success': True, 'data': {'avatar': HTTP_HOST+user.avatar}})
@@ -213,7 +214,7 @@ def user_edit_email():
     user.email = email
     if not user.is_email_active:
         user.is_email_active = True
-    user.update_time = datetime.now()
+    user.update_time()
     db.session.commit()
     return jsonify({'success': True})
 
