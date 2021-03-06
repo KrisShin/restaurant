@@ -11,7 +11,7 @@ class Redis(object):
             try:
                 res = json.loads(res)
             except json.JSONDecodeError:
-                pass
+                res = res.decode()
         return res
 
     def set_val(self, key: str, val, ex: int):

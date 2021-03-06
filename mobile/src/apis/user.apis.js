@@ -38,7 +38,7 @@ export function userSendCaptchaAPI(data) {
 }
 
 export function userChangePwdAPI(data) {
-    return http.post(`${BASE_API}/user/change_pwd`, data)
+    return http.put(`${BASE_API}/user/change_pwd`, data)
 }
 
 // export function uploadAvatarAPI(params) {

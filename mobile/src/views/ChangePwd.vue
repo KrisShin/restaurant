@@ -48,29 +48,41 @@
         required
         label="新密码"
         palceholder="请确认新密码"
+        :error-message="cmfErrMsg"
+        @input="checkCfmPassword"
         maxLength="20"
         clearable
       />
     </div>
     <van-row type="flex" justify="center">
-      <van-button type="primary" @click="onClickChangePwd">
+      <van-button
+        type="primary"
+        @click="onClickChangePwd"
+        :disabled="isSubmitAllowed"
+      >
         提交修改
       </van-button>
     </van-row>
   </div>
 </template>
 <script>
-import { userSendCaptchaAPI, userChangePwdAPI } from "../apis/user.apis";
+import {
+  userSendCaptchaAPI,
+  userChangePwdAPI,
+  userLogoutAPI,
+} from "../apis/user.apis";
 
 export default {
   name: "ChangePwd",
   data() {
     return {
-      email: "",
-      captcha: "",
-      oldPassword: "",
-      newPassword: "",
-      cfmPassword: "",
+      email: null,
+      captcha: null,
+      oldPassword: null,
+      newPassword: null,
+      cfmPassword: null,
+      isSubmitAllowed: true,
+      cmfErrMsg: "",
     };
   },
   created() {
@@ -78,7 +90,7 @@ export default {
   },
   methods: {
     onClickReturn() {
-      this.$router.replace("/");
+      this.$router.go("-1");
     },
     onClickChangePwd() {
       if (
@@ -87,7 +99,63 @@ export default {
         this.newPassword &&
         this.cfmPassword
       ) {
-        userChangePwdAPI();
+        userChangePwdAPI({
+          captcha: this.captcha,
+          old_password: this.oldPassword,
+          new_password: this.newPassword,
+          cfm_password: this.cfmPassword,
+        }).then((resp) => {
+          console.log(resp.data.code == 1008);
+          if (resp.data.success) {
+            this.$notify({
+              message: "密码修改成功, 请重新登录",
+              type: "success",
+              duration: 800,
+            });
+            userLogoutAPI().then((resp) => {
+              if (resp.data.success) {
+                this.$notify({
+                  message: "退出登录",
+                  type: "success",
+                  duration: 1000,
+                });
+              }
+              this.$store.dispatch("common/setToken", null);
+              this.$store.dispatch("common/setUserInfo", null);
+              this.$router.replace("/");
+            });
+          } else if (resp.data.code == 10012) {
+            this.isSubmitAllowed = true;
+            this.cmfErrMsg = "与新密码不一致";
+          } else if (resp.data.code == 1007) {
+            this.$toast.fail("新密码不能与原密码相同");
+          } else if (resp.data.code == 1009) {
+            this.$toast.fail("验证码过期, 请重新发送");
+          } else if (resp.data.code == 1004) {
+            this.$toast.fail("原密码错误");
+          } else if (resp.data.code == 1008) {
+            this.$toast.fail("验证码错误");
+          }
+        });
+      }
+    },
+    checkCfmPassword() {
+      if (!this.newPassword) {
+        console.log(1);
+        this.isSubmitAllowed = true;
+        return;
+      }
+      if (!this.cfmPassword) {
+        console.log(2);
+        this.isSubmitAllowed = true;
+        return;
+      }
+      if (this.newPassword !== this.cfmPassword) {
+        this.isSubmitAllowed = true;
+        this.cmfErrMsg = "与新密码不一致";
+      } else {
+        this.isSubmitAllowed = false;
+        this.cmfErrMsg = "";
       }
     },
     onClickSendCaptcha() {

@@ -136,12 +136,18 @@ def user_change_pwd():
     captcha = data.get('captcha')
     old_passwd = data.get('old_password')
     new_passwd = data.get('new_password')
+    confirm_passwd = data.get('cfm_password')
+
+    if confirm_passwd != new_passwd:
+        return jsonify({'success':False, 'code': WRONG_CONFIRM_PASSWORD})
 
     if old_passwd == new_passwd:
         return jsonify({'success': False, 'code': SAME_PASSWORD})
-    real_captch = r.get_val(f'user_{get_userId(request)}:get_captcha')
 
-    if captcha != real_captch:
+    real_captcha = r.get_val(f'user_{get_userId(request)}:get_captcha')
+    if not real_captcha:
+        return jsonify({'success': False, 'code': CAPTCHA_EXPIRED})
+    if captcha != real_captcha:
         return jsonify({'success': False, 'code': WRONG_CAPTCHA})
 
     user = User.query.filter_by(id=get_userId(request)).first()
@@ -196,7 +202,7 @@ def user_edit_email():
     real_cap = r.get_val(f'user_{user.id}:captcha')
     if not real_cap:
         return jsonify({'success': False, 'code': CAPTCHA_EXPIRED})
-    if (not captcha) or (captcha != real_cap.decode()):
+    if (not captcha) or (captcha != real_cap):
         return jsonify({'success': False, 'code': WRONG_CAPTCHA})
 
     ex_user = User.query.filter(
