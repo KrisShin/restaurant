@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 from .models import Dish, Tag
 from user.models import User
-from utils.util import set_tag_color
 from utils.wraps import get_userId
 from config.global_params import db
 
@@ -30,8 +29,6 @@ def tags():
             ex_ids = [tag['id'] for tag in ex_tags]
             
         res = [dict(tag) for tag in Tag.query.filter(Tag.id.notin_(ex_ids)).order_by(Tag.weight.desc()).all()]
-        ex_tags = set_tag_color(ex_tags)
-        res = set_tag_color(res )
         
         return jsonify({'success': True, 'data': {
             'tags': res,
