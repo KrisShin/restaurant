@@ -34,7 +34,16 @@
         </van-col>
         <van-col>余额:{{ userInfo.balance }}</van-col>
       </van-row>
-      <span></span>
+      <van-tag
+        v-for="(tag, index) in userInfo.tags"
+        :key="index"
+        :color="tag.color"
+        round
+        size="medium"
+        @click="onClickAddTag(tag, index)"
+      >
+        {{ tag.name }}
+      </van-tag>
     </div>
     <van-cell-group title="个人管理">
       <van-cell title="编辑信息" is-link to="/editInfo" />

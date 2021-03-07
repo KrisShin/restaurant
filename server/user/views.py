@@ -170,7 +170,6 @@ def user_profile():
         resp['user_id'] = resp['id']
         del resp['id']
         resp['balance'] = user.account.balance
-        resp['avatar'] = HTTP_HOST + resp['avatar']
         return jsonify({'success': True, 'data': resp})
     elif request.method == 'PUT':
         data = request.get_json()
@@ -265,6 +264,7 @@ def tags():
 
         tags = Tag.query.filter(Tag.id.in_(exist_tags)).all()
         user.tags = tags
+        user.update_time()
         db.session.commit()
         return jsonify({'success': True})
 

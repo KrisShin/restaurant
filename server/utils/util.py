@@ -50,8 +50,3 @@ def del_invalify_image(path):
 def get_captcha():
     return ''.join(random.choices(string.digits+string.ascii_letters, k=8))
 
-
-def set_tag_color(tags):
-    for t in tags:
-        t['color'] = TAG_COLOR[t['weight']]
-    return tags

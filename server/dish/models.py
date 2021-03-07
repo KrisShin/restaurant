@@ -1,5 +1,6 @@
 from datetime import datetime
 from config.global_params import db
+from config.settings import TAG_COLOR
 
 
 tags = db.Table('rs_dish_tag',
@@ -39,10 +40,12 @@ class Tag(db.Model):
         super(Tag, self).__init__(**kwargs)
     
     def keys(self):
-        return ('id', 'weight', 'name')
+        return ('id', 'weight', 'name', 'color')
     
     def __getitem__(self, item):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''
+        if item=='color':
+            return TAG_COLOR[self.weight]
         return getattr(self, item)
 
 
