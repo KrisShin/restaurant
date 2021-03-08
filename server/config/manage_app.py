@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from flask import Flask
 from .db_config import DBConfig
 from .global_params import db, redis
@@ -20,6 +22,7 @@ def create_app():
         ENV='development',
         REDIS_URL=f"redis://{REDIS_USER}:{REDIS_PWD}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
     )
+    app.permanent_session_lifetime = timedelta(minutes=30) # 设置session到期时间
 
     register_blueprint(app)
     db.init_app(app)

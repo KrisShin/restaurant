@@ -1,12 +1,16 @@
-from functools import wraps
-from config.settings import KEY
-from flask import request, jsonify
 from datetime import datetime
+from functools import wraps
+
+from flask import request, jsonify, session
 import jwt
+
+from config.settings import KEY
 from config.status_code import TOKEN_EXPIRE, INVALID_TOKEN
 
 
 def jwt_auth(auth, alg='HS256'):
+    if not all((session.get('user_name'), session.get('user_id'))):
+        return TOKEN_EXPIRE, False, None, False  # token过期
     try:
         decode_auth = jwt.decode(auth, KEY, alg)
         exp = datetime.utcfromtimestamp(decode_auth['exp'])
@@ -34,7 +38,8 @@ def auth(func):
     return wrapper
 
 
-def get_userId(request):
-    auth = request.headers.get('Authorization')
-    _, _, user_id, _ = jwt_auth(auth.encode())
-    return user_id
+def get_userId():
+    if not all((session.get('user_name'), session.get('user_id'))):
+        session.clear()
+        return
+    return session.get('user_id')
