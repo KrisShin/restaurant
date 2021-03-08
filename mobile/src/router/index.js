@@ -8,6 +8,8 @@ import Profile from '../views/Profile.vue'
 import Auth from '../views/Auth.vue'
 import EditInfo from '../views/EditInfo.vue'
 import ChangePwd from '../views/ChangePwd.vue'
+import Address from '../views/Address.vue'
+import AddrEdit from '../views/AddrEdit.vue'
 
 Vue.use(VueRouter)
 
@@ -56,6 +58,20 @@ const routes = [
     path: '/changePwd',
     name: 'ChangePwd',
     component: ChangePwd,
+    meta: {
+      requireAuth: true
+    }
+  }, {
+    path: '/address',
+    name: 'Address',
+    component: Address,
+    meta: {
+      requireAuth: true
+    }
+  }, {
+    path: '/addrEdit',
+    name: 'AddrEdit',
+    component: AddrEdit,
     meta: {
       requireAuth: true
     }

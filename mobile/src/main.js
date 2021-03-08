@@ -7,7 +7,8 @@ import {
   ActionSheet, Tag, Grid, GridItem, Empty, Toast, NavBar,
   Field, Button, Col, Row, Icon, Image as VanImage,
   Lazyload, Swipe, SwipeItem, Tabbar, TabbarItem,
-  Notify, Cell, CellGroup,Dialog, Uploader
+  Notify, Cell, CellGroup, Dialog, Uploader, AddressList,
+  AddressEdit,
 } from "vant";
 
 
@@ -15,6 +16,8 @@ Vue.config.productionTip = false
 Vue.prototype.$BASE_API = BASE_API
 
 Vue.use(ActionSheet);
+Vue.use(AddressEdit);
+Vue.use(AddressList);
 Vue.use(Button);
 Vue.use(Cell);
 Vue.use(CellGroup);

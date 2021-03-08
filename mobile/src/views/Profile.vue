@@ -54,6 +54,7 @@
       />
       <van-cell title="会员充值" is-link to="/" />
       <van-cell title="修改密码" is-link to="/changePwd" />
+      <van-cell title="地址管理" is-link to="/address" />
     </van-cell-group>
     <van-cell-group title="订单管理">
       <van-cell title="我的订单" :value="orderCount" />
