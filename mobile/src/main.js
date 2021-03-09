@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import store from './store'
 import router from './router'
-import BASE_API from './utils/settings'
+import axios from './axios/http'
 import {
   ActionSheet, Tag, Grid, GridItem, Empty, Toast, NavBar,
   Field, Button, Col, Row, Icon, Image as VanImage,
@@ -13,7 +13,8 @@ import {
 
 
 Vue.config.productionTip = false
-Vue.prototype.$BASE_API = BASE_API
+Vue.prototype.$BASE_API = 'http://127.0.0.1:9096'
+Vue.prototype.$axios = axios
 
 Vue.use(ActionSheet);
 Vue.use(AddressEdit);

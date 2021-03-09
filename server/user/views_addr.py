@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 
 from .models import User, Address
+from config.global_params import db
 from config.status_code import ADDR_DATA_ERROR
 from utils.wraps import auth, get_userId
 
@@ -18,10 +19,7 @@ def oprate_address(addr_id):
         if addr_id != 0:
             return jsonify({'success': False, 'code': ADDR_DATA_ERROR})
         data = request.get_json()
-        '''
-        {'name': 'Goku', 'tel': '12343214123', 'country': '', 'province': '四川省', 'city': '成都市', 'county': '青羊区', 'areaCode': '510105', 'postalCode': '', 'addressDetail': 'kakagogo', 'isDefault': False, 'id': 0}
-        '''
-        user = User.query.filter(id=get_userId(request)).first()
+        user = User.query.filter_by(id=get_userId(request)).first()
         name = data.get('name')
         phone = data.get('tel')
         location = {
@@ -33,9 +31,16 @@ def oprate_address(addr_id):
             'addressDetail': data.get('addressDetail')
         }
         is_default = data.get('isDefault')
+        if is_default:
+            for a in user.addrs:
+                a.is_default = False
         addr = Address(name=name, phone=phone, location=location,
                        user=user, is_default=is_default)
-        return jsonify({'success': True, 'data': request.get_json()})
+        addr.update_time()
+
+        db.session.add(addr)
+        db.session.commit()
+        return jsonify({'success': True})
 
     if request.method == 'PUT':
         addr = Address.query.filter(id=addr_id).first()

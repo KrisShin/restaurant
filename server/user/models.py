@@ -86,6 +86,9 @@ class Address(db.Model):
         elif item == 'isDefault':
             return self.is_default
         return getattr(self, item)
+    
+    def update_time(self):
+        self.update_time = datetime.now()
 
 
 class Account(db.Model):

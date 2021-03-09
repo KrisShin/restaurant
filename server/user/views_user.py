@@ -12,7 +12,7 @@ from config.settings import KEY, HTTP_HOST
 from dish.models import Tag
 from utils.mail_sender import sender
 from utils.rest_redis import r
-from utils.util import make_password, check_password, get_captcha, gen_filename, save_img, del_invalify_image
+from utils.util import make_password, check_password, get_captcha, save_img, del_invalify_image
 from utils.wraps import auth, clear_login_cache, get_userId, set_login_cache
 
 
@@ -145,7 +145,7 @@ def user_change_pwd():
     if old_passwd == new_passwd:
         return jsonify({'success': False, 'code': USER_SAME_PASSWORD})
 
-    real_captcha = r.get_val(f'user_{get_userId(request)}:get_captcha')
+    real_captcha = r.get_val(f'user_{get_userId(request)}:captcha')
     if not real_captcha:
         return jsonify({'success': False, 'code': USER_CAPTCHA_EXPIRED})
     if captcha != real_captcha:
