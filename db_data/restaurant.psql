@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 11.9 (Debian 11.9-0+deb10u1)
--- Dumped by pg_dump version 11.9 (Debian 11.9-0+deb10u1)
+-- Dumped from database version 11.10
+-- Dumped by pg_dump version 11.10
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -95,7 +95,8 @@ CREATE TABLE public.address (
     create_time timestamp without time zone,
     update_time timestamp without time zone,
     is_delete boolean,
-    user_id integer
+    user_id integer,
+    is_default boolean
 );
 
 
@@ -377,8 +378,7 @@ CREATE TABLE public."user" (
     role public.role_enum,
     is_new boolean,
     is_email_active boolean,
-    create_time timestamp without time zone,
-    update_time timestamp without time zone
+    create_time timestamp without time zone
 );
 
 
@@ -479,7 +479,7 @@ COPY public.account (id, user_id, is_vip, start_time, end_time, balance) FROM st
 -- Data for Name: address; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public.address (id, name, phone, location, create_time, update_time, is_delete, user_id) FROM stdin;
+COPY public.address (id, name, phone, location, create_time, update_time, is_delete, user_id, is_default) FROM stdin;
 \.
 
 
@@ -488,8 +488,7 @@ COPY public.address (id, name, phone, location, create_time, update_time, is_del
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
-09e4d40c3b05
-78f4a410e1e2
+c505829170f9
 \.
 
 
@@ -559,25 +558,25 @@ COPY public.rs_user_tag (user_id, tag_id) FROM stdin;
 
 COPY public.tag (id, weight, name, create_time) FROM stdin;
 1	1	蛋糕	2021-01-18 11:47:01.640015
-2	1	奶茶	2021-01-18 11:47:01.642433
 3	1	碳酸饮料	2021-01-18 11:47:01.644337
-4	1	偏甜	2021-01-18 11:47:01.646718
 5	1	咸香	2021-01-18 11:47:01.647717
 6	1	香辣	2021-01-18 11:47:01.648712
-7	1	麻辣	2021-01-18 11:47:01.650707
-8	1	特辣	2021-01-18 11:47:01.651707
-9	1	微辣	2021-01-18 11:47:01.652701
 10	1	中辣	2021-01-18 11:47:01.653701
-11	1	广东辣	2021-01-18 11:47:01.655693
 12	1	少油	2021-01-18 11:47:01.657689
 13	1	少盐	2021-01-18 11:47:01.659683
-14	1	少糖	2021-01-18 11:47:01.660682
 15	1	甜点	2021-01-18 11:47:01.66168
 16	1	海鲜	2021-01-18 11:47:01.663672
 17	1	生鲜	2021-01-18 11:47:01.664669
-18	1	五香	2021-01-18 11:47:01.665667
 19	1	糖醋	2021-01-18 11:47:01.667661
-20	1	甜辣	2021-01-19 17:02:26.443432
+2	3	奶茶	2021-01-18 11:47:01.642433
+4	2	偏甜	2021-01-18 11:47:01.646718
+7	4	麻辣	2021-01-18 11:47:01.650707
+8	5	特辣	2021-01-18 11:47:01.651707
+9	7	微辣	2021-01-18 11:47:01.652701
+11	6	广东辣	2021-01-18 11:47:01.655693
+14	10	少糖	2021-01-18 11:47:01.660682
+18	9	五香	2021-01-18 11:47:01.665667
+20	8	甜辣	2021-01-19 17:02:26.443432
 \.
 
 
@@ -585,12 +584,12 @@ COPY public.tag (id, weight, name, create_time) FROM stdin;
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, role, is_new, is_email_active, create_time, update_time) FROM stdin;
-3	kris	120	13233334444	/static/avatar/default.jpg	2855829886@qq.com	bd204bca717db2893f2c70cd62a71bdb	f	user	t	f	2021-01-25 23:59:15.670682	\N
-4	admin	6	13433334444	/static/avatar/default.jpg	1251124312@qq.com	73ea1c92bb54f5fd20c354f501add709	f	user	t	f	2021-01-26 00:03:34.626408	\N
-5	test	12	14343434343	/static/avatar/default.jpg	666@qq.com	d9aad98fed83cc216be1157d6c282882	f	user	t	f	2021-01-26 00:06:08.025096	\N
-6	test1	32	14344443333	/static/avatar/default.jpg	777@123.com	6ec48fc9bc5ff3561b9320efe6d71e63	f	user	t	f	2021-01-26 00:10:26.805808	\N
-1	admin	20	13355553333	/static/avatar/a3b671925ed14032932820e089383dcd.jpeg	krisshin@88.com	73ea1c92bb54f5fd20c354f501add709	f	admin	t	t	2021-01-24 01:00:55	2021-02-25 23:15:00.237733
+COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, role, is_new, is_email_active, create_time) FROM stdin;
+1	kris	21	13355553333	/static/avatar/OIP.jpeg	krisshin@88.com	73ea1c92bb54f5fd20c354f501add709	f	admin	t	f	2021-01-24 01:00:55
+3	kris	120	13233334444	/static/avatar/default.jpg	2855829886@qq.com	bd204bca717db2893f2c70cd62a71bdb	f	user	t	f	2021-01-25 23:59:15.670682
+4	admin	6	13433334444	/static/avatar/default.jpg	1251124312@qq.com	73ea1c92bb54f5fd20c354f501add709	f	user	t	f	2021-01-26 00:03:34.626408
+5	test	12	14343434343	/static/avatar/default.jpg	666@qq.com	d9aad98fed83cc216be1157d6c282882	f	user	t	f	2021-01-26 00:06:08.025096
+6	test1	32	14344443333	/static/avatar/default.jpg	777@123.com	6ec48fc9bc5ff3561b9320efe6d71e63	f	user	t	f	2021-01-26 00:10:26.805808
 \.
 
 
