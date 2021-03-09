@@ -13,7 +13,7 @@ from dish.models import Tag
 from utils.mail_sender import sender
 from utils.rest_redis import r
 from utils.util import make_password, check_password, get_captcha, gen_filename, save_img, del_invalify_image
-from utils.wraps import auth, get_userId
+from utils.wraps import auth, clear_login_cache, get_userId, set_login_cache
 
 
 user = Blueprint('User', __name__, url_prefix='/user')
@@ -104,7 +104,7 @@ def user_login():
     Authorization = jwt.encode(
         {'user_id': user.id, 'exp': datetime.now() + timedelta(hours=2), 'role': user.role}, KEY, 'HS256')
 
-    r.set_val(f'user:{Authorization}', user.id)
+    set_login_cache(Authorization, user.id)
 
     return jsonify({"success": True, "info": "",  'token': Authorization})
 
@@ -145,13 +145,13 @@ def user_change_pwd():
     if old_passwd == new_passwd:
         return jsonify({'success': False, 'code': SAME_PASSWORD})
 
-    real_captcha = r.get_val(f'user_{get_userId()}:get_captcha')
+    real_captcha = r.get_val(f'user_{get_userId(request)}:get_captcha')
     if not real_captcha:
         return jsonify({'success': False, 'code': CAPTCHA_EXPIRED})
     if captcha != real_captcha:
         return jsonify({'success': False, 'code': WRONG_CAPTCHA})
 
-    user = User.query.filter_by(id=get_userId()).first()
+    user = User.query.filter_by(id=get_userId(request)).first()
     if not check_password(old_passwd, user.password):
         return jsonify({'success': False, 'code': WRONG_PASSWORD})
 
@@ -166,7 +166,7 @@ def user_change_pwd():
 def user_profile():
     '''check user profile'''
     if request.method == 'GET':
-        user = User.query.filter_by(id=get_userId()).first()
+        user = User.query.filter_by(id=get_userId(request)).first()
         resp = dict(user)
         return jsonify({'success': True, 'data': resp})
     elif request.method == 'PUT':
@@ -175,7 +175,7 @@ def user_profile():
         avatar_path = save_img('avatar', base64_str)
         age = data.get('age')
         nickname = data.get('nickname')
-        user = User.query.filter_by(id=get_userId()).first()
+        user = User.query.filter_by(id=get_userId(request)).first()
 
         if avatar_path:
             del_invalify_image(user.avatar)
@@ -196,7 +196,7 @@ def user_edit_email():
     data = request.get_json()
     email = data.get('email')
     captcha = data.get('captcha')
-    user = User.query.filter_by(id=get_userId()).first()
+    user = User.query.filter_by(id=get_userId(request)).first()
     real_cap = r.get_val(f'user_{user.id}:captcha')
     if not real_cap:
         return jsonify({'success': False, 'code': CAPTCHA_EXPIRED})
@@ -238,7 +238,7 @@ def user_avatar():
     data = request.get_json()
     base64_str = data.get('avatar')
     avatar_path = save_img('avatar', base64_str)
-    user = User.query.filter_by(id=get_userId()).first()
+    user = User.query.filter_by(id=get_userId(request)).first()
 
     user.avatar = avatar_path
 
@@ -249,7 +249,7 @@ def user_avatar():
 @user.route('/logout', methods=['POST'])
 @auth
 def user_logout():
-    r.del_val(f'user:{request.headers.get("Authorization")}')
+    clear_login_cache()
     return jsonify({'success': True})
 
 
@@ -258,7 +258,7 @@ def user_logout():
 def tags():
     if request.method == 'PUT':
         data = request.get_json()
-        user = User.query.filter_by(id=get_userId()).first()
+        user = User.query.filter_by(id=get_userId(request)).first()
         exist_tags = data.get('ex_tags')
 
         tags = Tag.query.filter(Tag.id.in_(exist_tags)).all()

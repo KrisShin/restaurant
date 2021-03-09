@@ -10,7 +10,7 @@ address = Blueprint('Address', __name__, url_prefix='/addr')
 @auth
 def oprate_address():
     if request.method == 'GET':
-        user = User.query.filter(id=get_userId()).first()
+        user = User.query.filter(id=get_userId(request)).first()
         addrs = [dict(addr) for addr in user.address]
         return jsonify({'success': True, 'data': {'addresses': addrs}})
     if request.method == 'POST':

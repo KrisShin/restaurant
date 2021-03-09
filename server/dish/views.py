@@ -21,7 +21,7 @@ dish = Blueprint('Dish', __name__, url_prefix='/dish')
 def tags():
     if request.method == 'GET':
         ex_tags = []
-        user_id = get_userId()
+        user_id = get_userId(request)
         ex_ids = []
         if user_id:
             user = User.query.filter_by(id=user_id).first()

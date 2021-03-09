@@ -14,7 +14,7 @@ class Redis(object):
                 res = res.decode()
         return res
 
-    def set_val(self, key: str, val, ex: int):
+    def set_val(self, key: str, val, ex=0):
         try:
             if not isinstance(val, str):
                 val = json.dumps(val)

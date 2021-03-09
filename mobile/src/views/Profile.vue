@@ -1,6 +1,6 @@
 <template>
   <div id="profile">
-    <van-nav-bar title="恰了木有-我的" />
+    <van-nav-bar title="恰了木有-我的" fixed placeholder/>
     <div
       style="padding: 10px; background: aliceblue"
       class="van-hairline--top-bottom"
@@ -64,7 +64,7 @@
     <van-button type="danger" block @click="clickToLogout">
       退出登录
     </van-button>
-    <van-tabbar v-model="active">
+    <van-tabbar v-model="active" placeholder>
       <van-tabbar-item name="recommend" icon="hot-o" to="/">
         推荐
       </van-tabbar-item>

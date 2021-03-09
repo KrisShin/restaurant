@@ -10,7 +10,8 @@ from utils.rest_redis import r
 
 
 def jwt_auth(auth, alg='HS256'):
-    if not r.get_val(f'user:{auth}'):
+    if not r.get_val(f'user:{auth.decode()}'):
+        print(auth.decode())
         return TOKEN_EXPIRE, False, None, False  # token过期
     try:
         decode_auth = jwt.decode(auth, KEY, alg)
@@ -39,8 +40,9 @@ def auth(func):
     return wrapper
 
 
-def set_login_cache(req):
-    r.set_val(f'user:{req.headers.get("Authorization")}', 7200)
+def set_login_cache(auth, user_id):
+    print(auth)
+    r.set_val(f'user:{auth}', user_id, 1800)
 
 
 def clear_login_cache(req):
