@@ -19,7 +19,7 @@ web管理端+移动端使用Vue
 3.  修改config/db_config.py postgresql的主机和端口用户密码
 4.  退出server, 导入db_data文件夹的测试数据恢复数据库 psql -U restuser -h localhost -p 35432 -d restaurant -f db_data/restaurant.psql
 5.  python manage.py 运行服务
-6.  默认管理员账户13355553333, 密码admin123, 默认用户:14343434343, 密码:user123
+6.  默认管理员账户13355553333, 密码admin123, 默认用户:13344443333, 密码:user123
 
 ##### front端
 首先进入front

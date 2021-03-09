@@ -37,6 +37,7 @@ def user_register():
     gender = data.get('gender')
     age = data.get('age')
     email = data.get('email')
+    password = make_password(data.get('password'))
 
     # check phone number
     reg_phone = r'^1[3-9]\d{9}$'
@@ -47,7 +48,6 @@ def user_register():
     if user:
         return jsonify()
 
-    password = make_password(data.get('password'))
     user = User(nickname=nickname, phone=phone, age=age, email=email,
                 password=password, gender=gender, avatar='/static/avatar/default.jpg')
     account = Account(user=user)
@@ -249,7 +249,7 @@ def user_avatar():
 @user.route('/logout', methods=['POST'])
 @auth
 def user_logout():
-    clear_login_cache()
+    clear_login_cache(request)
     return jsonify({'success': True})
 
 

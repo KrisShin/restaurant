@@ -5,8 +5,9 @@ from config.settings import HTTP_HOST
 from dish.models import Tag
 from order.models import Order, Comment
 
-tags = db.Table('rs_user_tag', db.Column('user_id', db.Integer, db.ForeignKey(
-    'user.id'), primary_key=True), db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True))
+tags = db.Table('rs_user_tag', 
+                db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True), 
+                db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True))
 
 
 class User(db.Model):

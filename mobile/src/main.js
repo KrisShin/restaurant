@@ -8,7 +8,7 @@ import {
   Field, Button, Col, Row, Icon, Image as VanImage,
   Lazyload, Swipe, SwipeItem, Tabbar, TabbarItem,
   Notify, Cell, CellGroup, Dialog, Uploader, AddressList,
-  AddressEdit,
+  AddressEdit, Radio, RadioGroup
 } from "vant";
 
 
@@ -31,6 +31,8 @@ Vue.use(Icon);
 Vue.use(Lazyload);
 Vue.use(NavBar)
 Vue.use(Notify);
+Vue.use(Radio);
+Vue.use(RadioGroup);
 Vue.use(Row);
 Vue.use(Swipe);
 Vue.use(SwipeItem);

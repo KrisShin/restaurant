@@ -16,9 +16,25 @@ def oprate_address(addr_id):
 
     if request.method == 'POST':
         if addr_id != 0:
-            return jsonify({'success':False, 'code': ADDR_DATA_ERROR})
+            return jsonify({'success': False, 'code': ADDR_DATA_ERROR})
         data = request.get_json()
-        print(data)
+        '''
+        {'name': 'Goku', 'tel': '12343214123', 'country': '', 'province': '四川省', 'city': '成都市', 'county': '青羊区', 'areaCode': '510105', 'postalCode': '', 'addressDetail': 'kakagogo', 'isDefault': False, 'id': 0}
+        '''
+        user = User.query.filter(id=get_userId(request)).first()
+        name = data.get('name')
+        phone = data.get('tel')
+        location = {
+            'country': data.get('country'),
+            'province': data.get('province'),
+            'city': data.get('city'),
+            'county': data.get('county'),
+            'areaCode': data.get('areaCode'),
+            'addressDetail': data.get('addressDetail')
+        }
+        is_default = data.get('isDefault')
+        addr = Address(name=name, phone=phone, location=location,
+                       user=user, is_default=is_default)
         return jsonify({'success': True, 'data': request.get_json()})
 
     if request.method == 'PUT':

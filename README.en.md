@@ -18,7 +18,7 @@ cd server
 3.  modify config/db_config.py host,username and password and port of postgresql.
 4.  cd .. , import test data in db_data folder: psql -U restuser -h localhost -p 35432 -d restaurant -f db_data/restaurant.psql
 5.  run server: python manage.py
-6.  default administrator account: admin/admin123, default user account: user/user123.
+6.  default administrator account: 13355553333/admin123, default user account: 13344443333/user123.
 
 ##### front端
 cd front

@@ -17,7 +17,7 @@
           type="text"
           maxlength="8"
           label="验证码"
-          palceholder="请输入验证码"
+          placeholder="请输入验证码"
           @input="onChangeCaptcha"
         />
       </van-col>

@@ -41,6 +41,8 @@ def save_img(path, base64_str):
 
 
 def del_invalify_image(path):
+    if path.lower().endswith('default.jpg'):
+        return
     try:
         os.remove(path.replace('/static', 'statics'))
     except Exception as e:
@@ -49,4 +51,3 @@ def del_invalify_image(path):
 
 def get_captcha():
     return ''.join(random.choices(string.digits+string.ascii_letters, k=8))
-
