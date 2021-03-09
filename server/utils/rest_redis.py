@@ -22,5 +22,13 @@ class Redis(object):
         except:
             raise Exception(f'{type(val)} val jsonify failed. :{val}')
 
+    def del_val(self, key):
+        try:
+            redis.delete(key)
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
 
 r = Redis()

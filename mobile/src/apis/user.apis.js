@@ -41,6 +41,10 @@ export function userChangePwdAPI(data) {
     return http.put(`${BASE_API}/user/change_pwd`, data)
 }
 
+export function userTestAPI(data) {
+    return http.post(`${BASE_API}/user/test`, data)
+}
+
 // export function uploadAvatarAPI(params) {
 //     return http.post(`${BASE_API}/user/upload_avatar`, params)
 // }

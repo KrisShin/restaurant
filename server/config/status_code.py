@@ -34,6 +34,3 @@ INVALID_TOKEN = 10011
 
 # 确认密码与新密码不一致
 WRONG_CONFIRM_PASSWORD = 10012
-
-# session中未成功保存登录信息
-EMPTY_SESSION = 10013

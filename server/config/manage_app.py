@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from flask import Flask
 from .db_config import DBConfig
 from .global_params import db, redis
@@ -22,7 +20,6 @@ def create_app():
         SECRET_KEY='di*nq30($jkf(msqp>vm.oh5v79ase0',
         ENV='development',
         REDIS_URL=f"redis://{REDIS_USER}:{REDIS_PWD}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}",
-        PERMANENT_SESSION_LIFETIME=timedelta(hours=2)  # 设置session到期时间
     )
 
     register_blueprint(app)

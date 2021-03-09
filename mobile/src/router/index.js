@@ -87,7 +87,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some((r) => r.meta.requireAuth)) {
-    let isLogin = JSON.parse(localStorage.getItem('isLogin'));
+    let isLogin = JSON.parse(sessionStorage.getItem('isLogin'));
     if (isLogin) {   //判断是否已经登录
       next();
     } else {
@@ -101,7 +101,7 @@ router.beforeEach((to, from, next) => {
   }
   //如果本地 存在 token 则 不允许直接跳转到 登录页面
   if (to.fullPath === "/login") {
-    if (JSON.parse(localStorage.getItem('isLogin'))) {
+    if (JSON.parse(sessionStorage.getItem('isLogin'))) {
       next({
         path: from.fullPath
       });

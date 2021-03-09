@@ -51,6 +51,8 @@ export default {
       var _this = this;
       userLoginAPI({ phone: this.phone, password: this.password, login: true })
         .then((resp) => {
+          var docCookies = document.cookie
+          console.log(docCookies);
           if (resp.data.success) {
             this.$toast("登陆成功");
             _this.$store.dispatch("common/setToken", resp.data.token);

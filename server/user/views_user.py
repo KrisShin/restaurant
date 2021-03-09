@@ -3,9 +3,9 @@ from datetime import datetime, timedelta
 import jwt
 import re
 
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, jsonify, request
 
-from .models import User, Address, Account
+from .models import User, Account
 from config.global_params import db
 from config.status_code import *
 from config.settings import KEY, HTTP_HOST
@@ -103,10 +103,8 @@ def user_login():
 
     Authorization = jwt.encode(
         {'user_id': user.id, 'exp': datetime.now() + timedelta(hours=2), 'role': user.role}, KEY, 'HS256')
-        
-    session.permanent = True
-    session['user_id'] = user.id
-    session['user_name'] = user.nickname
+
+    r.set_val(f'user:{Authorization}', user.id)
 
     return jsonify({"success": True, "info": "",  'token': Authorization})
 
@@ -251,7 +249,7 @@ def user_avatar():
 @user.route('/logout', methods=['POST'])
 @auth
 def user_logout():
-    session.clear()
+    r.del_val(f'user:{request.headers.get("Authorization")}')
     return jsonify({'success': True})
 
 
@@ -286,7 +284,6 @@ def test():
         user = User.query.filter_by(id=1).first()
         # user.password = make_password("admin123")
         # db.session.commit()
-        session['user'] = user.nickname
         return jsonify({'msg': 'method GET ok'})
 
     if request.method == "POST":
@@ -300,7 +297,6 @@ def test():
         #             password=password, gender=gender, avatar='/static/avatar/default.jpg')
         # db.session.add(user)
         # db.session.commit()
-        print(session['user'])
 
         return jsonify({'msg': 'method POST OK'})
     if request.method == "PUT":
