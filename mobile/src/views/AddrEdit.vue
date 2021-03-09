@@ -21,7 +21,12 @@
   </div>
 </template>
 <script>
-import { addrDelAPI } from "../apis/address.api";
+import {
+  addrDelAPI,
+  addrEditAPI,
+  addrAddAPI,
+  addrGetAPI,
+} from "../apis/address.api";
 import areaList from "../assets/Aera.ts";
 export default {
   name: "AddrEdit",
@@ -37,15 +42,30 @@ export default {
         areaCode: "",
         isDefault: false,
       },
+      isEdit: false,
     };
+  },
+  created() {
+    this.isEdit = this.$route.query.id ? true : false;
+    if (this.isEdit) {
+      addrGetAPI({ id: this.$route.query.id }).then((resp) => {
+        if (resp.data.success) {
+          const data = resp.data.data;
+          console.log(data);
+        }
+      });
+    }
   },
   methods: {
     onClickReturn() {
       this.$router.go(-1);
     },
     onSave(val) {
-      console.log(val);
-      this.$toast("save");
+      if (this.isEdit) {
+        addrEditAPI(val);
+      } else {
+        addrAddAPI(val);
+      }
     },
     onDelete(val) {
       console.log(val);

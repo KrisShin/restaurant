@@ -56,11 +56,10 @@ export default {
       this.$router.go(-1);
     },
     onAdd() {
-      this.$toast("新增地址");
+      this.$router.push("/addrEdit?id=");
     },
-    onEdit(item, index) {
-      this.$router.push("/addrEdit");
-      this.$toast("编辑地址:" + index);
+    onEdit(item) {
+      this.$router.push("/addrEdit?id=" + item.id);
     },
   },
 };

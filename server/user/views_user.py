@@ -41,7 +41,7 @@ def user_register():
     # check phone number
     reg_phone = r'^1[3-9]\d{9}$'
     if not re.match(reg_phone, phone):
-        return jsonify({'success': False, 'code': WRONG_PHONE_FORMAT})
+        return jsonify({'success': False, 'code': USER_WRONG_PHONE_FORMAT})
 
     user = User.query.filter_by(phone=phone).first()
     if user:
@@ -99,7 +99,7 @@ def user_login():
         return jsonify({'success': False, 'code': USER_NOT_EXIST})
 
     if not check_password(password, user.password):
-        return jsonify({'success': False, 'code': WRONG_PASSWORD})
+        return jsonify({'success': False, 'code': USER_WRONG_PASSWORD})
 
     Authorization = jwt.encode(
         {'user_id': user.id, 'exp': datetime.now() + timedelta(hours=2), 'role': user.role}, KEY, 'HS256')
@@ -114,11 +114,11 @@ def send_captcha_email():
     data = request.get_json()
     email = data.get('email')
     if not email:
-        return jsonify({'success': False, 'code': EMAIL_NOT_EXIST})
+        return jsonify({'success': False, 'code': USER_EMAIL_NOT_EXIST})
     user = User.query.filter_by(email=email).first()
 
     if r.get_val(f'user_{user.id}:captcha'):
-        return jsonify({'success': False, 'code': CAPTCHA_SENDED})
+        return jsonify({'success': False, 'code': USER_CAPTCHA_SENDED})
 
     captcha = get_captcha()
     mail = {
@@ -140,20 +140,20 @@ def user_change_pwd():
     confirm_passwd = data.get('cfm_password')
 
     if confirm_passwd != new_passwd:
-        return jsonify({'success': False, 'code': WRONG_CONFIRM_PASSWORD})
+        return jsonify({'success': False, 'code': USER_WRONG_CONFIRM_PASSWORD})
 
     if old_passwd == new_passwd:
-        return jsonify({'success': False, 'code': SAME_PASSWORD})
+        return jsonify({'success': False, 'code': USER_SAME_PASSWORD})
 
     real_captcha = r.get_val(f'user_{get_userId(request)}:get_captcha')
     if not real_captcha:
-        return jsonify({'success': False, 'code': CAPTCHA_EXPIRED})
+        return jsonify({'success': False, 'code': USER_CAPTCHA_EXPIRED})
     if captcha != real_captcha:
-        return jsonify({'success': False, 'code': WRONG_CAPTCHA})
+        return jsonify({'success': False, 'code': USER_WRONG_CAPTCHA})
 
     user = User.query.filter_by(id=get_userId(request)).first()
     if not check_password(old_passwd, user.password):
-        return jsonify({'success': False, 'code': WRONG_PASSWORD})
+        return jsonify({'success': False, 'code': USER_WRONG_PASSWORD})
 
     user.password = make_password(new_passwd)
     user.update_time()
@@ -199,9 +199,9 @@ def user_edit_email():
     user = User.query.filter_by(id=get_userId(request)).first()
     real_cap = r.get_val(f'user_{user.id}:captcha')
     if not real_cap:
-        return jsonify({'success': False, 'code': CAPTCHA_EXPIRED})
+        return jsonify({'success': False, 'code': USER_CAPTCHA_EXPIRED})
     if (not captcha) or (captcha != real_cap):
-        return jsonify({'success': False, 'code': WRONG_CAPTCHA})
+        return jsonify({'success': False, 'code': USER_WRONG_CAPTCHA})
 
     ex_user = User.query.filter(
         User.email == email, User.id != user.id).first()

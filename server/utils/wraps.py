@@ -5,14 +5,14 @@ from flask import request, jsonify
 import jwt
 
 from config.settings import KEY
-from config.status_code import TOKEN_EXPIRE, INVALID_TOKEN
+from config.status_code import USER_TOKEN_EXPIRE, USER_INVALID_TOKEN
 from utils.rest_redis import r
 
 
 def jwt_auth(auth, alg='HS256'):
     if not r.get_val(f'user:{auth.decode()}'):
         print(auth.decode())
-        return TOKEN_EXPIRE, False, None, False  # token过期
+        return USER_TOKEN_EXPIRE, False, None, False  # token过期
     try:
         decode_auth = jwt.decode(auth, KEY, alg)
         exp = datetime.utcfromtimestamp(decode_auth['exp'])
@@ -20,12 +20,12 @@ def jwt_auth(auth, alg='HS256'):
         if (exp - datetime.now()).total_seconds() > 0:
             return 200, True, decode_auth['user_id'], admin
     except jwt.exceptions.ExpiredSignatureError:
-        return TOKEN_EXPIRE, False, None, False  # token过期
+        return USER_TOKEN_EXPIRE, False, None, False  # token过期
     except Exception as e:
         print(e)
-        return INVALID_TOKEN, False, None, False
+        return USER_INVALID_TOKEN, False, None, False
     else:
-        return INVALID_TOKEN, False, None, False  # 非法的token
+        return USER_INVALID_TOKEN, False, None, False  # 非法的token
 
 
 def auth(func):

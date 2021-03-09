@@ -8,12 +8,15 @@ import BASE_API from '../utils/settings'
 export function addrListAPI(data) {
     return http.get(`${BASE_API}/addr/`, data)
 }
+export function addrGetAPI(data) {
+    return http.get(`${BASE_API}/addr/${data.id}`, data)
+}
 export function addrAddAPI(data) {
-    return http.post(`${BASE_API}/addr/`, data)
+    return http.post(`${BASE_API}/addr/${0}`, data)
 }
 export function addrEditAPI(data) {
-    return http.put(`${BASE_API}/addr/`, data)
+    return http.put(`${BASE_API}/addr/${data.id}`, data)
 }
 export function addrDelAPI(data) {
-    return http.delete(`${BASE_API}/addr/`, data)
+    return http.delete(`${BASE_API}/addr/${data.id}`, data)
 }
