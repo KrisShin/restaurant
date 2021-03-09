@@ -103,6 +103,7 @@ def user_login():
 
     Authorization = jwt.encode(
         {'user_id': user.id, 'exp': datetime.now() + timedelta(hours=2), 'role': user.role}, KEY, 'HS256')
+        
     session.permanent = True
     session['user_id'] = user.id
     session['user_name'] = user.nickname
@@ -169,9 +170,6 @@ def user_profile():
     if request.method == 'GET':
         user = User.query.filter_by(id=get_userId()).first()
         resp = dict(user)
-        resp['user_id'] = resp['id']
-        del resp['id']
-        resp['balance'] = user.account.balance
         return jsonify({'success': True, 'data': resp})
     elif request.method == 'PUT':
         data = request.get_json()

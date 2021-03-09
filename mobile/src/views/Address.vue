@@ -54,10 +54,11 @@ export default {
       this.$router.go(-1);
     },
     onAdd() {
-      Toast("新增地址");
+      this.$toast("新增地址");
     },
     onEdit(item, index) {
-      Toast("编辑地址:" + index);
+      this.$router.push('/addrEdit')
+      this.$toast("编辑地址:" + index);
     },
   },
 };

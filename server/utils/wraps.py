@@ -5,12 +5,12 @@ from flask import request, jsonify, session
 import jwt
 
 from config.settings import KEY
-from config.status_code import TOKEN_EXPIRE, INVALID_TOKEN
+from config.status_code import EMPTY_SESSION, TOKEN_EXPIRE, INVALID_TOKEN
 
 
 def jwt_auth(auth, alg='HS256'):
     if not all((session.get('user_name'), session.get('user_id'))):
-        return TOKEN_EXPIRE, False, None, False  # token过期
+        return EMPTY_SESSION, False, None, False  # token过期
     try:
         decode_auth = jwt.decode(auth, KEY, alg)
         exp = datetime.utcfromtimestamp(decode_auth['exp'])

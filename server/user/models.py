@@ -40,11 +40,13 @@ class User(db.Model):
 
     def keys(self):
         '''serilize object keys'''
-        return ('id', 'avatar', 'email', 'balance', 'nickname', 'gender', 'is_email_active', 'is_new', 'phone', 'age', 'tags')
+        return ('user_id', 'avatar', 'email', 'balance', 'nickname', 'gender', 'is_email_active', 'is_new', 'phone', 'age', 'tags')
 
     def __getitem__(self, item):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''
-        if item == 'avatar':
+        if item == 'user_id':
+            return getattr(self, 'id')
+        elif item == 'avatar':
             return HTTP_HOST + getattr(self, item)
         elif item == 'balance':
             return self.account.balance
@@ -65,6 +67,7 @@ class Address(db.Model):
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime)
     is_delete = db.Column(db.Boolean, default=0)  # 是否已删除
+    is_default = db.Column(db.Boolean, default=0)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     order = db.relationship("Order", backref="address",
@@ -72,6 +75,16 @@ class Address(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Address, self).__init__(**kwargs)
+
+    def keys(self):
+        return ('id', 'name', 'tel', 'location', 'isDefault')
+
+    def __getitem__(self, item):
+        if item == 'tel':
+            return self.phone
+        elif item == 'isDefault':
+            return self.is_default
+        return getattr(self, item)
 
 
 class Account(db.Model):

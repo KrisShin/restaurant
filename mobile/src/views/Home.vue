@@ -114,13 +114,21 @@ export default {
     this.isLogin = this.$store.state.common.isLogin;
     this.userInfo = this.$store.state.common.userInfo;
 
+    this.active = "recommend";
     if (this.isLogin && !this.userInfo) {
-      userInfoAPI().then((resp) => {
-        this.active = "recommend";
-        var userInfo = resp.data.data;
-        this.$store.dispatch("common/setUserInfo", userInfo);
-        this.userInfo = this.$store.state.common.userInfo;
-      });
+      userInfoAPI()
+        .then((resp) => {
+          if (resp.data.success) {
+            var userInfo = resp.data.data;
+            this.$store.dispatch("common/setUserInfo", userInfo);
+            this.userInfo = userInfo;
+          } else if (resp.data.code == 10010) {
+            console.error("登录过期");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   },
   methods: {
