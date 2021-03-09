@@ -4,6 +4,8 @@
       title="恰了木有-修改密码"
       @click-left="onClickReturn"
       left-arrow
+      fixed
+      placeholder
     />
     <div>
       <van-row type="flex" justify="space-around">

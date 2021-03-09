@@ -1,6 +1,12 @@
 <template>
   <div id="auth">
-    <van-nav-bar title="恰了木有-认证" @click-left="onClickReturn" left-arrow />
+    <van-nav-bar
+      title="恰了木有-认证"
+      @click-left="onClickReturn"
+      left-arrow
+      fixed
+      placeholder
+    />
     <van-row type="flex" justify="center">
       <div>邮箱: {{ email }} 验证码已发送</div>
     </van-row>

@@ -1,6 +1,12 @@
 <template>
   <div id="login">
-    <van-nav-bar title="恰了木有-登录" @click-left="onClickReturn" left-arrow />
+    <van-nav-bar
+      title="恰了木有-登录"
+      @click-left="onClickReturn"
+      left-arrow
+      fixed
+      placeholder
+    />
     <div>
       <!-- 输入手机号，调起手机号键盘 -->
       <van-field

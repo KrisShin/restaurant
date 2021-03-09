@@ -1,6 +1,12 @@
 <template>
   <div id="register">
-    <van-nav-bar title="恰了木有-注册" @click-left="onClickReturn" left-arrow />
+    <van-nav-bar
+      title="恰了木有-注册"
+      @click-left="onClickReturn"
+      left-arrow
+      fixed
+      placeholder
+    />
     <div>
       <van-field
         v-model="user_form.nickname"

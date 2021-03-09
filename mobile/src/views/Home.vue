@@ -1,6 +1,11 @@
 <template>
   <div id="home">
-    <van-nav-bar title="恰了木有" @click-right="onClickSearch">
+    <van-nav-bar
+      title="恰了木有"
+      @click-right="onClickSearch"
+      fixed
+      placeholder
+    >
       <template #left v-if="isLogin">
         <van-image
           width="35"
@@ -40,7 +45,7 @@
       </div>
     </div>
     <div>
-      <van-tabbar v-model="active" v-if="isLogin">
+      <van-tabbar v-model="active" v-if="isLogin" placeholder>
         <van-tabbar-item name="recommend" icon="hot-o"> 推荐 </van-tabbar-item>
         <van-tabbar-item name="cart" icon="shopping-cart-o" badge="20">
           购物车
@@ -49,7 +54,7 @@
           我的
         </van-tabbar-item>
       </van-tabbar>
-      <van-tabbar v-model="active" v-else>
+      <van-tabbar placeholder v-model="active" v-else>
         <van-tabbar-item name="login" icon="hot-o" @click="onClickToLogin">
           登录
         </van-tabbar-item>

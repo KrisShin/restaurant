@@ -4,6 +4,8 @@
       title="恰了木有-地址管理"
       @click-left="onClickReturn"
       left-arrow
+      fixed
+      placeholder
     />
     <div>
       <van-address-edit

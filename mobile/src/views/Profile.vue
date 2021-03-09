@@ -1,6 +1,6 @@
 <template>
   <div id="profile">
-    <van-nav-bar title="恰了木有-我的" fixed placeholder/>
+    <van-nav-bar title="恰了木有-我的" fixed placeholder />
     <div
       style="padding: 10px; background: aliceblue"
       class="van-hairline--top-bottom"

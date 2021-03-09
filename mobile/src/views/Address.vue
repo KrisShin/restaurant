@@ -4,6 +4,8 @@
       title="恰了木有-地址管理"
       @click-left="onClickReturn"
       left-arrow
+      fixed
+      placeholder
     />
     <div>
       <van-address-list
@@ -57,7 +59,7 @@ export default {
       this.$toast("新增地址");
     },
     onEdit(item, index) {
-      this.$router.push('/addrEdit')
+      this.$router.push("/addrEdit");
       this.$toast("编辑地址:" + index);
     },
   },
