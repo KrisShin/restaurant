@@ -310,7 +310,7 @@ ALTER TABLE public.rs_user_tag OWNER TO restuser;
 
 CREATE TABLE public.tag (
     id integer NOT NULL,
-    weight integer,
+    weight integer DEFAULT 1 NOT NULL,
     name character varying(32),
     create_time timestamp without time zone
 );
@@ -524,6 +524,22 @@ COPY public.rs_user_tag (user_id, tag_id) FROM stdin;
 --
 
 COPY public.tag (id, weight, name, create_time) FROM stdin;
+1	1	甜点	2021-03-10 17:39:06
+2	1	奶茶	\N
+3	1	麻辣	\N
+4	1	海鲜	\N
+5	1	冰饮	\N
+6	1	重辣	\N
+7	1	特辣	\N
+8	1	微辣	\N
+9	1	广东辣	\N
+10	1	不吃葱	\N
+11	1	不吃香菜	\N
+12	1	腌制品	\N
+13	1	热饮	\N
+14	1	半糖	\N
+15	1	果汁	\N
+16	1	时蔬	\N
 \.
 
 
@@ -575,7 +591,7 @@ SELECT pg_catalog.setval('public.dish_id_seq', 1, false);
 -- Name: tag_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.tag_id_seq', 1, false);
+SELECT pg_catalog.setval('public.tag_id_seq', 16, true);
 
 
 --
