@@ -34,7 +34,7 @@ def user_register():
     data = request.get_json()
     nickname = data.get('nickname')
     phone = data.get('phone')
-    gender = data.get('gender')
+    gender = bool(data.get('gender'))
     age = data.get('age')
     email = data.get('email')
     password = make_password(data.get('password'))

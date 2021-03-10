@@ -51,8 +51,10 @@ export default {
       addrGetAPI({ id: this.$route.query.id }).then((resp) => {
         if (resp.data.success) {
           const data = resp.data.data;
-          console.log(data);
-          this.address = data
+          this.address = data;
+        }else if (resp.data.code==1103){
+          this.$toast.fail('地址不存在')
+          this.$router.go(-1)
         }
       });
     }
@@ -100,8 +102,10 @@ export default {
       }
       addrDelAPI(val).then((resp) => {
         if (resp.data.success) {
-          console.log(resp.data.data);
+          this.$router.go(-1);
           this.$toast.success("删除完成");
+        } else {
+          this.$toast.fail("删除失败");
         }
       });
     },

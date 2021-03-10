@@ -87,13 +87,11 @@ class Address(db.Model):
         elif item == 'isDefault':
             return self.is_default
         elif item == 'addressDetail':
-            addrDetial = json.loads(self.location).get('addressDetail')
-            return addrDetial
+            return self.location.get('addressDetail')
         elif item == 'areaCode':
-            areaCode = json.loads(self.location).get('areaCode')
-            return areaCode
+            return self.location.get('areaCode')
         elif item == 'address':
-            return ''.join(self.location.values())
+            return ' '.join(self.location.values())[:-7]
 
         return getattr(self, item)
 

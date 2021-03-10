@@ -39,11 +39,12 @@
         direction="horizontal"
         style="padding: 10px 10px 10px 7px; font-size: 14px"
         class="van-hairline--bottom"
+        @change="show"
       >
         <span style="color: red">*</span>
         <span style="margin: 0 70px 0 3px; color: #646566">性别</span>
-        <van-radio name="0">女</van-radio>
-        <van-radio name="1">男</van-radio>
+        <van-radio name=''>女</van-radio>
+        <van-radio name='1'>男</van-radio>
       </van-radio-group>
 
       <van-field
@@ -84,7 +85,7 @@ export default {
       user_form: {
         nickname: "",
         phone: "",
-        gender: "0",
+        gender: '',
         age: 0,
         email: null,
         password: "",
@@ -95,6 +96,9 @@ export default {
     this.user_form.phone = this.$route.query.phone;
   },
   methods: {
+    show(){
+      console.log(Boolean(this.user_form.gender))
+    },
     age_formatter() {
       if (this.user_form.age <= 0) return (this.user_form.age = 0);
       if (this.user_form.age >= 120) return (this.user_form.age = 120);

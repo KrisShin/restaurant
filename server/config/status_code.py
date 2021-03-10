@@ -42,3 +42,6 @@ ADDR_DATA_ERROR = 1101
 
 # 地址数据不完整
 ADDR_LACK_DATA = 1102
+
+# 地址数据不完整
+ADDR_NOT_EXISIT = 1103
