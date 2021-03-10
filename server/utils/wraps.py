@@ -1,12 +1,18 @@
-from functools import wraps
-from config.settings import KEY
-from flask import request, jsonify
 from datetime import datetime
+from functools import wraps
+
+from flask import request, jsonify
 import jwt
-from config.status_code import TOKEN_EXPIRE, INVALID_TOKEN
+
+from config.settings import KEY
+from config.status_code import USER_TOKEN_EXPIRE, USER_INVALID_TOKEN
+from utils.rest_redis import r
 
 
 def jwt_auth(auth, alg='HS256'):
+    if not r.get_val(f'user:{auth.decode()}'):
+        print(auth.decode())
+        return USER_TOKEN_EXPIRE, False, None, False  # token过期
     try:
         decode_auth = jwt.decode(auth, KEY, alg)
         exp = datetime.utcfromtimestamp(decode_auth['exp'])
@@ -14,12 +20,12 @@ def jwt_auth(auth, alg='HS256'):
         if (exp - datetime.now()).total_seconds() > 0:
             return 200, True, decode_auth['user_id'], admin
     except jwt.exceptions.ExpiredSignatureError:
-        return TOKEN_EXPIRE, False, None, False  # token过期
+        return USER_TOKEN_EXPIRE, False, None, False  # token过期
     except Exception as e:
         print(e)
-        return INVALID_TOKEN, False, None, False
+        return USER_INVALID_TOKEN, False, None, False
     else:
-        return INVALID_TOKEN, False, None, False  # 非法的token
+        return USER_INVALID_TOKEN, False, None, False  # 非法的token
 
 
 def auth(func):
@@ -30,11 +36,18 @@ def auth(func):
         if status == 200 and auth_s and role:
             return func(*args, **kwargs)
         else:
-            return jsonify({'msg': 'fail', 'status': status}), status
+            return jsonify({'success': False, 'code': status})# , status
     return wrapper
 
 
-def get_userId(request):
-    auth = request.headers.get('Authorization')
-    _, _, user_id, _ = jwt_auth(auth.encode())
-    return user_id
+def set_login_cache(auth, user_id):
+    print(auth)
+    r.set_val(f'user:{auth}', user_id, 1800)
+
+
+def clear_login_cache(req):
+    r.del_val(f'user:{req.headers.get("Authorization")}')
+
+
+def get_userId(req):
+    return r.get_val(f'user:{req.headers.get("Authorization")}')

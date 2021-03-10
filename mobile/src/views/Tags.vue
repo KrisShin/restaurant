@@ -1,6 +1,12 @@
 <template>
   <div id="tags">
-    <van-nav-bar title="恰了木有-标签" @click-left="onClickReturn" left-arrow />
+    <van-nav-bar
+      title="恰了木有-标签"
+      @click-left="onClickReturn"
+      left-arrow
+      fixed
+      placeholder
+    />
     <div id="content" style="padding: 2%">
       <div id="choosen" flex="1">
         <van-row>

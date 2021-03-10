@@ -1,46 +1,46 @@
-import http from '../utils/http'
-import BASE_API from '../utils/settings'
-/**
- *  @parms resquest 请求地址 例如：http://197.82.15.15:8088/request/...
- *  @param '/testIp'代表vue-cil中config，index.js中配置的代理
- */
+import axios from '../axios'
+
 
 export function userLoginAPI(data) {
-    return http.post(`${BASE_API}/user/login`, data)
+    return axios.post(`/user/login`, data)
 }
 
 export function userLogoutAPI(data) {
-    return http.post(`${BASE_API}/user/logout`, data)
+    return axios.post(`/user/logout`, data)
 }
 
 export function userInfoAPI(data) {
-    return http.get(`${BASE_API}/user/profile`, data)
+    return axios.get(`/user/profile`, data)
 }
 
 export function userEditInfoAPI(data) {
-    return http.put(`${BASE_API}/user/profile`, data)
+    return axios.put(`/user/profile`, data)
 }
 
 export function userChangeEmailAPI(data) {
-    return http.put(`${BASE_API}/user/change_email`, data)
+    return axios.put(`/user/change_email`, data)
 }
 
 export function userRegisterAPI(data) {
-    return http.post(`${BASE_API}/user/register`, data)
+    return axios.post(`/user/register`, data)
 }
 
 export function userTagsAPI(data) {
-    return http.put(`${BASE_API}/user/tags`, data)
+    return axios.put(`/user/tags`, data)
 }
 
 export function userSendCaptchaAPI(data) {
-    return http.post(`${BASE_API}/user/email_captcha`, data)
+    return axios.post(`/user/email_captcha`, data)
 }
 
 export function userChangePwdAPI(data) {
-    return http.put(`${BASE_API}/user/change_pwd`, data)
+    return axios.put(`/user/change_pwd`, data)
+}
+
+export function userTestAPI(data) {
+    return axios.post(`/user/test`, data)
 }
 
 // export function uploadAvatarAPI(params) {
-//     return http.post(`${BASE_API}/user/upload_avatar`, params)
+//     return axios.post(`/user/upload_avatar`, params)
 // }

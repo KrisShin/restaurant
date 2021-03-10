@@ -26,6 +26,9 @@ class Dish(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Dish, self).__init__(**kwargs)
+    
+    def set_update_time(self):
+        self.update_time = datetime.now()
 
 
 class Tag(db.Model):

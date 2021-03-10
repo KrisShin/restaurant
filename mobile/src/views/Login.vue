@@ -1,6 +1,12 @@
 <template>
   <div id="login">
-    <van-nav-bar title="恰了木有-登录" @click-left="onClickReturn" left-arrow />
+    <van-nav-bar
+      title="恰了木有-登录"
+      @click-left="onClickReturn"
+      left-arrow
+      fixed
+      placeholder
+    />
     <div>
       <!-- 输入手机号，调起手机号键盘 -->
       <van-field
@@ -8,14 +14,14 @@
         type="text"
         maxlength="11"
         label="手机号"
-        palceholder="请输入手机号"
+        placeholder="请输入手机号"
       />
       <!-- 输入密码 -->
       <van-field
         v-model="password"
         type="password"
         label="密码"
-        palceholder="请输入密码"
+        placeholder="请输入密码"
       />
     </div>
 
@@ -23,7 +29,7 @@
       <van-button type="primary" @click="onClickLogin"> 登录 </van-button>
     </van-row>
     <van-row type="flex" justify="center">
-      <span style="font-size: 11px">
+      <span style="font-size: 11px; margin-top: 20px">
         没有账号?
         <router-link to="/register">注册</router-link>
       </span>
@@ -42,7 +48,9 @@ export default {
       password: "",
     };
   },
-
+  created() {
+    this.phone = this.$route.query.phone;
+  },
   methods: {
     onClickReturn() {
       this.$router.replace("/");

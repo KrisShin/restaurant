@@ -3,18 +3,17 @@ from datetime import datetime, timedelta
 import jwt
 import re
 
-from flask import Blueprint, json, jsonify, request, session
-from flask_cors import cross_origin
+from flask import Blueprint, jsonify, request
 
-from .models import User, Address, Account
+from .models import User, Account
 from config.global_params import db
 from config.status_code import *
 from config.settings import KEY, HTTP_HOST
 from dish.models import Tag
 from utils.mail_sender import sender
 from utils.rest_redis import r
-from utils.util import make_password, check_password, get_captcha, gen_filename, save_img, del_invalify_image
-from utils.wraps import auth, get_userId
+from utils.util import make_password, check_password, get_captcha, save_img, del_invalify_image
+from utils.wraps import auth, clear_login_cache, get_userId, set_login_cache
 
 
 user = Blueprint('User', __name__, url_prefix='/user')
@@ -35,20 +34,20 @@ def user_register():
     data = request.get_json()
     nickname = data.get('nickname')
     phone = data.get('phone')
-    gender = data.get('gender')
+    gender = bool(data.get('gender'))
     age = data.get('age')
     email = data.get('email')
+    password = make_password(data.get('password'))
 
     # check phone number
     reg_phone = r'^1[3-9]\d{9}$'
     if not re.match(reg_phone, phone):
-        return jsonify({'success': False, 'code': WRONG_PHONE_FORMAT})
+        return jsonify({'success': False, 'code': USER_WRONG_PHONE_FORMAT})
 
     user = User.query.filter_by(phone=phone).first()
     if user:
-        return jsonify()
+        return jsonify({'success': False, 'code': USER_EXISTED})
 
-    password = make_password(data.get('password'))
     user = User(nickname=nickname, phone=phone, age=age, email=email,
                 password=password, gender=gender, avatar='/static/avatar/default.jpg')
     account = Account(user=user)
@@ -56,9 +55,7 @@ def user_register():
     db.session.add(account)
     db.session.commit()
 
-    return jsonify({'success': True,
-                    'info': '',
-                    'data': {'phone': phone}})
+    return jsonify({'success': True, 'info': ''})
 
 
 @user.route('/login', methods=['POST'])
@@ -100,10 +97,12 @@ def user_login():
         return jsonify({'success': False, 'code': USER_NOT_EXIST})
 
     if not check_password(password, user.password):
-        return jsonify({'success': False, 'code': WRONG_PASSWORD})
+        return jsonify({'success': False, 'code': USER_WRONG_PASSWORD})
 
     Authorization = jwt.encode(
         {'user_id': user.id, 'exp': datetime.now() + timedelta(hours=2), 'role': user.role}, KEY, 'HS256')
+
+    set_login_cache(Authorization, user.id)
 
     return jsonify({"success": True, "info": "",  'token': Authorization})
 
@@ -113,11 +112,11 @@ def send_captcha_email():
     data = request.get_json()
     email = data.get('email')
     if not email:
-        return jsonify({'success': False, 'code': EMAIL_NOT_EXIST})
+        return jsonify({'success': False, 'code': USER_EMAIL_NOT_EXIST})
     user = User.query.filter_by(email=email).first()
 
     if r.get_val(f'user_{user.id}:captcha'):
-        return jsonify({'success': False, 'code': CAPTCHA_SENDED})
+        return jsonify({'success': False, 'code': USER_CAPTCHA_SENDED})
 
     captcha = get_captcha()
     mail = {
@@ -139,23 +138,23 @@ def user_change_pwd():
     confirm_passwd = data.get('cfm_password')
 
     if confirm_passwd != new_passwd:
-        return jsonify({'success': False, 'code': WRONG_CONFIRM_PASSWORD})
+        return jsonify({'success': False, 'code': USER_WRONG_CONFIRM_PASSWORD})
 
     if old_passwd == new_passwd:
-        return jsonify({'success': False, 'code': SAME_PASSWORD})
+        return jsonify({'success': False, 'code': USER_SAME_PASSWORD})
 
-    real_captcha = r.get_val(f'user_{get_userId(request)}:get_captcha')
+    real_captcha = r.get_val(f'user_{get_userId(request)}:captcha')
     if not real_captcha:
-        return jsonify({'success': False, 'code': CAPTCHA_EXPIRED})
+        return jsonify({'success': False, 'code': USER_CAPTCHA_EXPIRED})
     if captcha != real_captcha:
-        return jsonify({'success': False, 'code': WRONG_CAPTCHA})
+        return jsonify({'success': False, 'code': USER_WRONG_CAPTCHA})
 
     user = User.query.filter_by(id=get_userId(request)).first()
     if not check_password(old_passwd, user.password):
-        return jsonify({'success': False, 'code': WRONG_PASSWORD})
+        return jsonify({'success': False, 'code': USER_WRONG_PASSWORD})
 
     user.password = make_password(new_passwd)
-    user.update_time()
+    user.set_update_time()
     db.session.commit()
     return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
@@ -167,14 +166,13 @@ def user_profile():
     if request.method == 'GET':
         user = User.query.filter_by(id=get_userId(request)).first()
         resp = dict(user)
-        resp['user_id'] = resp['id']
-        del resp['id']
-        resp['balance'] = user.account.balance
         return jsonify({'success': True, 'data': resp})
     elif request.method == 'PUT':
         data = request.get_json()
         base64_str = data.get('avatar')
-        avatar_path = save_img('avatar', base64_str)
+        avatar_path = None
+        if base64_str:
+            avatar_path = save_img('avatar', base64_str)
         age = data.get('age')
         nickname = data.get('nickname')
         user = User.query.filter_by(id=get_userId(request)).first()
@@ -186,7 +184,7 @@ def user_profile():
             user.age = age
         if nickname:
             user.nickname = nickname
-        user.update_time()
+        user.set_update_time()
         db.session.commit()
 
         return jsonify({'success': True, 'data': {'avatar': HTTP_HOST+user.avatar}})
@@ -201,9 +199,9 @@ def user_edit_email():
     user = User.query.filter_by(id=get_userId(request)).first()
     real_cap = r.get_val(f'user_{user.id}:captcha')
     if not real_cap:
-        return jsonify({'success': False, 'code': CAPTCHA_EXPIRED})
+        return jsonify({'success': False, 'code': USER_CAPTCHA_EXPIRED})
     if (not captcha) or (captcha != real_cap):
-        return jsonify({'success': False, 'code': WRONG_CAPTCHA})
+        return jsonify({'success': False, 'code': USER_WRONG_CAPTCHA})
 
     ex_user = User.query.filter(
         User.email == email, User.id != user.id).first()
@@ -213,7 +211,7 @@ def user_edit_email():
     user.email = email
     if not user.is_email_active:
         user.is_email_active = True
-    user.update_time()
+    user.set_update_time()
     db.session.commit()
     return jsonify({'success': True})
 
@@ -223,7 +221,7 @@ def user_edit_email():
 # def user_add_tags():
 #     data = request.get_json()
 #     tags = data.get('tags')
-#     user = User.query.filter_by(id=get_userId(request)).first()
+#     user = User.query.filter_by(id=get_userId()).first()
 
 #     tag_list = list()
 #     for tag in tags:
@@ -234,23 +232,24 @@ def user_edit_email():
 #     return jsonify({'success': True})
 
 
-@user.route('/upload_avatar', methods=['POST'])
-@auth
-def user_avatar():
-    data = request.get_json()
-    base64_str = data.get('avatar')
-    avatar_path = save_img('avatar', base64_str)
-    user = User.query.filter_by(id=get_userId(request)).first()
+# @user.route('/upload_avatar', methods=['POST'])
+# @auth
+# def user_avatar():
+#     data = request.get_json()
+#     base64_str = data.get('avatar')
+#     avatar_path = save_img('avatar', base64_str)
+#     user = User.query.filter_by(id=get_userId(request)).first()
 
-    user.avatar = avatar_path
+#     user.avatar = avatar_path
 
-    db.session.commit()
-    return jsonify({'success': True})
+#     db.session.commit()
+#     return jsonify({'success': True})
 
 
 @user.route('/logout', methods=['POST'])
 @auth
 def user_logout():
+    clear_login_cache(request)
     return jsonify({'success': True})
 
 
@@ -264,7 +263,7 @@ def tags():
 
         tags = Tag.query.filter(Tag.id.in_(exist_tags)).all()
         user.tags = tags
-        user.update_time()
+        user.set_update_time()
         db.session.commit()
         return jsonify({'success': True})
 
@@ -278,13 +277,13 @@ def test():
     # sender.send('krisshin@88.com', mail)
     # return jsonify({'msg': 'ok'})
     # data = request.get_json()
-    # print(get_userId(request))
+    # print(get_userId())
     if request.method == "GET":
         # user = User.query.filter_by(id=1).first()
         # print(user.age, current_user.age)
         user = User.query.filter_by(id=1).first()
-        user.password = make_password("admin123")
-        db.session.commit()
+        # user.password = make_password("admin123")
+        # db.session.commit()
         return jsonify({'msg': 'method GET ok'})
 
     if request.method == "POST":

@@ -1,6 +1,11 @@
 <template>
   <div id="home">
-    <van-nav-bar title="恰了木有" @click-right="onClickSearch">
+    <van-nav-bar
+      title="恰了木有"
+      @click-right="onClickSearch"
+      fixed
+      placeholder
+    >
       <template #left v-if="isLogin">
         <van-image
           width="35"
@@ -40,7 +45,7 @@
       </div>
     </div>
     <div>
-      <van-tabbar v-model="active" v-if="isLogin">
+      <van-tabbar v-model="active" v-if="isLogin" placeholder>
         <van-tabbar-item name="recommend" icon="hot-o"> 推荐 </van-tabbar-item>
         <van-tabbar-item name="cart" icon="shopping-cart-o" badge="20">
           购物车
@@ -49,7 +54,7 @@
           我的
         </van-tabbar-item>
       </van-tabbar>
-      <van-tabbar v-model="active" v-else>
+      <van-tabbar placeholder v-model="active" v-else>
         <van-tabbar-item name="login" icon="hot-o" @click="onClickToLogin">
           登录
         </van-tabbar-item>
@@ -93,7 +98,7 @@
 </template>
 
 <script>
-import { userInfoAPI } from "../apis/user.apis";
+import { userInfoAPI, userTestAPI } from "../apis/user.apis";
 
 export default {
   name: "Home",
@@ -114,13 +119,19 @@ export default {
     this.isLogin = this.$store.state.common.isLogin;
     this.userInfo = this.$store.state.common.userInfo;
 
+    this.active = "recommend";
     if (this.isLogin && !this.userInfo) {
-      userInfoAPI().then((resp) => {
-        this.active = "recommend";
-        var userInfo = resp.data.data;
-        this.$store.dispatch("common/setUserInfo", userInfo);
-        this.userInfo = this.$store.state.common.userInfo;
-      });
+      userInfoAPI()
+        .then((resp) => {
+          if (resp.data.success) {
+            var userInfo = resp.data.data;
+            this.$store.dispatch("common/setUserInfo", userInfo);
+            this.userInfo = userInfo;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   },
   methods: {
@@ -142,7 +153,7 @@ export default {
       // this.$toast("退出登录");
       // this.$store.dispatch("common/setToken", null);
       // this.$store.dispatch("common/setUserInfo", null);
-      // userLogoutAPI();
+      userTestAPI();
       // this.$router.go(0);
     },
     // test_get: function () {

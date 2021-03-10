@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 11.9 (Debian 11.9-0+deb10u1)
--- Dumped by pg_dump version 11.9 (Debian 11.9-0+deb10u1)
+-- Dumped from database version 11.10
+-- Dumped by pg_dump version 11.10
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -91,11 +91,12 @@ CREATE TABLE public.address (
     id integer NOT NULL,
     name character varying(128) NOT NULL,
     phone character varying(11) NOT NULL,
-    location character varying(512) NOT NULL,
+    location json NOT NULL,
     create_time timestamp without time zone,
-    update_time timestamp without time zone,
     is_delete boolean,
-    user_id integer
+    is_default boolean,
+    user_id integer,
+    update_time timestamp without time zone
 );
 
 
@@ -141,10 +142,10 @@ ALTER TABLE public.alembic_version OWNER TO restuser;
 CREATE TABLE public.comment (
     id integer NOT NULL,
     content character varying(512),
-    rate public.rate_enum,
     create_time timestamp without time zone,
     user_id integer,
-    order_id character varying(32)
+    order_id character varying(32),
+    rate public.rate_enum
 );
 
 
@@ -268,28 +269,6 @@ CREATE TABLE public."order" (
 ALTER TABLE public."order" OWNER TO restuser;
 
 --
--- Name: order_id_seq; Type: SEQUENCE; Schema: public; Owner: restuser
---
-
-CREATE SEQUENCE public.order_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.order_id_seq OWNER TO restuser;
-
---
--- Name: order_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: restuser
---
-
-ALTER SEQUENCE public.order_id_seq OWNED BY public."order".id;
-
-
---
 -- Name: rs_dish_order; Type: TABLE; Schema: public; Owner: restuser
 --
 
@@ -331,7 +310,7 @@ ALTER TABLE public.rs_user_tag OWNER TO restuser;
 
 CREATE TABLE public.tag (
     id integer NOT NULL,
-    weight integer,
+    weight integer DEFAULT 1 NOT NULL,
     name character varying(32),
     create_time timestamp without time zone
 );
@@ -374,10 +353,10 @@ CREATE TABLE public."user" (
     email character varying(128),
     password character varying(128) NOT NULL,
     gender boolean,
-    role public.role_enum,
     is_new boolean,
     is_email_active boolean,
     create_time timestamp without time zone,
+    role public.role_enum,
     update_time timestamp without time zone
 );
 
@@ -442,13 +421,6 @@ ALTER TABLE ONLY public.dish ALTER COLUMN id SET DEFAULT nextval('public.dish_id
 
 
 --
--- Name: order id; Type: DEFAULT; Schema: public; Owner: restuser
---
-
-ALTER TABLE ONLY public."order" ALTER COLUMN id SET DEFAULT nextval('public.order_id_seq'::regclass);
-
-
---
 -- Name: tag id; Type: DEFAULT; Schema: public; Owner: restuser
 --
 
@@ -467,11 +439,7 @@ ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_
 --
 
 COPY public.account (id, user_id, is_vip, start_time, end_time, balance) FROM stdin;
-1	1	f	\N	\N	500.579999999999984
-4	5	f	2021-01-26 00:06:08.026358	\N	0
-2	3	f	2021-01-25 23:59:15.675769	\N	0
-3	4	f	2021-01-26 00:03:34.627109	\N	0
-5	6	f	2021-01-26 00:10:26.806766	\N	0
+1	1	f	\N	\N	0
 \.
 
 
@@ -479,7 +447,10 @@ COPY public.account (id, user_id, is_vip, start_time, end_time, balance) FROM st
 -- Data for Name: address; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public.address (id, name, phone, location, create_time, update_time, is_delete, user_id) FROM stdin;
+COPY public.address (id, name, phone, location, create_time, is_delete, is_default, user_id, update_time) FROM stdin;
+4	吴京666	14332133214	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u4e50\\u5c71\\u5e02", "county": "\\u5e02\\u4e2d\\u533a", "addressDetail": "\\u7231\\u7684\\u65b9\\u5f0f", "areaCode": "511102"}	2021-03-10 17:06:36.564771	f	f	1	2021-03-10 17:21:46.903463
+5	惊雷1	14323565443	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u7709\\u5c71\\u5e02", "county": "\\u6d2a\\u96c5\\u53bf", "addressDetail": "\\u554a\\u9876\\u9876\\u9876\\u9876\\u9876", "areaCode": "511423"}	2021-03-10 17:10:13.899607	f	t	1	2021-03-10 17:21:54.548244
+6	make	15523432345	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u5df4\\u4e2d\\u5e02", "county": "\\u5357\\u6c5f\\u53bf", "addressDetail": "\\u4e94\\u9053\\u53e3\\u804c\\u4e1a\\u6280\\u672f\\u5b66\\u9662", "areaCode": "511922"}	2021-03-10 17:22:33.883056	f	f	1	2021-03-10 17:22:33.882059
 \.
 
 
@@ -488,8 +459,7 @@ COPY public.address (id, name, phone, location, create_time, update_time, is_del
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
-09e4d40c3b05
-78f4a410e1e2
+2fb408e9f32c
 \.
 
 
@@ -497,7 +467,7 @@ COPY public.alembic_version (version_num) FROM stdin;
 -- Data for Name: comment; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public.comment (id, content, rate, create_time, user_id, order_id) FROM stdin;
+COPY public.comment (id, content, create_time, user_id, order_id, rate) FROM stdin;
 \.
 
 
@@ -546,10 +516,6 @@ COPY public.rs_dish_tag (dish_id, tag_id) FROM stdin;
 --
 
 COPY public.rs_user_tag (user_id, tag_id) FROM stdin;
-1	2
-1	1
-1	4
-1	15
 \.
 
 
@@ -558,26 +524,22 @@ COPY public.rs_user_tag (user_id, tag_id) FROM stdin;
 --
 
 COPY public.tag (id, weight, name, create_time) FROM stdin;
-1	1	蛋糕	2021-01-18 11:47:01.640015
-2	1	奶茶	2021-01-18 11:47:01.642433
-3	1	碳酸饮料	2021-01-18 11:47:01.644337
-4	1	偏甜	2021-01-18 11:47:01.646718
-5	1	咸香	2021-01-18 11:47:01.647717
-6	1	香辣	2021-01-18 11:47:01.648712
-7	1	麻辣	2021-01-18 11:47:01.650707
-8	1	特辣	2021-01-18 11:47:01.651707
-9	1	微辣	2021-01-18 11:47:01.652701
-10	1	中辣	2021-01-18 11:47:01.653701
-11	1	广东辣	2021-01-18 11:47:01.655693
-12	1	少油	2021-01-18 11:47:01.657689
-13	1	少盐	2021-01-18 11:47:01.659683
-14	1	少糖	2021-01-18 11:47:01.660682
-15	1	甜点	2021-01-18 11:47:01.66168
-16	1	海鲜	2021-01-18 11:47:01.663672
-17	1	生鲜	2021-01-18 11:47:01.664669
-18	1	五香	2021-01-18 11:47:01.665667
-19	1	糖醋	2021-01-18 11:47:01.667661
-20	1	甜辣	2021-01-19 17:02:26.443432
+1	1	甜点	2021-03-10 17:39:06
+2	1	奶茶	\N
+3	1	麻辣	\N
+4	1	海鲜	\N
+5	1	冰饮	\N
+6	1	重辣	\N
+7	1	特辣	\N
+8	1	微辣	\N
+9	1	广东辣	\N
+10	1	不吃葱	\N
+11	1	不吃香菜	\N
+12	1	腌制品	\N
+13	1	热饮	\N
+14	1	半糖	\N
+15	1	果汁	\N
+16	1	时蔬	\N
 \.
 
 
@@ -585,12 +547,8 @@ COPY public.tag (id, weight, name, create_time) FROM stdin;
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, role, is_new, is_email_active, create_time, update_time) FROM stdin;
-3	kris	120	13233334444	/static/avatar/default.jpg	2855829886@qq.com	bd204bca717db2893f2c70cd62a71bdb	f	user	t	f	2021-01-25 23:59:15.670682	\N
-4	admin	6	13433334444	/static/avatar/default.jpg	1251124312@qq.com	73ea1c92bb54f5fd20c354f501add709	f	user	t	f	2021-01-26 00:03:34.626408	\N
-5	test	12	14343434343	/static/avatar/default.jpg	666@qq.com	d9aad98fed83cc216be1157d6c282882	f	user	t	f	2021-01-26 00:06:08.025096	\N
-6	test1	32	14344443333	/static/avatar/default.jpg	777@123.com	6ec48fc9bc5ff3561b9320efe6d71e63	f	user	t	f	2021-01-26 00:10:26.805808	\N
-1	admin	20	13355553333	/static/avatar/a3b671925ed14032932820e089383dcd.jpeg	krisshin@88.com	73ea1c92bb54f5fd20c354f501add709	f	admin	t	t	2021-01-24 01:00:55	2021-02-25 23:15:00.237733
+COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, is_new, is_email_active, create_time, role, update_time) FROM stdin;
+1	test	14	13433334444	/static/avatar/6ea1ebed100443f697d6921594d9f19a.jpeg	krisshin@aliyun.com	17defb64b6cb7dfe8619d77debf8ef8b	f	t	f	2021-03-10 16:55:54.282033	admin	2021-03-10 16:57:55.228703
 \.
 
 
@@ -598,14 +556,14 @@ COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, r
 -- Name: account_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.account_id_seq', 5, true);
+SELECT pg_catalog.setval('public.account_id_seq', 1, true);
 
 
 --
 -- Name: address_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.address_id_seq', 1, false);
+SELECT pg_catalog.setval('public.address_id_seq', 6, true);
 
 
 --
@@ -630,24 +588,17 @@ SELECT pg_catalog.setval('public.dish_id_seq', 1, false);
 
 
 --
--- Name: order_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
---
-
-SELECT pg_catalog.setval('public.order_id_seq', 1, false);
-
-
---
 -- Name: tag_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.tag_id_seq', 20, true);
+SELECT pg_catalog.setval('public.tag_id_seq', 16, true);
 
 
 --
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.user_id_seq', 6, true);
+SELECT pg_catalog.setval('public.user_id_seq', 1, true);
 
 
 --

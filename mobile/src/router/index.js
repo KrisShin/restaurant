@@ -8,6 +8,8 @@ import Profile from '../views/Profile.vue'
 import Auth from '../views/Auth.vue'
 import EditInfo from '../views/EditInfo.vue'
 import ChangePwd from '../views/ChangePwd.vue'
+import Address from '../views/Address.vue'
+import AddrEdit from '../views/AddrEdit.vue'
 
 Vue.use(VueRouter)
 
@@ -59,11 +61,25 @@ const routes = [
     meta: {
       requireAuth: true
     }
+  }, {
+    path: '/address',
+    name: 'Address',
+    component: Address,
+    meta: {
+      requireAuth: true
+    }
+  }, {
+    path: '/addrEdit',
+    name: 'AddrEdit',
+    component: AddrEdit,
+    meta: {
+      requireAuth: true
+    }
   }
 ]
 
 const router = new VueRouter({
-  // mode: 'history',
+  // mode: 'hash',
   // base: process.env.BASE_URL,
   routes
 })
@@ -71,7 +87,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some((r) => r.meta.requireAuth)) {
-    let isLogin = JSON.parse(localStorage.getItem('isLogin'));
+    let isLogin = JSON.parse(sessionStorage.getItem('isLogin'));
     if (isLogin) {   //判断是否已经登录
       next();
     } else {
@@ -85,7 +101,7 @@ router.beforeEach((to, from, next) => {
   }
   //如果本地 存在 token 则 不允许直接跳转到 登录页面
   if (to.fullPath === "/login") {
-    if (JSON.parse(localStorage.getItem('isLogin'))) {
+    if (JSON.parse(sessionStorage.getItem('isLogin'))) {
       next({
         path: from.fullPath
       });

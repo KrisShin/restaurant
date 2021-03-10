@@ -4,6 +4,8 @@
       title="恰了木有-编辑信息"
       @click-left="onClickReturn"
       left-arrow
+      fixed
+      placeholder
     />
     <van-cell-group title="头像">
       <van-row type="flex" justify="center">

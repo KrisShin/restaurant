@@ -25,6 +25,9 @@ class Order(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(**kwargs)
+    
+    def set_update_time(self):
+        self.update_time = datetime.now()
 
 
 class Comment(db.Model):

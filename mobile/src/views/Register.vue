@@ -1,11 +1,17 @@
 <template>
   <div id="register">
-    <van-nav-bar title="恰了木有-注册" @click-left="onClickReturn" left-arrow />
+    <van-nav-bar
+      title="恰了木有-注册"
+      @click-left="onClickReturn"
+      left-arrow
+      fixed
+      placeholder
+    />
     <div>
       <van-field
         v-model="user_form.nickname"
         label="昵称"
-        palceholder="请输入昵称"
+        placeholder="请输入昵称"
         required
         clearable
         maxLength="20"
@@ -14,25 +20,38 @@
         v-model="user_form.phone"
         type="digit"
         maxLength="11"
+        placeholder="请输入手机号"
         required
         label="手机号"
-        palceholder="请输入手机号"
         clearable
       />
       <van-field
         v-model="user_form.age"
         type="digit"
         required
+        placeholder="请输入年龄"
         :formatter="age_formatter"
         format-trigger="onBlur"
         label="年龄"
-        palceholder="请输入年龄"
       />
+      <van-radio-group
+        v-model="user_form.gender"
+        direction="horizontal"
+        style="padding: 10px 10px 10px 7px; font-size: 14px"
+        class="van-hairline--bottom"
+        @change="show"
+      >
+        <span style="color: red">*</span>
+        <span style="margin: 0 70px 0 3px; color: #646566">性别</span>
+        <van-radio name=''>女</van-radio>
+        <van-radio name='1'>男</van-radio>
+      </van-radio-group>
+
       <van-field
         v-model="user_form.email"
         type="email"
         label="邮箱"
-        palceholder="请输入邮箱"
+        placeholder="请输入邮箱"
         required
         clearable
       />
@@ -41,7 +60,7 @@
         type="password"
         required
         label="密码"
-        palceholder="请输入密码"
+        placeholder="请输入密码"
         clearable
       />
     </div>
@@ -49,7 +68,7 @@
       <van-button type="primary" @click="onClickRegister"> 注册 </van-button>
     </van-row>
     <van-row type="flex" justify="center">
-      <span style="font-size: 11px">
+      <span style="font-size: 11px; margin-top: 20px">
         已有账号?
         <router-link to="/login">登录</router-link>
       </span>
@@ -66,6 +85,7 @@ export default {
       user_form: {
         nickname: "",
         phone: "",
+        gender: '',
         age: 0,
         email: null,
         password: "",
@@ -73,9 +93,12 @@ export default {
     };
   },
   created() {
-    this.phone = this.$route.query.phone;
+    this.user_form.phone = this.$route.query.phone;
   },
   methods: {
+    show(){
+      console.log(Boolean(this.user_form.gender))
+    },
     age_formatter() {
       if (this.user_form.age <= 0) return (this.user_form.age = 0);
       if (this.user_form.age >= 120) return (this.user_form.age = 120);
@@ -90,8 +113,11 @@ export default {
         .then((res) => {
           var data = res.data;
           if (data.success) {
-            this.$toast("注册成功");
-            setTimeout(_this.$router.push("/login?phone=" + data.phone), 1000);
+            this.$toast.success("注册成功");
+            setTimeout(_this.$router.push("/login?phone=" + _this.user_form.phone), 1000);
+          } else if (data.code == 1002) {
+            this.$toast.fail("手机号已注册");
+            setTimeout(_this.$router.push("/login?phone=" + _this.user_form.phone), 1000);
           }
         })
         .catch((err) => {

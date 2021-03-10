@@ -4,32 +4,29 @@
       title="恰了木有-修改密码"
       @click-left="onClickReturn"
       left-arrow
+      fixed
+      placeholder
     />
     <div>
-      <van-row type="flex" justify="space-around">
-        <van-col span="17">
-          <van-field v-model="email" palceholder="请输入验证码" readonly />
-        </van-col>
-        <van-col span="5">
-          <van-button type="primary" size="small" @click="onClickSendCaptcha">
-            发送
-          </van-button>
-        </van-col>
-      </van-row>
       <van-field
         v-model="captcha"
-        label="验证码"
-        palceholder="请输入验证码"
-        required
+        center
         clearable
-        maxLength="8"
-      />
+        :label="email"
+        placeholder="请输入短信验证码"
+      >
+        <template #button>
+          <van-button size="small" type="primary" @click="onClickSendCaptcha">
+            发送验证码
+          </van-button>
+        </template>
+      </van-field>
       <van-field
         v-model="oldPassword"
         type="password"
         required
         label="旧密码"
-        palceholder="请输入旧密码"
+        placeholder="请输入旧密码"
         maxLength="20"
         clearable
       />
@@ -38,7 +35,7 @@
         type="password"
         required
         label="新密码"
-        palceholder="请输入新密码"
+        placeholder="请输入新密码"
         maxLength="20"
         clearable
       />
@@ -47,7 +44,7 @@
         type="password"
         required
         label="新密码"
-        palceholder="请确认新密码"
+        placeholder="请确认新密码"
         :error-message="cmfErrMsg"
         @input="checkCfmPassword"
         maxLength="20"
@@ -90,7 +87,7 @@ export default {
   },
   methods: {
     onClickReturn() {
-      this.$router.go("-1");
+      this.$router.go(-1);
     },
     onClickChangePwd() {
       if (
@@ -141,12 +138,10 @@ export default {
     },
     checkCfmPassword() {
       if (!this.newPassword) {
-        console.log(1);
         this.isSubmitAllowed = true;
         return;
       }
       if (!this.cfmPassword) {
-        console.log(2);
         this.isSubmitAllowed = true;
         return;
       }

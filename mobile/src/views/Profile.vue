@@ -1,6 +1,6 @@
 <template>
   <div id="profile">
-    <van-nav-bar title="恰了木有-我的" />
+    <van-nav-bar title="恰了木有-我的" fixed placeholder />
     <div
       style="padding: 10px; background: aliceblue"
       class="van-hairline--top-bottom"
@@ -54,6 +54,7 @@
       />
       <van-cell title="会员充值" is-link to="/" />
       <van-cell title="修改密码" is-link to="/changePwd" />
+      <van-cell title="地址管理" is-link to="/address" />
     </van-cell-group>
     <van-cell-group title="订单管理">
       <van-cell title="我的订单" :value="orderCount" />
@@ -63,7 +64,7 @@
     <van-button type="danger" block @click="clickToLogout">
       退出登录
     </van-button>
-    <van-tabbar v-model="active">
+    <van-tabbar v-model="active" placeholder>
       <van-tabbar-item name="recommend" icon="hot-o" to="/">
         推荐
       </van-tabbar-item>
