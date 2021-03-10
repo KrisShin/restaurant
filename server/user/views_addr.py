@@ -76,7 +76,7 @@ def operate_an_addr(addr, user, data):
     if is_default:
         for a in user.address:
             a.is_default = False
-    if not all((name,phone,location,user,addr)):
+    if not all((name, phone, location, user, addr)):
         return
     addr.name = name,
     addr.phone = phone

@@ -42,12 +42,35 @@
             <img width="100%" v-lazy="image" />
           </van-swipe-item>
         </van-swipe>
+        <van-card
+          num="2"
+          price="2.00"
+          desc="描述信息"
+          title="商品标题"
+          thumb="https://img01.yzcdn.cn/vant/ipad.jpeg"
+        >
+          <template #tags>
+            <van-tag plain type="danger">标签</van-tag>
+            <van-tag plain type="danger">标签</van-tag>
+          </template>
+          <template #footer>
+            <van-button size="mini">按钮</van-button>
+            <van-button size="mini">按钮</van-button>
+          </template>
+        </van-card>
       </div>
     </div>
     <div>
       <van-tabbar v-model="active" v-if="isLogin" placeholder>
-        <van-tabbar-item name="recommend" icon="hot-o"> 推荐 </van-tabbar-item>
-        <van-tabbar-item name="cart" icon="shopping-cart-o" badge="20">
+        <van-tabbar-item name="recommend" icon="hot-o" to="/">
+          推荐
+        </van-tabbar-item>
+        <van-tabbar-item
+          name="cart"
+          icon="shopping-cart-o"
+          badge="20"
+          to="/cart"
+        >
           购物车
         </van-tabbar-item>
         <van-tabbar-item name="my" icon="user-o" badge="20" to="/profile">

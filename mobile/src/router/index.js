@@ -10,6 +10,7 @@ import EditInfo from '../views/EditInfo.vue'
 import ChangePwd from '../views/ChangePwd.vue'
 import Address from '../views/Address.vue'
 import AddrEdit from '../views/AddrEdit.vue'
+import Cart from '../views/Cart.vue'
 
 Vue.use(VueRouter)
 
@@ -72,6 +73,13 @@ const routes = [
     path: '/addrEdit',
     name: 'AddrEdit',
     component: AddrEdit,
+    meta: {
+      requireAuth: true
+    }
+  }, {
+    path: '/cart',
+    name: 'Cart',
+    component: Cart,
     meta: {
       requireAuth: true
     }
