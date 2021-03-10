@@ -25,8 +25,8 @@ service.interceptors.response.use(res => {
     const { success, code } = res.data
     if (success === false && (code === 10010 || code === 10011)) {
         // 1. 提示
-        if (code === 10010) vue.$toast.fail('token失效')
-        else if (code === 10011) vue.$toast.fail('token无效')
+        if (code === 10010) vue.$toast.fail('登录过期, 请重新登录')
+        else if (code === 10011) vue.$toast.fail('口令无效, 请重新登录')
 
         // 2. 删除本地token 和 user_info
         vue.$store.dispatch("common/setToken", null);

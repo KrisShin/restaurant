@@ -1,12 +1,13 @@
-# -*- coding: utf-8 -*-
 from datetime import datetime
+import json
+
 from config.global_params import db
 from config.settings import HTTP_HOST
 from dish.models import Tag
 from order.models import Order, Comment
 
-tags = db.Table('rs_user_tag', 
-                db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True), 
+tags = db.Table('rs_user_tag',
+                db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
                 db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True))
 
 
@@ -55,7 +56,7 @@ class User(db.Model):
             return [dict(tag) for tag in self.tags]
         return getattr(self, item)
 
-    def update_time(self):
+    def set_update_time(self):
         self.update_time = datetime.now()
 
 
@@ -64,7 +65,7 @@ class Address(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     phone = db.Column(db.String(11), nullable=False)
-    location = db.Column(db.String(512), nullable=False)  # 昵称
+    location = db.Column(db.JSON(), nullable=False)
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime)
     is_delete = db.Column(db.Boolean, default=0)  # 是否已删除
@@ -78,16 +79,25 @@ class Address(db.Model):
         super(Address, self).__init__(**kwargs)
 
     def keys(self):
-        return ('id', 'name', 'tel', 'location', 'isDefault')
+        return ('id', 'name', 'tel', 'address', 'addressDetail', 'areaCode', 'isDefault')
 
     def __getitem__(self, item):
         if item == 'tel':
             return self.phone
         elif item == 'isDefault':
             return self.is_default
+        elif item == 'addressDetail':
+            addrDetial = json.loads(self.location).get('addressDetail')
+            return addrDetial
+        elif item == 'areaCode':
+            areaCode = json.loads(self.location).get('areaCode')
+            return areaCode
+        elif item == 'address':
+            return ''.join(self.location.values())
+
         return getattr(self, item)
-    
-    def update_time(self):
+
+    def set_update_time(self):
         self.update_time = datetime.now()
 
 

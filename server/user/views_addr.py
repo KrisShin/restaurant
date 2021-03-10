@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, request, jsonify
 
 from .models import User, Address
@@ -32,9 +34,9 @@ def oprate_address(addr_id):
         }
         is_default = data.get('isDefault')
         if is_default:
-            for a in user.addrs:
+            for a in user.address:
                 a.is_default = False
-        addr = Address(name=name, phone=phone, location=location,
+        addr = Address(name=name, phone=phone, location=json.dumps(location),
                        user=user, is_default=is_default)
         addr.update_time()
 

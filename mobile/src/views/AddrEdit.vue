@@ -52,6 +52,7 @@ export default {
         if (resp.data.success) {
           const data = resp.data.data;
           console.log(data);
+          this.address = data
         }
       });
     }
@@ -62,13 +63,41 @@ export default {
     },
     onSave(val) {
       if (this.isEdit) {
-        addrEditAPI(val);
+        addrEditAPI(val)
+          .then((res) => {
+            if (res.data.success) {
+              this.$router.go(-1);
+              this.$toast.success("新增地址成功");
+            } else if (res.data.code == 1101) {
+              this.$toast.fail("地址数据有误");
+            } else if (res.data.code == 1102) {
+              this.$toast.fail("地址数据不完整");
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
       } else {
-        addrAddAPI(val);
+        addrAddAPI(val)
+          .then((res) => {
+            if (res.data.success) {
+              this.$router.go(-1);
+              this.$toast.success("新增地址成功");
+            } else if (res.data.code == 1101) {
+              this.$toast.fail("地址数据有误");
+            } else if (res.data.code == 1102) {
+              this.$toast.fail("地址数据不完整");
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
       }
     },
     onDelete(val) {
-      console.log(val);
+      if (val.id == 0) {
+        return;
+      }
       addrDelAPI(val).then((resp) => {
         if (resp.data.success) {
           console.log(resp.data.data);
