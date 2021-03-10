@@ -1,5 +1,4 @@
 import json
-from server.config.status_code import ADDR_LACK_DATA
 
 from flask import Blueprint, request, jsonify
 
