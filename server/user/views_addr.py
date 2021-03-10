@@ -12,7 +12,7 @@ address = Blueprint('Address', __name__, url_prefix='/addr')
 @auth
 def oprate_address(addr_id):
     if request.method == 'GET':
-        addr = Address.query.filter(id=addr_id).first()
+        addr = Address.query.filter_by(id=addr_id).first()
         return jsonify({'success': True, 'data': dict(addr)})
 
     if request.method == 'POST':
@@ -43,17 +43,17 @@ def oprate_address(addr_id):
         return jsonify({'success': True})
 
     if request.method == 'PUT':
-        addr = Address.query.filter(id=addr_id).first()
+        addr = Address.query.filter_by(id=addr_id).first()
         return jsonify({'success': True, 'data': request.get_json()})
 
     if request.method == 'DELETE':
-        addr = Address.query.filter(id=addr_id).first()
+        addr = Address.query.filter_by(id=addr_id).first()
         return jsonify({'success': True, 'data': request.get_json()})
 
 
-@address.route('/addrList', methods=["GET"])
+@address.route('/list', methods=["GET"])
 @auth
 def get_addr_by_id():
-    user = User.query.filter(id=get_userId(request)).first()
+    user = User.query.filter_by(id=get_userId(request)).first()
     addrs = [dict(addr) for addr in user.address]
     return jsonify({'success': True, 'data': {'addresses': addrs}})

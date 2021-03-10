@@ -1,3 +1,6 @@
+import axios from '../axios'
+
+
 export function dishTagsAPI(data) {
-    return this.$axios.get(`/dish/tags`, data)
+    return axios.get(`/dish/tags`, data)
 }

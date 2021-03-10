@@ -46,7 +46,7 @@ def user_register():
 
     user = User.query.filter_by(phone=phone).first()
     if user:
-        return jsonify()
+        return jsonify({'success': False, 'code': USER_EXISTED})
 
     user = User(nickname=nickname, phone=phone, age=age, email=email,
                 password=password, gender=gender, avatar='/static/avatar/default.jpg')
@@ -55,9 +55,7 @@ def user_register():
     db.session.add(account)
     db.session.commit()
 
-    return jsonify({'success': True,
-                    'info': '',
-                    'data': {'phone': phone}})
+    return jsonify({'success': True, 'info': ''})
 
 
 @user.route('/login', methods=['POST'])
@@ -172,7 +170,9 @@ def user_profile():
     elif request.method == 'PUT':
         data = request.get_json()
         base64_str = data.get('avatar')
-        avatar_path = save_img('avatar', base64_str)
+        avatar_path = None
+        if base64_str:
+            avatar_path = save_img('avatar', base64_str)
         age = data.get('age')
         nickname = data.get('nickname')
         user = User.query.filter_by(id=get_userId(request)).first()
@@ -232,18 +232,18 @@ def user_edit_email():
 #     return jsonify({'success': True})
 
 
-@user.route('/upload_avatar', methods=['POST'])
-@auth
-def user_avatar():
-    data = request.get_json()
-    base64_str = data.get('avatar')
-    avatar_path = save_img('avatar', base64_str)
-    user = User.query.filter_by(id=get_userId(request)).first()
+# @user.route('/upload_avatar', methods=['POST'])
+# @auth
+# def user_avatar():
+#     data = request.get_json()
+#     base64_str = data.get('avatar')
+#     avatar_path = save_img('avatar', base64_str)
+#     user = User.query.filter_by(id=get_userId(request)).first()
 
-    user.avatar = avatar_path
+#     user.avatar = avatar_path
 
-    db.session.commit()
-    return jsonify({'success': True})
+#     db.session.commit()
+#     return jsonify({'success': True})
 
 
 @user.route('/logout', methods=['POST'])

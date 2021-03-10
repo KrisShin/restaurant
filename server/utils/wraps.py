@@ -36,7 +36,7 @@ def auth(func):
         if status == 200 and auth_s and role:
             return func(*args, **kwargs)
         else:
-            return jsonify({'success': False, 'status': status}), status
+            return jsonify({'success': False, 'code': status})# , status
     return wrapper
 
 

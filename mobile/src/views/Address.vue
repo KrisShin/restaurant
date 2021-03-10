@@ -21,6 +21,7 @@
   </div>
 </template>
 <script>
+import { addrListAPI } from "../apis/address.api";
 export default {
   name: "Address",
   data() {
@@ -50,6 +51,9 @@ export default {
         },
       ],
     };
+  },
+  created() {
+    addrListAPI().then().catch(()=>{});
   },
   methods: {
     onClickReturn() {

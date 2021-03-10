@@ -109,8 +109,11 @@ export default {
         .then((res) => {
           var data = res.data;
           if (data.success) {
-            this.$toast("注册成功");
-            setTimeout(_this.$router.push("/login?phone=" + data.phone), 1000);
+            this.$toast.success("注册成功");
+            setTimeout(_this.$router.push("/login?phone=" + _this.user_form.phone), 1000);
+          } else if (data.code == 1002) {
+            this.$toast.fail("手机号已注册");
+            setTimeout(_this.$router.push("/login?phone=" + _this.user_form.phone), 1000);
           }
         })
         .catch((err) => {

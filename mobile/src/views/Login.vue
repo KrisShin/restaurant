@@ -48,7 +48,9 @@ export default {
       password: "",
     };
   },
-
+  created() {
+    this.phone = this.$route.query.phone;
+  },
   methods: {
     onClickReturn() {
       this.$router.replace("/");

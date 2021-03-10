@@ -2,7 +2,6 @@ import Vue from 'vue'
 import App from './App.vue'
 import store from './store'
 import router from './router'
-import axios from './axios/http'
 import {
   ActionSheet, Tag, Grid, GridItem, Empty, Toast, NavBar,
   Field, Button, Col, Row, Icon, Image as VanImage,
@@ -14,7 +13,6 @@ import {
 
 Vue.config.productionTip = false
 Vue.prototype.$BASE_API = 'http://127.0.0.1:9096'
-Vue.prototype.$axios = axios
 
 Vue.use(ActionSheet);
 Vue.use(AddressEdit);
@@ -44,8 +42,10 @@ Vue.use(Toast)
 Vue.use(Uploader);
 Vue.use(VanImage);
 
-new Vue({
+var vue = new Vue({
   store,
   router,
   render: h => h(App),
 }).$mount('#app')
+
+export default vue

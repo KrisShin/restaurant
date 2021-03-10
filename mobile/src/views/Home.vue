@@ -127,8 +127,6 @@ export default {
             var userInfo = resp.data.data;
             this.$store.dispatch("common/setUserInfo", userInfo);
             this.userInfo = userInfo;
-          } else if (resp.data.code == 10010) {
-            console.error("登录过期");
           }
         })
         .catch((err) => {
