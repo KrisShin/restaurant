@@ -154,7 +154,7 @@ def user_change_pwd():
         return jsonify({'success': False, 'code': USER_WRONG_PASSWORD})
 
     user.password = make_password(new_passwd)
-    user.update_time()
+    user.set_update_time()
     db.session.commit()
     return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
@@ -184,7 +184,7 @@ def user_profile():
             user.age = age
         if nickname:
             user.nickname = nickname
-        user.update_time()
+        user.set_update_time()
         db.session.commit()
 
         return jsonify({'success': True, 'data': {'avatar': HTTP_HOST+user.avatar}})
@@ -211,7 +211,7 @@ def user_edit_email():
     user.email = email
     if not user.is_email_active:
         user.is_email_active = True
-    user.update_time()
+    user.set_update_time()
     db.session.commit()
     return jsonify({'success': True})
 
@@ -263,7 +263,7 @@ def tags():
 
         tags = Tag.query.filter(Tag.id.in_(exist_tags)).all()
         user.tags = tags
-        user.update_time()
+        user.set_update_time()
         db.session.commit()
         return jsonify({'success': True})
 

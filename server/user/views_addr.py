@@ -38,7 +38,7 @@ def oprate_address(addr_id):
                 a.is_default = False
         addr = Address(name=name, phone=phone, location=json.dumps(location),
                        user=user, is_default=is_default)
-        addr.update_time()
+        addr.set_update_time()
 
         db.session.add(addr)
         db.session.commit()
