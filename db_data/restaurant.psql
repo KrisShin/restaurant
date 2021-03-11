@@ -93,7 +93,6 @@ CREATE TABLE public.address (
     phone character varying(11) NOT NULL,
     location json NOT NULL,
     create_time timestamp without time zone,
-    is_delete boolean,
     is_default boolean,
     user_id integer,
     update_time timestamp without time zone
@@ -179,10 +178,11 @@ ALTER SEQUENCE public.comment_id_seq OWNED BY public.comment.id;
 
 CREATE TABLE public.discount (
     id integer NOT NULL,
-    discount_type integer,
+    discount_type integer NOT NULL,
     start_time timestamp without time zone,
     end_time timestamp without time zone,
-    discount integer
+    description character varying(200) NOT NULL,
+    discount double precision
 );
 
 
@@ -251,6 +251,42 @@ ALTER SEQUENCE public.dish_id_seq OWNED BY public.dish.id;
 
 
 --
+-- Name: dishimg; Type: TABLE; Schema: public; Owner: restuser
+--
+
+CREATE TABLE public.dishimg (
+    id integer NOT NULL,
+    is_index boolean,
+    uri character varying(512) NOT NULL,
+    dish_id integer
+);
+
+
+ALTER TABLE public.dishimg OWNER TO restuser;
+
+--
+-- Name: dishimg_id_seq; Type: SEQUENCE; Schema: public; Owner: restuser
+--
+
+CREATE SEQUENCE public.dishimg_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.dishimg_id_seq OWNER TO restuser;
+
+--
+-- Name: dishimg_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: restuser
+--
+
+ALTER SEQUENCE public.dishimg_id_seq OWNED BY public.dishimg.id;
+
+
+--
 -- Name: order; Type: TABLE; Schema: public; Owner: restuser
 --
 
@@ -310,7 +346,7 @@ ALTER TABLE public.rs_user_tag OWNER TO restuser;
 
 CREATE TABLE public.tag (
     id integer NOT NULL,
-    weight integer DEFAULT 1 NOT NULL,
+    weight integer DEFAULT 1,
     name character varying(32),
     create_time timestamp without time zone
 );
@@ -421,6 +457,13 @@ ALTER TABLE ONLY public.dish ALTER COLUMN id SET DEFAULT nextval('public.dish_id
 
 
 --
+-- Name: dishimg id; Type: DEFAULT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.dishimg ALTER COLUMN id SET DEFAULT nextval('public.dishimg_id_seq'::regclass);
+
+
+--
 -- Name: tag id; Type: DEFAULT; Schema: public; Owner: restuser
 --
 
@@ -447,10 +490,10 @@ COPY public.account (id, user_id, is_vip, start_time, end_time, balance) FROM st
 -- Data for Name: address; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public.address (id, name, phone, location, create_time, is_delete, is_default, user_id, update_time) FROM stdin;
-4	吴京666	14332133214	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u4e50\\u5c71\\u5e02", "county": "\\u5e02\\u4e2d\\u533a", "addressDetail": "\\u7231\\u7684\\u65b9\\u5f0f", "areaCode": "511102"}	2021-03-10 17:06:36.564771	f	f	1	2021-03-10 17:21:46.903463
-5	惊雷1	14323565443	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u7709\\u5c71\\u5e02", "county": "\\u6d2a\\u96c5\\u53bf", "addressDetail": "\\u554a\\u9876\\u9876\\u9876\\u9876\\u9876", "areaCode": "511423"}	2021-03-10 17:10:13.899607	f	t	1	2021-03-10 17:21:54.548244
-6	make	15523432345	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u5df4\\u4e2d\\u5e02", "county": "\\u5357\\u6c5f\\u53bf", "addressDetail": "\\u4e94\\u9053\\u53e3\\u804c\\u4e1a\\u6280\\u672f\\u5b66\\u9662", "areaCode": "511922"}	2021-03-10 17:22:33.883056	f	f	1	2021-03-10 17:22:33.882059
+COPY public.address (id, name, phone, location, create_time, is_default, user_id, update_time) FROM stdin;
+4	吴京666	14332133214	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u4e50\\u5c71\\u5e02", "county": "\\u5e02\\u4e2d\\u533a", "addressDetail": "\\u7231\\u7684\\u65b9\\u5f0f", "areaCode": "511102"}	2021-03-10 17:06:36.564771	f	1	2021-03-10 17:21:46.903463
+5	惊雷1	14323565443	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u7709\\u5c71\\u5e02", "county": "\\u6d2a\\u96c5\\u53bf", "addressDetail": "\\u554a\\u9876\\u9876\\u9876\\u9876\\u9876", "areaCode": "511423"}	2021-03-10 17:10:13.899607	t	1	2021-03-10 17:21:54.548244
+6	make	15523432345	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u5df4\\u4e2d\\u5e02", "county": "\\u5357\\u6c5f\\u53bf", "addressDetail": "\\u4e94\\u9053\\u53e3\\u804c\\u4e1a\\u6280\\u672f\\u5b66\\u9662", "areaCode": "511922"}	2021-03-10 17:22:33.883056	f	1	2021-03-10 17:22:33.882059
 \.
 
 
@@ -459,7 +502,7 @@ COPY public.address (id, name, phone, location, create_time, is_delete, is_defau
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
-2fb408e9f32c
+fea6be4c19ba
 \.
 
 
@@ -475,7 +518,12 @@ COPY public.comment (id, content, create_time, user_id, order_id, rate) FROM std
 -- Data for Name: discount; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public.discount (id, discount_type, start_time, end_time, discount) FROM stdin;
+COPY public.discount (id, discount_type, start_time, end_time, description, discount) FROM stdin;
+4	3	\N	\N	第二件半价	\N
+1	0	\N	\N	无折扣	1
+2	1	\N	\N	95折	0.949999999999999956
+5	4	\N	\N	两件8折	0.800000000000000044
+3	2	\N	\N	买一送一	\N
 \.
 
 
@@ -484,6 +532,22 @@ COPY public.discount (id, discount_type, start_time, end_time, discount) FROM st
 --
 
 COPY public.dish (id, name, price, amount, description, discount_id, create_time, update_time) FROM stdin;
+1	青椒土豆丝	13.5	0	青椒和土豆丝爆炒, 味道香辣, 口感爽脆	1	2021-03-11 10:43:35	\N
+2	超级佛跳墙	499.990000000000009	0	超级无敌海景佛跳墙, 只能说什么都有, 超级滋补, 酬宾95折	2	2021-03-11 10:48:31	\N
+3	蒜苗回锅肉	28.879999999999999	0	这么香的回锅肉, 收你28.88不算过分吧	1	2021-03-11 10:49:55	\N
+4	鱼香茄子	12.8800000000000008	0	黑多的鱼香, 茄子比较耙, 酸甜酸甜不腻	2	2021-03-11 10:51:14	\N
+\.
+
+
+--
+-- Data for Name: dishimg; Type: TABLE DATA; Schema: public; Owner: restuser
+--
+
+COPY public.dishimg (id, is_index, uri, dish_id) FROM stdin;
+3	t	/static/dish/tds.jpg	1
+4	t	/static/dish/yxqz.jpg	4
+2	t	/static/dish/hgr.jpg	3
+1	t	/static/dish/ftq.jpg	2
 \.
 
 
@@ -508,6 +572,11 @@ COPY public.rs_dish_order (dish_id, order_id) FROM stdin;
 --
 
 COPY public.rs_dish_tag (dish_id, tag_id) FROM stdin;
+1	8
+1	16
+2	4
+3	3
+4	16
 \.
 
 
@@ -525,21 +594,21 @@ COPY public.rs_user_tag (user_id, tag_id) FROM stdin;
 
 COPY public.tag (id, weight, name, create_time) FROM stdin;
 1	1	甜点	2021-03-10 17:39:06
-2	1	奶茶	\N
-3	1	麻辣	\N
-4	1	海鲜	\N
-5	1	冰饮	\N
-6	1	重辣	\N
-7	1	特辣	\N
-8	1	微辣	\N
-9	1	广东辣	\N
-10	1	不吃葱	\N
-11	1	不吃香菜	\N
-12	1	腌制品	\N
-13	1	热饮	\N
-14	1	半糖	\N
-15	1	果汁	\N
-16	1	时蔬	\N
+2	1	奶茶	2021-03-11 09:25:02
+5	1	冰饮	2021-03-11 09:25:11
+6	1	重辣	2021-03-11 09:25:14
+7	1	特辣	2021-03-11 09:25:17
+9	1	广东辣	2021-03-11 09:25:23
+10	1	不吃葱	2021-03-11 09:25:26
+11	1	不吃香菜	2021-03-11 09:25:29
+12	1	腌制品	2021-03-11 09:25:31
+13	1	热饮	2021-03-11 09:25:34
+14	1	半糖	2021-03-11 09:25:37
+15	1	果汁	2021-03-11 09:25:41
+16	3	时蔬	2021-03-11 09:25:43
+8	2	微辣	2021-03-11 09:25:20
+4	2	海鲜	2021-03-11 09:25:08
+3	2	麻辣	2021-03-11 09:25:05
 \.
 
 
@@ -577,14 +646,21 @@ SELECT pg_catalog.setval('public.comment_id_seq', 1, false);
 -- Name: discount_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.discount_id_seq', 1, false);
+SELECT pg_catalog.setval('public.discount_id_seq', 5, true);
 
 
 --
 -- Name: dish_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.dish_id_seq', 1, false);
+SELECT pg_catalog.setval('public.dish_id_seq', 4, true);
+
+
+--
+-- Name: dishimg_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
+--
+
+SELECT pg_catalog.setval('public.dishimg_id_seq', 4, true);
 
 
 --
@@ -647,6 +723,14 @@ ALTER TABLE ONLY public.discount
 
 ALTER TABLE ONLY public.dish
     ADD CONSTRAINT dish_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: dishimg dishimg_pkey; Type: CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.dishimg
+    ADD CONSTRAINT dishimg_pkey PRIMARY KEY (id);
 
 
 --
@@ -759,6 +843,14 @@ ALTER TABLE ONLY public.comment
 
 ALTER TABLE ONLY public.dish
     ADD CONSTRAINT dish_discount_id_fkey FOREIGN KEY (discount_id) REFERENCES public.discount(id);
+
+
+--
+-- Name: dishimg dishimg_dish_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: restuser
+--
+
+ALTER TABLE ONLY public.dishimg
+    ADD CONSTRAINT dishimg_dish_id_fkey FOREIGN KEY (dish_id) REFERENCES public.dish(id);
 
 
 --
