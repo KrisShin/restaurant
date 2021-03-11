@@ -68,8 +68,21 @@
       <van-tabbar-item name="recommend" icon="hot-o" to="/">
         推荐
       </van-tabbar-item>
-      <van-tabbar-item name="cart" icon="shopping-cart-o" badge="20" to="/cart">
-        购物车
+      <van-tabbar-item
+        name="dishes"
+        icon="records"
+        :dot="localDishCnt != dishCnt"
+        to="/dishes"
+      >
+        点餐
+      </van-tabbar-item>
+      <van-tabbar-item
+        name="cart"
+        icon="shopping-cart-o"
+        :badge="cartBadge"
+        to="/cart"
+      >
+        结算
       </van-tabbar-item>
       <van-tabbar-item name="my" icon="user-o" badge="20" to="/profile">
         我的
@@ -97,6 +110,9 @@ export default {
       commentCount: 0,
       showActiveModal: false,
       email: "",
+      cartBadge: sessionStorage.getItem("cartBadge"),
+      localDishCnt: localStorage.getItem("localDishCnt"),
+      dishCnt: 0,
     };
   },
   created: function () {

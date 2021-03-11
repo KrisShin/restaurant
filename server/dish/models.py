@@ -1,6 +1,6 @@
 from datetime import datetime
 from config.global_params import db
-from config.settings import TAG_COLOR
+from config.settings import HTTP_HOST, TAG_COLOR
 
 
 tags = db.Table('rs_dish_tag',
@@ -29,6 +29,24 @@ class Dish(db.Model):
     def __init__(self, *args, **kwargs):
         super(Dish, self).__init__(**kwargs)
 
+    def keys(self):
+        return ('id', 'name', 'price', 'amount', 'description', 'discount', 'discount_desc', 'tags', 'images', 'index_img')
+
+    def __getitem__(self, item):
+        if item == 'discount_desc':
+            return self.discount.description
+        elif item == 'discount':
+            return self.discount.discount
+        elif item == 'tags':
+            return [dict(tag) for tag in self.tags]
+        elif item == 'images':
+            return [dict(img) for img in self.images]
+        elif item == 'index_img':
+            for img in self.images:
+                if img.is_index:
+                    return HTTP_HOST + img.uri
+        return getattr(self, item)
+
     def set_update_time(self):
         self.update_time = datetime.now()
 
@@ -50,7 +68,7 @@ class Tag(db.Model):
     def __getitem__(self, item):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''
         if item == 'color':
-            return TAG_COLOR[self.weight]
+            return TAG_COLOR[self.weight % 10]
         return getattr(self, item)
 
 
@@ -81,3 +99,11 @@ class DishImg(db.Model):
 
     def __init__(self, **kwargs):
         super(Discount, self).__init__(**kwargs)
+
+    def keys(self):
+        return ('id', 'is_index', 'uri')
+
+    def __getitem__(self, item):
+        if item == 'uri':
+            return HTTP_HOST + getattr(self, item)
+        return getattr(self, item)

@@ -1,6 +1,6 @@
 <template>
   <div id="cart">
-    <van-nav-bar title="恰了木有-购物车" @click-right="tt" fixed placeholder>
+    <van-nav-bar title="恰了木有-结算" @click-right="tt" fixed placeholder>
       <template #left>
         <van-image
           width="35"
@@ -14,7 +14,7 @@
         <div>{{ userInfo.nickname }}</div>
       </template>
       <template #right>
-        <van-icon name="search" size="18" @click="tt" />
+        <van-icon name="delete-o" size="18" @click="tt" />
       </template>
     </van-nav-bar>
     <div>
@@ -71,8 +71,21 @@
       <van-tabbar-item name="recommend" icon="hot-o" to="/">
         推荐
       </van-tabbar-item>
-      <van-tabbar-item name="cart" icon="shopping-cart-o" badge="20" to="/cart">
-        购物车
+      <van-tabbar-item
+        name="dishes"
+        icon="records"
+        :dot="localDishCnt != dishCnt"
+        to="/dishes"
+      >
+        点餐
+      </van-tabbar-item>
+      <van-tabbar-item
+        name="cart"
+        icon="shopping-cart-o"
+        :badge="cartBadge"
+        to="/cart"
+      >
+        结算
       </van-tabbar-item>
       <van-tabbar-item name="my" icon="user-o" badge="20" to="/profile">
         我的
@@ -94,6 +107,9 @@ export default {
         this.$BASE_API + "/static/dish/yxqz.jpg",
       ],
       userInfo: {},
+      cartBadge: sessionStorage.getItem("cartBadge"),
+      localDishCnt: localStorage.getItem("localDishCnt"),
+      dishCnt: 0,
     };
   },
   created: function () {
