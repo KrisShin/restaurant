@@ -35,30 +35,30 @@
       </template>
     </van-nav-bar>
     <div>
-      <div>
-        <span>推荐菜品</span>
-        <van-swipe :autoplay="3000">
-          <van-swipe-item v-for="(image, index) in images" :key="index">
-            <img width="100%" v-lazy="image" />
-          </van-swipe-item>
-        </van-swipe>
-        <van-card
-          num="2"
-          price="2.00"
-          desc="描述信息"
-          title="商品标题"
-          thumb="https://img01.yzcdn.cn/vant/ipad.jpeg"
-        >
-          <template #tags>
-            <van-tag plain type="danger">标签</van-tag>
-            <van-tag plain type="danger">标签</van-tag>
-          </template>
-          <template #footer>
-            <van-button size="mini">按钮</van-button>
-            <van-button size="mini">按钮</van-button>
-          </template>
-        </van-card>
-      </div>
+      <span>推荐菜品</span>
+      <van-swipe :autoplay="3000" height="200">
+        <van-swipe-item v-for="(image, index) in images" :key="index">
+          <img width="100%" v-lazy="image" />
+        </van-swipe-item>
+      </van-swipe>
+    </div>
+    <div>
+      <van-card
+        num="82"
+        price="12.00"
+        desc="黑多鱼香, 黑多茄子"
+        title="鱼香茄子"
+        :thumb="images[3]"
+      >
+        <template #tags>
+          <van-tag plain type="danger">甜辣</van-tag>
+          <van-tag plain type="danger">时蔬</van-tag>
+        </template>
+        <template #footer>
+          <van-button size="mini">加入购物车</van-button>
+          <van-button size="mini">按钮</van-button>
+        </template>
+      </van-card>
     </div>
     <div>
       <van-tabbar v-model="active" v-if="isLogin" placeholder>

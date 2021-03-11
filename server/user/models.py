@@ -68,7 +68,6 @@ class Address(db.Model):
     location = db.Column(db.JSON(), nullable=False)
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime)
-    is_delete = db.Column(db.Boolean, default=0)  # 是否已删除
     is_default = db.Column(db.Boolean, default=0)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

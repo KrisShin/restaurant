@@ -16,7 +16,7 @@ class Dish(db.Model):
     price = db.Column(db.Float, default=0.01)
     amount = db.Column(db.Integer, default=0)  # 销量
     description = db.Column(db.String(256))
-    
+
     discount_id = db.Column(db.Integer, db.ForeignKey('discount.id'))
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime)
@@ -24,9 +24,11 @@ class Dish(db.Model):
     tags = db.relationship('Tag', secondary=tags, lazy='subquery',
                            backref=db.backref('dishes', lazy=True))  # 标签(口味偏好) n:n
 
+    images = db.relationship("DishImg", backref="dish", lazy=True)
+
     def __init__(self, *args, **kwargs):
         super(Dish, self).__init__(**kwargs)
-    
+
     def set_update_time(self):
         self.update_time = datetime.now()
 
@@ -41,13 +43,13 @@ class Tag(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Tag, self).__init__(**kwargs)
-    
+
     def keys(self):
         return ('id', 'weight', 'name', 'color')
-    
+
     def __getitem__(self, item):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''
-        if item=='color':
+        if item == 'color':
             return TAG_COLOR[self.weight]
         return getattr(self, item)
 
@@ -56,12 +58,26 @@ class Discount(db.Model):
     __tablename__ = 'discount'
 
     id = db.Column(db.Integer, primary_key=True)
-    discount_type = db.Column(db.Integer)  # 0-没有折扣/1-折扣/2-买一送一/3-第二件半价
+    # 0-没有折扣/1-折扣/2-买一送一/3-第二件半价
+    discount_type = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.String(200), nullable=False)
     start_time = db.Column(db.DateTime, default=datetime.now)
     end_time = db.Column(db.DateTime)
-    discount = db.Column(db.Integer)
+    discount = db.Column(db.Float, default=0.01)
 
     dishes = db.relationship("Dish", backref="discount", lazy=True)
-    
+
     def __init__(self, *args, **kwargs):
+        super(Discount, self).__init__(**kwargs)
+
+
+class DishImg(db.Model):
+    __tablename__ = 'dishimg'
+    id = db.Column(db.Integer, primary_key=True)
+
+    is_index = db.Column(db.Boolean, default=0)
+    uri = db.Column(db.String(512), nullable=False)
+    dish_id = db.Column(db.Integer, db.ForeignKey('dish.id'))
+
+    def __init__(self, **kwargs):
         super(Discount, self).__init__(**kwargs)

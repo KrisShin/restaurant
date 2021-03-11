@@ -43,3 +43,5 @@ def tags():
         db.session.commit()
 
         return jsonify({'success': True, 'data': dict(tag)})
+
+@dish.route('/push', methods=[])
