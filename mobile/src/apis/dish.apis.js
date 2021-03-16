@@ -12,3 +12,7 @@ export function dishPushAPI(data) {
 export function dishListAPI(data) {
     return axios.post(`/dish/list`, data)
 }
+
+export function dishCartAPI(data) {
+    return axios.post(`/dish/cart`, data)
+}

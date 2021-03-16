@@ -92,3 +92,15 @@ def post_dish_list():
 
     dishes = [dict(dish) for dish in dishes]
     return jsonify({'success': True, 'data': dishes})
+
+
+@dish.route('/cart', methods=['POST'])
+@auth
+def post_dish_cart():
+    data = request.get_json()
+    dish_ids = data.get('dishes', [])
+    if not dish_ids:
+        return jsonify({'success': True, 'data': None})
+    dishes = [dict(dish)
+              for dish in Dish.query.filter(Dish.id.in_(dish_ids)).all()]
+    return jsonify({'success': True, 'data': dishes})

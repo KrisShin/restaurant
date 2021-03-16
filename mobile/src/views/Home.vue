@@ -158,7 +158,7 @@ export default {
             dish.count = cart[dish.id];
           });
           this.dishCount = resp.data.data.dishCount;
-          this.$store.dispatch("common/setDishCount", dishCount);
+          this.$store.dispatch("common/setDishCount", this.dishCount);
         }
       })
       .catch((err) => {

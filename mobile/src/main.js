@@ -8,7 +8,7 @@ import {
   Lazyload, Swipe, SwipeItem, Tabbar, TabbarItem,
   Notify, Cell, CellGroup, Dialog, Uploader, AddressList,
   AddressEdit, Radio, RadioGroup, SubmitBar, Card, Stepper,
-  PullRefresh, List
+  PullRefresh, List, Checkbox, CheckboxGroup
 } from "vant";
 
 
@@ -21,6 +21,8 @@ Vue.use(AddressList);
 Vue.use(Button);
 Vue.use(Card);
 Vue.use(Cell);
+Vue.use(Checkbox);
+Vue.use(CheckboxGroup);
 Vue.use(CellGroup);
 Vue.use(Col);
 Vue.use(Dialog);
