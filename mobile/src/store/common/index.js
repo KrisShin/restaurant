@@ -4,7 +4,8 @@ export default {
   state: {
     token: '',
     isLogin: '',
-    userInfo: ''
+    userInfo: '',
+    dishCount: 0
   },
   getters: {
     getToken: state => state.token,
@@ -17,6 +18,9 @@ export default {
     },
     setUserInfo({ commit }, user) {
       commit('mutationUserInfo', user)
+    },
+    setDishCount({ commit }, dishCount) {
+      commit('mutationDishCount', dishCount)
     }
   },
   mutations: {
@@ -24,11 +28,16 @@ export default {
       state.token = token
       state.isLogin = state.token ? true : false
       // localStorage.setItem('token', token)
-      sessionStorage.setItem('isLogin', state.token ? true : false)
+      sessionStorage.setItem('isLogin', state.isLogin)
     },
     mutationUserInfo(state, user) {
       state.userInfo = user
       // localStorage.setItem('userInfo', user)
+      sessionStorage.setItem('userInfo', user)
+    },
+    mutationDishCount(state, dishCount) {
+      state.dishCount = dishCount
+      sessionStorage.setItem('dishCount', dishCount)
     }
   }
 }

@@ -55,7 +55,7 @@ export default {
       avatars: [],
     };
   },
-  created: function () {
+  created () {
     this.userInfo = this.$store.state.common.userInfo;
     this.avatars.push({ url: this.userInfo.avatar });
     this.nickname = this.userInfo.nickname;

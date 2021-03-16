@@ -3,6 +3,7 @@ from .models import Dish, Tag
 from user.models import User
 from utils.wraps import auth, get_userId
 from config.global_params import db
+from utils.rest_redis import r
 
 dish = Blueprint('Dish', __name__, url_prefix='/dish')
 
@@ -78,7 +79,8 @@ def push_dishes():
                 continue
             push_swiper.append(dict(dish))
             ex_dish_ids.append(dish.id)
-    return jsonify({'success': True, 'data': {'pushSwiper': push_swiper, 'pushDish': push}})
+    dish_count = int(r.get_val('dish_count') or 0)
+    return jsonify({'success': True, 'data': {'pushSwiper': push_swiper, 'pushDish': push, 'dishCount': dish_count}})
 
 
 @dish.route('/list', methods=['POST'])

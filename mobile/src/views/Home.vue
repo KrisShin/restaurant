@@ -1,10 +1,6 @@
 <template>
   <div id="home">
-    <van-nav-bar
-      title="恰了木有"
-      fixed
-      placeholder
-    >
+    <van-nav-bar title="恰了木有" fixed placeholder>
       <template #left v-if="isLogin">
         <van-image
           width="35"
@@ -79,7 +75,7 @@
         <van-tabbar-item
           name="dishes"
           icon="records"
-          :dot="localDishCnt != dishCnt"
+          :dot="localDishCount != dishCount"
           to="/dishes"
         >
           点餐
@@ -125,14 +121,19 @@ export default {
       active: "login",
       pushDish: [],
       pushSwiper: [],
-      cartBadge: sessionStorage.getItem("cartBadge"),
-      localDishCnt: localStorage.getItem("localDishCnt"),
-      dishCnt: 0,
+      cartBadge: localStorage.getItem("cartBadge")
+        ? JSON.parse(localStorage.getItem("cartBadge"))
+        : null,
+      localDishCount: localStorage.getItem("localDishCount")
+        ? JSON.parse(localStorage.getItem("localDishCount"))
+        : 0,
+      dishCount: this.$store.state.common.dishCount,
     };
   },
   created() {
     this.isLogin = this.$store.state.common.isLogin;
     this.userInfo = this.$store.state.common.userInfo;
+    var cart = JSON.parse(localStorage.getItem("cart"));
 
     this.active = "recommend";
     if (this.isLogin && !this.userInfo) {
@@ -153,11 +154,25 @@ export default {
         if (resp.data.success) {
           this.pushDish = resp.data.data.pushDish;
           this.pushSwiper = resp.data.data.pushSwiper;
+          this.pushDish.forEach((dish) => {
+            dish.count = cart[dish.id];
+          });
+          this.dishCount = resp.data.data.dishCount;
+          this.$store.dispatch("common/setDishCount", dishCount);
         }
       })
       .catch((err) => {
         console.error(err);
       });
+  },
+  beforeRouteLeave(to, form, next) {
+    var cart = {};
+    this.pushDish.forEach((dish) => {
+      cart[dish.id] = dish.count;
+    });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem("cartBadge", JSON.stringify(this.cartBadge));
+    next();
   },
   methods: {
     onClickToLogin() {

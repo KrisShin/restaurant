@@ -34,6 +34,9 @@
           :thumb="dish.index_img"
         >
           <template #tags>
+            <van-tag v-if="dish.discount_desc" type="danger">{{
+              dish.discount_desc
+            }}</van-tag>
             <van-tag
               plain
               :color="tag.color"
@@ -61,12 +64,7 @@
       <van-tabbar-item name="recommend" icon="hot-o" to="/">
         推荐
       </van-tabbar-item>
-      <van-tabbar-item
-        name="dishes"
-        icon="records"
-        :dot="localDishCnt != dishCnt"
-        to="/dishes"
-      >
+      <van-tabbar-item name="dishes" icon="records" to="/dishes">
         点餐
       </van-tabbar-item>
       <van-tabbar-item
@@ -91,19 +89,30 @@ export default {
   data() {
     return {
       active: "dishes",
-      cartBadge: sessionStorage.getItem("cartBadge"),
-      localDishCnt: localStorage.getItem("localDishCnt"),
-      dishCnt: 0,
+      cartBadge: localStorage.getItem("cartBadge")
+        ? JSON.parse(localStorage.getItem("cartBadge"))
+        : null,
       userInfo: {},
       dishes: [],
       loading: false,
       finished: false,
       refreshing: false,
       point: 0,
+      cart: {},
     };
   },
   created: function () {
     this.userInfo = this.$store.state.common.userInfo;
+    this.cart = JSON.parse(localStorage.getItem("cart"));
+    localStorage.setItem("localDishCount", this.$store.state.common.dishCount);
+  },
+  beforeRouteLeave(to, form, next) {
+    this.dishes.forEach((dish) => {
+      this.cart[dish.id] = dish.count;
+    });
+    localStorage.setItem("cart", JSON.stringify(this.cart));
+    localStorage.setItem("cartBadge", JSON.stringify(this.cartBadge));
+    next();
   },
   methods: {
     tt() {
@@ -116,10 +125,19 @@ export default {
       dishListAPI({ point: this.point })
         .then((resp) => {
           if (resp.data.success) {
-            resp.data.data.forEach((dish) => {
-              this.dishes.push(dish);
-            });
-            console.log(this.dishes);
+            if (resp.data.data) {
+              resp.data.data.forEach((dish) => {
+                dish.count = this.cart[dish.id];
+                this.dishes.push(dish);
+              });
+              this.point += resp.data.data.length;
+              this.loading = false;
+              if (resp.data.data.length < 5) {
+                this.finished = true;
+              }
+            } else {
+              this.finished = true;
+            }
           }
         })
         .catch((err) => {
@@ -129,6 +147,7 @@ export default {
     onRefresh() {
       // 清空列表数据
       this.finished = false;
+      this.point = 0;
 
       // 重新加载数据
       // 将 loading 设置为 true，表示处于加载状态
@@ -137,7 +156,7 @@ export default {
     },
     changeDishCount() {
       var count = 0;
-      this.pushDish.forEach((dish) => {
+      this.dishes.forEach((dish) => {
         count += dish.count;
       });
       sessionStorage.setItem("cartBadge", count);

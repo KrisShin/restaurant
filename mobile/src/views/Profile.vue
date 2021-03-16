@@ -71,7 +71,7 @@
       <van-tabbar-item
         name="dishes"
         icon="records"
-        :dot="localDishCnt != dishCnt"
+        :dot="localDishCount != dishCount"
         to="/dishes"
       >
         点餐
@@ -110,12 +110,14 @@ export default {
       commentCount: 0,
       showActiveModal: false,
       email: "",
-      cartBadge: sessionStorage.getItem("cartBadge"),
-      localDishCnt: localStorage.getItem("localDishCnt"),
-      dishCnt: 0,
+      cartBadge: localStorage.getItem("cartBadge")
+        ? JSON.parse(localStorage.getItem("cartBadge"))
+        : null,
+      localDishCount: localStorage.getItem("localDishCount"),
+      dishCount: this.$store.state.common.dishCount,
     };
   },
-  created: function () {
+  created() {
     this.userInfo = this.$store.state.common.userInfo;
   },
   methods: {

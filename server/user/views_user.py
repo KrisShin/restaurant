@@ -265,9 +265,7 @@ def tags():
         user.tags = tags
         user.set_update_time()
         db.session.commit()
-        for tag in Tag.query.all():
-            tag.weight = len(tag.users)+len(tag.dishes)
-            db.session.commit()
+        Tag.update_weight()
         return jsonify({'success': True})
 
 

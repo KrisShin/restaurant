@@ -46,7 +46,7 @@ export default {
       enableSubmit: false,
     };
   },
-  created: function () {
+  created () {
     this.email = this.$route.query.email;
   },
   methods: {
