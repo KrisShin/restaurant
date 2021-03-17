@@ -203,9 +203,7 @@ export default {
           this.total = 0;
           localStorage.setItem("cartBadge", null);
         })
-        .catch(() => {
-          this.$toast.success("取消清空");
-        });
+        .catch();
     },
   },
 };
