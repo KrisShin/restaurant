@@ -12,6 +12,8 @@ import Address from '../views/Address.vue'
 import AddrEdit from '../views/AddrEdit.vue'
 import Cart from '../views/Cart.vue'
 import Dishes from '../views/Dishes.vue'
+import Order from '../views/Order.vue'
+import DishDetail from '../views/DishDetail.vue'
 
 Vue.use(VueRouter)
 
@@ -88,6 +90,23 @@ const routes = [
     path: '/dishes',
     name: 'Dishes',
     component: Dishes,
+    meta: {
+      requireAuth: true
+    }
+  }, {
+    path: '/order',
+    name: 'Order',
+    component: Order,
+    meta: {
+      requireAuth: true
+    }
+  }, {
+    path: '/dishDetail',
+    name: 'DishDetail',
+    component: DishDetail,
+    meta: {
+      requireAuth: true
+    }
   }
 ]
 
