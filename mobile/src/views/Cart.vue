@@ -99,6 +99,9 @@ export default {
       loading: false,
       finished: false,
       refreshing: false,
+      cartBadge: localStorage.getItem("cartBadge")
+        ? JSON.parse(localStorage.getItem("cartBadge"))
+        : null,
       total: 0,
     };
   },
@@ -158,6 +161,7 @@ export default {
     },
     changeDishCount(dish) {
       const lastCount = this.cart[dish.id];
+      console.log(this.cart, dish.id, lastCount, dish.count);
       this.cart[dish.id] = dish.count;
       this.total += (dish.count - lastCount) * dish.price * dish.discount * 100;
       this.cartBadge += dish.count - lastCount;
@@ -175,10 +179,14 @@ export default {
     onClickDelDish({ position, name, instance }) {
       switch (position) {
         case "right":
-          this.cart[name] = 0;
-          var dish = this.getDish(name);
+          var dish = null;
+          this.dishes.forEach((d) => {
+            if (d.id == name) {
+              dish = d;
+            }
+          });
+          dish.count = 0;
 
-          console.log(dish, this.dishes);
           this.dishes = this.dishes.filter((dish) => {
             return dish.id != name;
           });
@@ -201,13 +209,6 @@ export default {
           this.total = 0;
         })
         .catch();
-    },
-    getDish(id) {
-      this.dishes.forEach((dish) => {
-        if (dish.id == id) {
-          return dish;
-        }
-      });
     },
   },
 };

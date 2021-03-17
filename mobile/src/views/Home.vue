@@ -190,12 +190,19 @@ export default {
       this.$router.push("/profile");
     },
     changeDishCount() {
-      var count = 0;
-      this.pushDish.forEach((dish) => {
-        count += dish.count;
-      });
-      sessionStorage.setItem("cartBadge", count);
-      this.cartBadge = count || null;
+      if (!this.isLogin) {
+        this.$toast("请先登录");
+        setTimeout(() => {
+          this.$router.push("/login");
+        }, 300);
+      } else {
+        var count = 0;
+        this.pushDish.forEach((dish) => {
+          count += dish.count;
+        });
+        sessionStorage.setItem("cartBadge", count);
+        this.cartBadge = count || null;
+      }
     },
     onClickToDetail(id) {
       if (!this.isLogin) {
