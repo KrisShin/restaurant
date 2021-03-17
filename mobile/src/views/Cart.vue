@@ -9,55 +9,80 @@
       placeholder
     >
       <template #right>
-        <van-icon name="delete-o" size="18" @click="tt" />
+        <van-icon name="delete-o" size="18" @click="onClickClearCart" />
       </template>
     </van-nav-bar>
     <div>
-      <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+      <van-pull-refresh
+        v-if="dishes.length > 0"
+        v-model="refreshing"
+        @refresh="onRefresh"
+      >
         <van-list
           v-model="loading"
           :finished="finished"
           finished-text="没有更多了"
           @load="onLoad"
         >
-          <van-card
+          <van-swipe-cell
             v-for="(dish, index) in dishes"
             :key="index"
-            :num="dish.amount"
-            :price="dish.price"
-            :desc="dish.description"
-            :title="dish.name"
-            :thumb="dish.index_img"
+            :name="dish.id"
+            :before-close="onClickDelDish"
+            stop-propagation
           >
-            <template #tags>
-              <van-tag v-if="dish.discount_desc" type="danger">{{
-                dish.discount_desc
-              }}</van-tag>
-              <van-tag
-                plain
-                :color="tag.color"
-                v-for="(tag, index) in dish.tags"
-                :key="index"
-                >{{ tag.name }}</van-tag
-              >
-            </template>
-            <template #footer>
-              <van-stepper
-                v-model="dish.count"
-                @change="changeDishCount"
-                theme="round"
-                default-value="0"
-                button-size="20"
-                min="0"
-                max="99"
-                integer
+            <van-card
+              :num="dish.amount"
+              :price="dish.price"
+              :desc="dish.description"
+              :title="dish.name"
+              :thumb="dish.index_img"
+              :tag="dish.discount_desc"
+            >
+              <template #tags>
+                <van-tag
+                  plain
+                  :color="tag.color"
+                  v-for="(tag, index) in dish.tags"
+                  :key="index"
+                >
+                  {{ tag.name }}
+                </van-tag>
+              </template>
+              <template #footer>
+                <van-stepper
+                  v-model="dish.count"
+                  @change="changeDishCount"
+                  theme="round"
+                  default-value="0"
+                  button-size="20"
+                  min="0"
+                  max="99"
+                  integer
+                />
+              </template>
+            </van-card>
+            <template #right>
+              <van-button
+                square
+                text="删除"
+                type="danger"
+                class="delete-button"
               />
             </template>
-          </van-card>
+          </van-swipe-cell>
         </van-list>
       </van-pull-refresh>
+      <van-row v-else type="flex" justify="center" @click="onClickToDishes">
+        <span>购物车为空, 请前往点餐吧</span>
+      </van-row>
     </div>
-    <van-submit-bar :price="total" text-align='left' button-text="提交订单" @submit="onSubmit">
+    <van-submit-bar
+      :price="total"
+      text-align="left"
+      button-text="提交订单"
+      @submit="onSubmit"
+    >
       <template v-if="!userInfo.is_vip" #tip>
         成为会员可以享受优惠
         <span @click="onClickToVIP">成为会员</span>
@@ -113,26 +138,14 @@ export default {
       // this.$router.push("/tags");
     },
     onLoad() {
-      // if (resp.data.success) {
-      //   if (resp.data.data) {
-      //     resp.data.data.forEach((dish) => {
-      //       dish.count = this.cart[dish.id];
-      //       this.dishes.push(dish);
-      //     });
-      //     this.point += resp.data.data.length;
       this.loading = false;
-      //     if (resp.data.data.length < 5) {
-      //       this.finished = true;
-      //     }
-      //   } else {
       this.finished = true;
-      //   }
-      // }
     },
     onRefresh() {
       // 清空列表数据
       this.finished = false;
       this.point = 0;
+      this.dishes = [];
 
       // 重新加载数据
       // 将 loading 设置为 true，表示处于加载状态
@@ -150,11 +163,55 @@ export default {
       this.total *= 100;
       this.cartBadge = count || null;
     },
-    onSubmit() {},
-    checked() {},
+    onSubmit() {
+      this.$toast.success("下单成功");
+    },
     onClickToVIP() {
-      this.$toast("恭喜成为会员");
+      this.$toast.success("恭喜成为会员");
+    },
+    onClickToDishes() {
+      this.$router.replace("/dishes");
+    },
+    onClickDelDish({ position, name, instance }) {
+      switch (position) {
+        case "right":
+          var cart = JSON.parse(localStorage.getItem("cart"));
+          cart[name] = 0;
+          localStorage.setItem("cart", JSON.stringify(cart));
+          this.dishes = this.dishes.filter((dish) => {
+            return dish.id != name;
+          });
+          this.changeDishCount();
+          localStorage.setItem("cartBadge", this.dishes.length);
+          break;
+        default:
+          instance.close();
+      }
+    },
+    onClickClearCart() {
+      this.$dialog
+        .confirm({
+          message: "确认清空购物车吗?",
+        })
+        .then(() => {
+          var cart = JSON.parse(localStorage.getItem("cart"));
+          for (var key in cart) {
+            cart[key] = 0;
+          }
+          localStorage.setItem("cart", JSON.stringify(cart));
+          this.dishes = [];
+          this.total = 0;
+          localStorage.setItem("cartBadge", null);
+        })
+        .catch(() => {
+          this.$toast.success("取消清空");
+        });
     },
   },
 };
 </script>
+<style>
+.delete-button {
+  height: 100%;
+}
+</style>

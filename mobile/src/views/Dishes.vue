@@ -32,11 +32,9 @@
           :desc="dish.description"
           :title="dish.name"
           :thumb="dish.index_img"
+          :tag="dish.discount_desc"
         >
           <template #tags>
-            <van-tag v-if="dish.discount_desc" type="danger">{{
-              dish.discount_desc
-            }}</van-tag>
             <van-tag
               plain
               :color="tag.color"
@@ -131,7 +129,6 @@ export default {
                 this.dishes.push(dish);
               });
               this.point += resp.data.data.length;
-              this.loading = false;
               if (resp.data.data.length < 5) {
                 this.finished = true;
               }
@@ -139,6 +136,8 @@ export default {
               this.finished = true;
             }
           }
+          this.loading = false;
+          this.finished = true;
         })
         .catch((err) => {
           console.error(err);
@@ -148,6 +147,7 @@ export default {
       // 清空列表数据
       this.finished = false;
       this.point = 0;
+      this.dishes = [];
 
       // 重新加载数据
       // 将 loading 设置为 true，表示处于加载状态
