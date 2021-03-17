@@ -33,7 +33,7 @@
       <van-field label="性别" :value="userInfo.gender ? '男' : '女'" readonly />
       <van-field label="邮箱" :value="userInfo.email" readonly />
       <van-field label="手机号" :value="userInfo.phone" readonly />
-      <van-cell title="标签" is-link to="/tags" />
+      <van-cell title="标签" is-link to="/tags" :value='userInfo.tags.length' />
     </van-cell-group>
 
     <van-button type="primary" block @click="test_upavatar">

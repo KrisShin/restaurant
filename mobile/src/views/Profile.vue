@@ -34,16 +34,18 @@
         </van-col>
         <van-col>余额:{{ userInfo.balance }}</van-col>
       </van-row>
-      <van-tag
-        v-for="(tag, index) in userInfo.tags"
-        :key="index"
-        :color="tag.color"
-        round
-        size="medium"
-        @click="onClickAddTag(tag, index)"
-      >
-        {{ tag.name }}
-      </van-tag>
+      <van-row type="flex" justify="center">
+        <van-tag
+          v-for="(tag, index) in userInfo.tags"
+          :key="index"
+          :color="tag.color"
+          round
+          size="medium"
+          @click="onClickAddTag(tag, index)"
+        >
+          {{ tag.name }}
+        </van-tag>
+      </van-row>
     </div>
     <van-cell-group title="个人管理">
       <van-cell title="编辑信息" is-link to="/editInfo" />
@@ -59,7 +61,7 @@
     <van-cell-group title="订单管理">
       <van-cell title="我的订单" :value="orderCount" />
       <van-cell title="我的评价" :value="commentCount" />
-      <van-cell title="Demo" value="内容" label="描述信息" />
+      <!-- <van-cell title="Demo" value="内容" label="描述信息" /> -->
     </van-cell-group>
     <van-button type="danger" block @click="clickToLogout">
       退出登录
@@ -94,6 +96,9 @@
       show-cancel-button
       @confirm="confirmToActive"
     >
+      <van-row type="flex" justify="center">
+        <span class="dialog-tip-msg">(点击邮箱可编辑)</span>
+      </van-row>
       <van-field v-model="email" />
     </van-dialog>
   </div>
@@ -166,3 +171,8 @@ export default {
   },
 };
 </script>
+<style>
+.dialog-tip-msg {
+  font-size: 0.6em;
+}
+</style>

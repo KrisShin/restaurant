@@ -42,7 +42,7 @@ class User(db.Model):
 
     def keys(self):
         '''serilize object keys'''
-        return ('user_id', 'avatar', 'email', 'balance', 'nickname', 'gender', 'is_email_active', 'is_new', 'phone', 'age', 'tags')
+        return ('user_id', 'avatar', 'email', 'balance', 'nickname', 'gender', 'is_email_active', 'is_new', 'phone', 'age', 'tags', 'default_addr')
 
     def __getitem__(self, item):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''
@@ -54,6 +54,15 @@ class User(db.Model):
             return self.account.balance
         elif item == 'tags':
             return [dict(tag) for tag in self.tags]
+        elif item == 'default_addr':
+            for addr in self.address:
+                if addr.is_default:
+                    return addr.id
+            else:
+                if self.address:
+                    return self.address[0].id
+                else:
+                    return 0
         return getattr(self, item)
 
     def set_update_time(self):

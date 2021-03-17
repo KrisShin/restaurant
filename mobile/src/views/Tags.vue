@@ -66,6 +66,10 @@ export default {
       this.tags = resp.data.data.tags;
     });
   },
+  beforeRouteLeave(to, form, next) {
+    this.onChangeTags();
+    next();
+  },
   methods: {
     onClickReturn() {
       this.$router.go(-1);
@@ -74,25 +78,28 @@ export default {
       //   this.$toast.success(tag.name);
       this.tags.splice(index, 1);
       this.ex_tags.push(tag);
-      this.onChangeTags();
+      // this.onChangeTags();
     },
     onClickRemoveTag(tag, index) {
       //   this.$toast.fail(tag.name);
       this.ex_tags.splice(index, 1);
       this.tags.push(tag);
-      this.onChangeTags();
+      // this.onChangeTags();
     },
     onChangeTags() {
       if (this.ex_tags.length < 1) {
         this.$toast.fail("请至少选择一个标签");
         return;
       }
+      var userInfo = this.$store.state.common.userInfo;
+      userInfo.tags = this.ex_tags;
       var tagIds = [];
       this.ex_tags.forEach((tag) => {
         tagIds.push(tag.id);
       });
       userTagsAPI({ ex_tags: tagIds }).then((resp) => {
         if (resp.data.success) {
+          this.$store.dispatch("common/setUserInfo", userInfo);
           this.$notify({
             message: "添加成功",
             background: "green",
