@@ -21,10 +21,14 @@ web管理端+移动端使用Vue
 5.  python manage.py 运行服务
 6.  默认管理员账户13355553333, 密码admin123, 默认用户:13344443333, 密码:user123
 
-##### front端
+##### front端(待开发)
 首先进入front
 1.  npm i
 
+##### mobile端(开发中)
+进入mobile
+1. npm i 安装依赖包
+2. npm run serve 运行程序
 
 数据库备份(系统命令)
 pg_dump -U restuser -p 35432 -d restaurant -f db_data/restaurant.psql

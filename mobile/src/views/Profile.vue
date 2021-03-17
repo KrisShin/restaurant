@@ -68,8 +68,21 @@
       <van-tabbar-item name="recommend" icon="hot-o" to="/">
         推荐
       </van-tabbar-item>
-      <van-tabbar-item name="cart" icon="shopping-cart-o" badge="20">
-        购物车
+      <van-tabbar-item
+        name="dishes"
+        icon="records"
+        :dot="localDishCount != dishCount"
+        to="/dishes"
+      >
+        点餐
+      </van-tabbar-item>
+      <van-tabbar-item
+        name="cart"
+        icon="shopping-cart-o"
+        :badge="cartBadge"
+        to="/cart"
+      >
+        结算
       </van-tabbar-item>
       <van-tabbar-item name="my" icon="user-o" badge="20" to="/profile">
         我的
@@ -97,9 +110,14 @@ export default {
       commentCount: 0,
       showActiveModal: false,
       email: "",
+      cartBadge: localStorage.getItem("cartBadge")
+        ? JSON.parse(localStorage.getItem("cartBadge"))
+        : null,
+      localDishCount: localStorage.getItem("localDishCount"),
+      dishCount: this.$store.state.common.dishCount,
     };
   },
-  created: function () {
+  created() {
     this.userInfo = this.$store.state.common.userInfo;
   },
   methods: {

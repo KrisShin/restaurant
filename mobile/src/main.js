@@ -7,7 +7,8 @@ import {
   Field, Button, Col, Row, Icon, Image as VanImage,
   Lazyload, Swipe, SwipeItem, Tabbar, TabbarItem,
   Notify, Cell, CellGroup, Dialog, Uploader, AddressList,
-  AddressEdit, Radio, RadioGroup
+  AddressEdit, Radio, RadioGroup, SubmitBar, Card, Stepper,
+  PullRefresh, List, Checkbox, CheckboxGroup
 } from "vant";
 
 
@@ -18,7 +19,10 @@ Vue.use(ActionSheet);
 Vue.use(AddressEdit);
 Vue.use(AddressList);
 Vue.use(Button);
+Vue.use(Card);
 Vue.use(Cell);
+Vue.use(Checkbox);
+Vue.use(CheckboxGroup);
 Vue.use(CellGroup);
 Vue.use(Col);
 Vue.use(Dialog);
@@ -28,11 +32,15 @@ Vue.use(Grid);
 Vue.use(GridItem);
 Vue.use(Icon);
 Vue.use(Lazyload);
+Vue.use(List);
 Vue.use(NavBar)
 Vue.use(Notify);
+Vue.use(PullRefresh);
 Vue.use(Radio);
 Vue.use(RadioGroup);
 Vue.use(Row);
+Vue.use(Stepper);
+Vue.use(SubmitBar);
 Vue.use(Swipe);
 Vue.use(SwipeItem);
 Vue.use(Tabbar);

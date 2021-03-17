@@ -265,6 +265,7 @@ def tags():
         user.tags = tags
         user.set_update_time()
         db.session.commit()
+        Tag.update_weight()
         return jsonify({'success': True})
 
 

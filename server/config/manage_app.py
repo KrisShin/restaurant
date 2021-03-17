@@ -4,8 +4,8 @@ from .global_params import db, redis
 from .settings import REDIS_HOST, REDIS_PORT, REDIS_USER, REDIS_PWD, REDIS_DB, STATIC_FOLDER, STATIC_PATH
 from user.views_user import user
 from user.views_addr import address
-from dish.views import dish
-from order.views import order
+from dish.views_dish import dish
+from order.views_order import order
 from flask_cors import CORS
 
 
