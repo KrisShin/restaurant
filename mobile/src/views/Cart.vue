@@ -117,12 +117,15 @@ export default {
     dishCartAPI({ dishes })
       .then((resp) => {
         if (resp.data.success) {
-          this.dishes = resp.data.data;
-          this.dishes.forEach((dish) => {
-            dish.count = this.cart[dish.id];
-            this.total += dish.price * dish.count * dish.discount;
-          });
-          this.total *= 100;
+          const data = resp.data.data;
+          if (data && data.length > 0) {
+            this.dishes = data;
+            this.dishes.forEach((dish) => {
+              dish.count = this.cart[dish.id];
+              this.total += dish.price * dish.count * dish.discount;
+            });
+            this.total *= 100;
+          }
         }
       })
       .catch((err) => {
@@ -131,7 +134,7 @@ export default {
   },
   beforeRouteLeave(to, form, next) {
     localStorage.setItem("cart", JSON.stringify(this.cart));
-    if (this.cartBadge == 0) {
+    if (!this.cartBadge) {
       this.cartBadge = null;
     }
     localStorage.setItem("cartBadge", JSON.stringify(this.cartBadge));
@@ -161,7 +164,6 @@ export default {
     },
     changeDishCount(dish) {
       const lastCount = this.cart[dish.id];
-      console.log(this.cart, dish.id, lastCount, dish.count);
       this.cart[dish.id] = dish.count;
       this.total += (dish.count - lastCount) * dish.price * dish.discount * 100;
       this.cartBadge += dish.count - lastCount;
