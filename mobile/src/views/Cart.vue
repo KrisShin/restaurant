@@ -209,6 +209,7 @@ export default {
           }
           this.dishes = [];
           this.total = 0;
+          this.cartBadge = 0;
         })
         .catch();
     },
