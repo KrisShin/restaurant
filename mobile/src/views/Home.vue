@@ -43,6 +43,7 @@
         :desc="dish.description"
         :title="dish.name"
         :thumb="dish.index_img"
+        :tag="dish.discount_desc"
       >
         <template #tags>
           <van-tag
