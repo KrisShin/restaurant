@@ -44,6 +44,8 @@
         :title="dish.name"
         :thumb="dish.index_img"
         :tag="dish.discount_desc"
+        lazy-load
+        @click-thumb="onClickToDetail(dish.id)"
       >
         <template #tags>
           <van-tag
@@ -194,6 +196,16 @@ export default {
       });
       sessionStorage.setItem("cartBadge", count);
       this.cartBadge = count || null;
+    },
+    onClickToDetail(id) {
+      if (!this.isLogin) {
+        this.$toast("请先登录");
+        setTimeout(() => {
+          this.$router.push("/login");
+        }, 300);
+      } else {
+        this.$router.push("/dishDetail?dish=" + id);
+      }
     },
   },
 };

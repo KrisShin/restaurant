@@ -4,7 +4,6 @@
       title="恰了木有-结算"
       @click-left="onClickReturn"
       left-arrow
-      @click-right="tt"
       fixed
       placeholder
     >
@@ -38,6 +37,8 @@
               :title="dish.name"
               :thumb="dish.index_img"
               :tag="dish.discount_desc"
+              lazy-load
+              @click-thumb="onClickToDetail(dish.id)"
             >
               <template #tags>
                 <van-tag
@@ -52,7 +53,7 @@
               <template #footer>
                 <van-stepper
                   v-model="dish.count"
-                  @change="changeDishCount"
+                  @change="changeDishCount(dish)"
                   theme="round"
                   default-value="0"
                   button-size="20"
@@ -82,12 +83,7 @@
       text-align="left"
       button-text="提交订单"
       @submit="onSubmit"
-    >
-      <template v-if="!userInfo.is_vip" #tip>
-        成为会员可以享受优惠
-        <span @click="onClickToVIP">成为会员</span>
-      </template>
-    </van-submit-bar>
+    />
   </div>
 </template>
 
@@ -130,12 +126,20 @@ export default {
         console.error(err);
       });
   },
+  beforeRouteLeave(to, form, next) {
+    localStorage.setItem("cart", JSON.stringify(this.cart));
+    if (this.cartBadge == 0) {
+      this.cartBadge = null;
+    }
+    localStorage.setItem("cartBadge", JSON.stringify(this.cartBadge));
+    next();
+  },
   methods: {
     onClickReturn() {
       this.$router.go(-1);
     },
-    tt() {
-      // this.$router.push("/tags");
+    onClickToDetail(id) {
+      this.$router.push("/dishDetail?dish=" + id);
     },
     onLoad() {
       this.loading = false;
@@ -152,19 +156,15 @@ export default {
       this.loading = true;
       this.onLoad();
     },
-    changeDishCount() {
-      this.total = 0;
-      var count = 0;
-      this.dishes.forEach((dish) => {
-        count += dish.count;
-        this.total += dish.price * dish.count * dish.discount;
-      });
-      sessionStorage.setItem("cartBadge", count);
-      this.total *= 100;
-      this.cartBadge = count || null;
+    changeDishCount(dish) {
+      const lastCount = this.cart[dish.id];
+      this.cart[dish.id] = dish.count;
+      this.total += (dish.count - lastCount) * dish.price * dish.discount * 100;
+      this.cartBadge += dish.count - lastCount;
     },
     onSubmit() {
-      this.$toast.success("下单成功");
+      // this.$toast.success("下单成功");
+      this.$router.push("/order");
     },
     onClickToVIP() {
       this.$toast.success("恭喜成为会员");
@@ -175,14 +175,14 @@ export default {
     onClickDelDish({ position, name, instance }) {
       switch (position) {
         case "right":
-          var cart = JSON.parse(localStorage.getItem("cart"));
-          cart[name] = 0;
-          localStorage.setItem("cart", JSON.stringify(cart));
+          this.cart[name] = 0;
+          var dish = this.getDish(name);
+
+          console.log(dish, this.dishes);
           this.dishes = this.dishes.filter((dish) => {
             return dish.id != name;
           });
-          this.changeDishCount();
-          localStorage.setItem("cartBadge", this.dishes.length);
+          this.changeDishCount(dish);
           break;
         default:
           instance.close();
@@ -191,19 +191,23 @@ export default {
     onClickClearCart() {
       this.$dialog
         .confirm({
-          message: "确认清空购物车吗?",
+          title: "确认清空购物车吗?",
         })
         .then(() => {
-          var cart = JSON.parse(localStorage.getItem("cart"));
-          for (var key in cart) {
-            cart[key] = 0;
+          for (var key in this.cart) {
+            this.cart[key] = 0;
           }
-          localStorage.setItem("cart", JSON.stringify(cart));
           this.dishes = [];
           this.total = 0;
-          localStorage.setItem("cartBadge", null);
         })
         .catch();
+    },
+    getDish(id) {
+      this.dishes.forEach((dish) => {
+        if (dish.id == id) {
+          return dish;
+        }
+      });
     },
   },
 };

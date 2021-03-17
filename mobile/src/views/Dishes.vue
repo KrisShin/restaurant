@@ -14,7 +14,7 @@
         <div>{{ userInfo.nickname }}</div>
       </template>
       <template #right>
-        <van-icon name="search" size="18" @click="tt" />
+        <van-icon name="search" size="18" @click="onClickSearchDish" />
       </template>
     </van-nav-bar>
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
@@ -33,6 +33,8 @@
           :title="dish.name"
           :thumb="dish.index_img"
           :tag="dish.discount_desc"
+          lazy-load
+          @click-thumb="onClickToDetail(dish.id)"
         >
           <template #tags>
             <van-tag
@@ -113,7 +115,7 @@ export default {
     next();
   },
   methods: {
-    tt() {
+    onClickSearchDish() {
       // this.$router.push("/tags");
     },
     onclickToProfile() {
@@ -161,6 +163,9 @@ export default {
       });
       sessionStorage.setItem("cartBadge", count);
       this.cartBadge = count || null;
+    },
+    onClickToDetail(id) {
+      this.$router.push("/dishDetail?dish=" + id);
     },
   },
 };

@@ -75,16 +75,12 @@ export default {
       this.$router.go(-1);
     },
     onClickAddTag(tag, index) {
-      //   this.$toast.success(tag.name);
       this.tags.splice(index, 1);
       this.ex_tags.push(tag);
-      // this.onChangeTags();
     },
     onClickRemoveTag(tag, index) {
-      //   this.$toast.fail(tag.name);
       this.ex_tags.splice(index, 1);
       this.tags.push(tag);
-      // this.onChangeTags();
     },
     onChangeTags() {
       if (this.ex_tags.length < 1) {

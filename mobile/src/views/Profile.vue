@@ -41,7 +41,7 @@
           :color="tag.color"
           round
           size="medium"
-          @click="onClickAddTag(tag, index)"
+          plain
         >
           {{ tag.name }}
         </van-tag>
