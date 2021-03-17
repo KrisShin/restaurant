@@ -170,7 +170,14 @@ export default {
     },
     onSubmit() {
       // this.$toast.success("下单成功");
-      this.$router.push("/order");
+      if (this.total > 0) {
+        this.$router.push("/order");
+      } else {
+        this.$toast.fail("请先点餐吧");
+        setTimeout(() => {
+          this.$router.replace("dishes");
+        }, 300);
+      }
     },
     onClickToVIP() {
       this.$toast.success("恭喜成为会员");
