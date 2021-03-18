@@ -99,6 +99,9 @@ export default {
       loading: false,
       finished: false,
       refreshing: false,
+      cartBadge: localStorage.getItem("cartBadge")
+        ? JSON.parse(localStorage.getItem("cartBadge"))
+        : null,
       total: 0,
     };
   },
@@ -114,12 +117,15 @@ export default {
     dishCartAPI({ dishes })
       .then((resp) => {
         if (resp.data.success) {
-          this.dishes = resp.data.data;
-          this.dishes.forEach((dish) => {
-            dish.count = this.cart[dish.id];
-            this.total += dish.price * dish.count * dish.discount;
-          });
-          this.total *= 100;
+          const data = resp.data.data;
+          if (data && data.length > 0) {
+            this.dishes = data;
+            this.dishes.forEach((dish) => {
+              dish.count = this.cart[dish.id];
+              this.total += dish.price * dish.count * dish.discount;
+            });
+            this.total *= 100;
+          }
         }
       })
       .catch((err) => {
@@ -128,7 +134,7 @@ export default {
   },
   beforeRouteLeave(to, form, next) {
     localStorage.setItem("cart", JSON.stringify(this.cart));
-    if (this.cartBadge == 0) {
+    if (!this.cartBadge) {
       this.cartBadge = null;
     }
     localStorage.setItem("cartBadge", JSON.stringify(this.cartBadge));
@@ -164,7 +170,14 @@ export default {
     },
     onSubmit() {
       // this.$toast.success("下单成功");
-      this.$router.push("/order");
+      if (this.total > 0) {
+        this.$router.push("/order");
+      } else {
+        this.$toast.fail("请先点餐吧");
+        setTimeout(() => {
+          this.$router.replace("dishes");
+        }, 300);
+      }
     },
     onClickToVIP() {
       this.$toast.success("恭喜成为会员");
@@ -175,10 +188,14 @@ export default {
     onClickDelDish({ position, name, instance }) {
       switch (position) {
         case "right":
-          this.cart[name] = 0;
-          var dish = this.getDish(name);
+          var dish = null;
+          this.dishes.forEach((d) => {
+            if (d.id == name) {
+              dish = d;
+            }
+          });
+          dish.count = 0;
 
-          console.log(dish, this.dishes);
           this.dishes = this.dishes.filter((dish) => {
             return dish.id != name;
           });
@@ -199,15 +216,9 @@ export default {
           }
           this.dishes = [];
           this.total = 0;
+          this.cartBadge = 0;
         })
         .catch();
-    },
-    getDish(id) {
-      this.dishes.forEach((dish) => {
-        if (dish.id == id) {
-          return dish;
-        }
-      });
     },
   },
 };
