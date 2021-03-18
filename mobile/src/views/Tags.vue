@@ -22,7 +22,8 @@
             round
             type="primary"
             size="medium"
-            @click="onClickRemoveTag(tag, index)"
+            closeable
+            @close="onClickRemoveTag(tag, index)"
           >
             {{ tag.name }}
           </van-tag>

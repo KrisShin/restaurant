@@ -88,14 +88,14 @@ def operate_an_addr(addr, user, data):
     return addr
 
 
-@address.route('/getDefault', methods=['GET'])
-@auth
-def get_default_addr():
-    user = User.query.filter_by(id=get_userId(request)).first()
-    addr = Address.query.filter_by(is_default=True, user_id=user.id).first()
-    if addr:
-        return jsonify({'success': True, 'data': dict(addr)})
+# @address.route('/getDefault', methods=['GET'])
+# @auth
+# def get_default_addr():
+#     user = User.query.filter_by(id=get_userId(request)).first()
+#     addr = Address.query.filter_by(is_default=True, user_id=user.id).first()
+#     if addr:
+#         return jsonify({'success': True, 'data': [dict(addr)]})
 
-    if user.address:
-        addr = dict(user.address[0])
-    return jsonify({'success': True, 'data': addr})
+#     if user.address:
+#         addr = dict(user.address[0])
+#     return jsonify({'success': True, 'data': [addr]})
