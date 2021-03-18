@@ -16,3 +16,6 @@ export function addrEditAPI(data) {
 export function addrDelAPI(data) {
     return axios.delete(`/addr/${data.id}`, data)
 }
+export function addrGetDefaultAPI(data) {
+    return axios.delete(`/addr/getDfault`, data)
+}

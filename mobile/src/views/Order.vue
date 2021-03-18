@@ -14,8 +14,18 @@
   </div>
 </template>
 <script>
+import { addrGetDefaultAPI } from "../apis/address.api";
 export default {
   name: "Order",
+  created() {
+    addrGetDefaultAPI()
+      .then((resp) => {
+        console.log(resp.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  },
   methods: {
     onClickReturn() {
       this.$router.go(-1);
