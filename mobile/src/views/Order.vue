@@ -79,7 +79,7 @@
   </div>
 </template>
 <script>
-import { addrGetAPI, addrListAPI } from "../apis/address.api";
+import { addrGetAPI, addrListAPI } from "../apis/address.apis";
 import { dishCartAPI } from "../apis/dish.apis";
 import AddrComp from "../components/AddrComp.vue";
 

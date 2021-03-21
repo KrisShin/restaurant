@@ -19,7 +19,7 @@
   </div>
 </template>
 <script>
-import { addrListAPI } from "../apis/address.api";
+import { addrListAPI } from "../apis/address.apis";
 export default {
   name: "Address",
   data() {
