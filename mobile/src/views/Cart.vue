@@ -114,23 +114,7 @@ export default {
         dishes.push(key);
       }
     }
-    dishCartAPI({ dishes })
-      .then((resp) => {
-        if (resp.data.success) {
-          const data = resp.data.data;
-          if (data && data.length > 0) {
-            this.dishes = data;
-            this.dishes.forEach((dish) => {
-              dish.count = this.cart[dish.id];
-              this.total += dish.price * dish.count * dish.discount;
-            });
-            this.total *= 100;
-          }
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    this.loadDishes(dishes);
   },
   beforeRouteLeave(to, form, next) {
     localStorage.setItem("cart", JSON.stringify(this.cart));
@@ -146,6 +130,25 @@ export default {
     },
     onClickToDetail(id) {
       this.$router.push("/dishDetail?dish=" + id);
+    },
+    loadDishes(dishes) {
+      dishCartAPI({ dishes })
+        .then((resp) => {
+          if (resp.data.success) {
+            const data = resp.data.data;
+            if (data && data.length > 0) {
+              this.dishes = data;
+              this.dishes.forEach((dish) => {
+                dish.count = this.cart[dish.id];
+                this.total += dish.price * dish.count * dish.discount;
+              });
+              this.total *= 100;
+            }
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
     onLoad() {
       this.loading = false;
