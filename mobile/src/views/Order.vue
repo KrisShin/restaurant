@@ -11,22 +11,37 @@
         <van-icon name="close" size="18" @click="onClickCancelOrder" />
       </template>
     </van-nav-bar>
-    <!-- <van-address-list
-      :list="list"
-      :switchable="false"
-      default-tag-text="默认"
-      @click-item="onClickToSwitchAddr"
-    /> -->
-    <div id="orderAddr">
-      <AddrComp :addr="addr" :switchable="true" />
+    <div id="content">
+      <div id="orderAddr">
+        <span>收货地址:</span>
+        <div @click="onClickShowAddrs">
+          <AddrComp :addr="address" :switchable="false" :is_border="true" />
+        </div>
+      </div>
     </div>
-    <van-action-sheet v-model="showAddressList" title="标题">
-      <div class="content">内容</div>
+    <van-action-sheet
+      v-model="showAddressList"
+      cancel-text="完成"
+      title="选择收货地址"
+      @closed="loadAddr"
+    >
+      <van-radio-group
+        v-model="address.id"
+        @change="onClickSwitchAddr(address.id)"
+      >
+        <AddrComp
+          v-for="addr in list"
+          :key="addr.id"
+          :addr="addr"
+          :switchable="true"
+          :is_border="false"
+        />
+      </van-radio-group>
     </van-action-sheet>
   </div>
 </template>
 <script>
-import { addrGetAPI } from "../apis/address.api";
+import { addrGetAPI, addrListAPI } from "../apis/address.api";
 import AddrComp from "../components/AddrComp.vue";
 
 export default {
@@ -35,23 +50,17 @@ export default {
   data() {
     return {
       list: [],
-      addr: {},
+      address: {},
       showAddressList: false,
       userInfo: {},
+      addrId: 0,
+      dishes: [],
     };
   },
   created() {
     this.userInfo = this.$store.state.common.userInfo;
-    addrGetAPI({ id: this.userInfo.default_addr })
-      .then((resp) => {
-        if (resp.data.success) {
-          this.addr = resp.data.data;
-          this.list.push(resp.data.data);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    this.addrId = this.userInfo.default_addr;
+    this.loadAddr();
   },
   methods: {
     onClickReturn() {
@@ -67,9 +76,37 @@ export default {
           this.$toast("不取消");
         });
     },
-    onClickToSwitchAddr() {
+    onClickSwitchAddr(id) {
+      this.addrId = id;
+    },
+    loadAddr() {
+      addrGetAPI({ id: this.addrId })
+        .then((resp) => {
+          if (resp.data.success) {
+            this.address = resp.data.data;
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+    onClickShowAddrs() {
       this.showAddressList = true;
+      addrListAPI()
+        .then((resp) => {
+          if (resp.data.success) {
+            this.list = resp.data.data.addresses;
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
   },
 };
 </script>
+<style scoped>
+#content {
+  padding: 0.1rem 0.3rem 0.1rem 0.3rem;
+}
+</style>
