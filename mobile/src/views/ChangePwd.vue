@@ -102,7 +102,6 @@ export default {
           new_password: this.newPassword,
           cfm_password: this.cfmPassword,
         }).then((resp) => {
-          console.log(resp.data.code == 1008);
           if (resp.data.success) {
             this.$notify({
               message: "密码修改成功, 请重新登录",

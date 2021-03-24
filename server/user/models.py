@@ -1,10 +1,9 @@
 from datetime import datetime
-import json
 
 from config.global_params import db
 from config.settings import HTTP_HOST
-from dish.models import Tag
-from order.models import Order, Comment
+
+
 
 tags = db.Table('rs_user_tag',
                 db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
@@ -22,8 +21,7 @@ class User(db.Model):
     email = db.Column(db.String(128), unique=True)  # 邮箱号(辅助找回密码)
     password = db.Column(db.String(128), nullable=False)
     gender = db.Column(db.Boolean, default=0)  # 性别 0-女/ 1-男
-    role = db.Column(db.Enum('user', 'admin', name='role_enum'),
-                     default='user')  # 权限user(用户)/admin(管理员)
+    role = db.Column(db.Enum('user', 'admin', name='role_enum'), default='user')  # 权限user(用户)/admin(管理员)
     is_new = db.Column(db.Boolean, default=1)  # 0-否/ 1-是
     account = db.relationship(
         "Account", backref="user", lazy=True, uselist=False)
@@ -80,8 +78,7 @@ class Address(db.Model):
     is_default = db.Column(db.Boolean, default=0)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    order = db.relationship("Order", backref="address",
-                            lazy=True, uselist=False)
+    orders = db.relationship("Order", backref="address", lazy=True)
 
     def __init__(self, *args, **kwargs):
         super(Address, self).__init__(**kwargs)

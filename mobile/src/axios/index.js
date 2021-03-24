@@ -38,7 +38,6 @@ service.interceptors.response.use(res => {
     }
     return res
 }, (error) => {
-    // console.log(error, 123123, code)
     Promise.reject(error)
 })
 

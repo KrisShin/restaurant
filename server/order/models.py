@@ -1,7 +1,9 @@
 from datetime import datetime
+import re
 from utils.util import gen_uuid_name
 from config.global_params import db
-from dish.models import Dish
+from config.settings import ORDER_STATUS
+
 
 dishes = db.Table('rs_dish_order',
                   db.Column('dish_id', db.Integer, db.ForeignKey('dish.id'), primary_key=True),
@@ -26,6 +28,24 @@ class Order(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(**kwargs)
+
+    def keys(self):
+        return ('id', 'money', 'status', 'note', 'create_time', 'update_time', 'address', 'index_img')
+
+    def __getitem__(self, item):
+        if item == 'status':
+            return ORDER_STATUS[self.status]
+        elif item == 'name':
+            return self.address.name
+        elif item == 'address':
+            return dict(self.address)
+        elif item == 'index_img':
+            return dict(self.dishes[0])['index_img']
+        elif item == 'update_time':
+            if not self.update_time:
+                return '待商家接单'
+        
+        return getattr(self, item)
     
     def set_update_time(self):
         self.update_time = datetime.now()

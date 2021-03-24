@@ -1,6 +1,7 @@
 from flask import Blueprint, json, jsonify, request
 from config.global_params import db
 from config.status_code import *
+from config.settings import ORDER_STATUS
 from utils.wraps import auth, get_userId
 from user.models import User, Address
 from dish.models import Dish
@@ -63,7 +64,7 @@ def operate_order(order_id):
 @auth
 def get_order_list():
     user = User.query.filter_by(id=get_userId(request)).first()
-    orders = user.orders
+    orders = [dict(order) for order in user.orders]
     return jsonify({'success': True, 'data': {'orders': orders}})
 
 
@@ -80,16 +81,5 @@ def get_order_status():
         'cancelOrder': 0
     }
     for order in user.orders:
-        if order.status == 0:
-            order_status["cancelOrder"] += 1
-        elif order.status == 1:
-            order_status["waitPay"] += 1
-        elif order.status == 2:
-            order_status["paid"] += 1
-        elif order.status == 3:
-            order_status["gotOrder"] += 1
-        elif order.status == 4:
-            order_status["waitComment"] += 1
-        elif order.status == 5:
-            order_status["doneOrder"] += 1
+        order_status[ORDER_STATUS[order.status]] += 1
     return jsonify({'success': True, 'data': {'orderStatus': order_status}})

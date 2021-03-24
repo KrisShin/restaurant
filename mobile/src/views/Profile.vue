@@ -77,7 +77,11 @@
       >
         待评价
       </van-tabbar-item>
-      <van-tabbar-item name="allOrder" icon="balance-list">
+      <van-tabbar-item
+        name="allOrder"
+        icon="balance-list"
+        to="/orders?type=all"
+      >
         全部订单
       </van-tabbar-item>
     </van-tabbar>
@@ -93,7 +97,7 @@
       <van-cell title="地址管理" is-link to="/address" />
     </van-cell-group>
     <van-cell-group title="订单管理">
-      <van-cell title="我的订单" :value="orderCount" />
+      <van-cell title="我的订单" :value="orderCount" to="/orders?type=all" />
       <van-cell title="我的评价" :value="commentCount" />
       <!-- <van-cell title="Demo" value="内容" label="描述信息" /> -->
     </van-cell-group>

@@ -149,7 +149,7 @@ export default {
           }
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
         });
     }
     dishPushAPI()

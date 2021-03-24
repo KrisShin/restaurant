@@ -13,6 +13,7 @@ import AddrEdit from '../views/AddrEdit.vue'
 import Cart from '../views/Cart.vue'
 import Dishes from '../views/Dishes.vue'
 import OrderDetail from '../views/OrderDetail.vue'
+import Orders from '../views/Orders.vue'
 import DishDetail from '../views/DishDetail.vue'
 
 Vue.use(VueRouter)
@@ -97,6 +98,13 @@ const routes = [
     path: '/orderDetail',
     name: 'OrderDetail',
     component: OrderDetail,
+    meta: {
+      requireAuth: true
+    }
+  }, {
+    path: '/orders',
+    name: 'Orders',
+    component: Orders,
     meta: {
       requireAuth: true
     }

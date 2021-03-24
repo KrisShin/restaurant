@@ -36,3 +36,12 @@ TAG_COLOR = {
     8: '#ff5500',
     9: '#ff0000',
 }
+
+ORDER_STATUS = {
+    0: 'cancelOrder',
+    1: 'waitPay',
+    2: 'paid',
+    3: 'gotOrder',
+    4: 'waitComment',
+    5: 'doneOrder',
+}
