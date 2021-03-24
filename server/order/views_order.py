@@ -84,7 +84,7 @@ def get_order_status():
     }
     for order in user.orders:
         order_status[ORDER_STATUS[order.status]] += 1
-    return jsonify({'success': True, 'data': {'orderStatus': order_status}})
+    return jsonify({'success': True, 'data': {'orderStatus': order_status, 'orderCount': len(user.orders)}})
 
 
 @order.route('/pay', methods=['POST'])

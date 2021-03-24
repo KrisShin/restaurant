@@ -124,7 +124,7 @@
       >
         结算
       </van-tabbar-item>
-      <van-tabbar-item name="my" icon="user-o" badge="20" to="/profile">
+      <van-tabbar-item name="my" icon="user-o" :badge="myBadge" to="/profile">
         我的
       </van-tabbar-item>
     </van-tabbar>
@@ -161,6 +161,7 @@ export default {
       dishCount: this.$store.state.common.dishCount,
       orderActive: null,
       orderStatus: {},
+      myBadge: 0,
     };
   },
   created() {
@@ -215,6 +216,12 @@ export default {
         .then((resp) => {
           if (resp.data.success) {
             this.orderStatus = resp.data.data.orderStatus;
+            this.orderCount = resp.data.data.orderCount;
+            this.myBadge =
+              this.orderStatus.waitPay +
+              this.orderStatus.paid +
+              this.orderStatus.gotOrder +
+              this.orderStatus.waitComment;
           }
         })
         .catch((err) => {
