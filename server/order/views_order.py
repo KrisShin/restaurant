@@ -14,7 +14,8 @@ order = Blueprint('Order', __name__, url_prefix='/order')
 @auth
 def operate_order(order_id):
     if request.method == 'GET':
-        return jsonify({'success': True})
+        order = Order.query.filter_by(id=order_id).first()
+        return jsonify({'success': True, 'data': {'order': dict(order)}})
     if request.method == 'PUT':
         return jsonify({'success': True})
     if request.method == 'POST':
@@ -40,7 +41,6 @@ def operate_order(order_id):
             money += dish_amount[str(dish.id)] * \
                 dish.price*dish.discount.discount
         money = round(money, 2)
-        print(dish_amount)
 
         order = Order(
             note=note,
@@ -52,7 +52,7 @@ def operate_order(order_id):
         )
         db.session.add(order)
         db.session.commit()
-        return jsonify({'success': True})
+        return jsonify({'success': True, 'data': {'id': order.id}})
     if request.method == 'DELETE':
         order = Order.query.filter_by(id=order_id).first()
         order.delete()
@@ -60,11 +60,13 @@ def operate_order(order_id):
         return jsonify({'success': True})
 
 
-@order.route('/list', methods=['GET'])
+@order.route('/list', methods=['POST'])
 @auth
-def get_order_list():
+def post_order_list():
     user = User.query.filter_by(id=get_userId(request)).first()
-    orders = [dict(order) for order in user.orders]
+    point = request.get_json().get('point', 0)
+    print(point)
+    orders = [dict(order) for order in user.orders[point:point+5]]
     return jsonify({'success': True, 'data': {'orders': orders}})
 
 
@@ -83,3 +85,36 @@ def get_order_status():
     for order in user.orders:
         order_status[ORDER_STATUS[order.status]] += 1
     return jsonify({'success': True, 'data': {'orderStatus': order_status}})
+
+
+@order.route('/pay', methods=['POST'])
+@auth
+def post_order_pay():
+    id = request.get_json().get('id')
+    user = User.query.filter_by(id=get_userId(request)).first()
+    order = Order.query.filter_by(id=id).first()
+    user.account.balance -= order.money
+    order.status = 2
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@order.route('/cancel', methods=['POST'])
+@auth
+def post_order_cancel():
+    id = request.get_json().get('id')
+    user = User.query.filter_by(id=get_userId(request)).first()
+    order = Order.query.filter_by(id=id).first()
+    msg = ''
+    if order.status == 1:
+        order.status = 0
+    elif order.status == 2:
+        user.account.balance += order.money
+        order.status = 0
+    elif 6 > order.status > 2:
+        msg = '等待商家审批退款'
+        order.status = 6
+    elif order.status in [0, 6]:
+        msg = '该状态下无法退款, 如有疑问请前往申诉'
+    db.session.commit()
+    return jsonify({'success': True, 'data': {'message': msg}})

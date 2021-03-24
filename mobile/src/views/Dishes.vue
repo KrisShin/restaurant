@@ -42,8 +42,9 @@
               :color="tag.color"
               v-for="(tag, index) in dish.tags"
               :key="index"
-              >{{ tag.name }}</van-tag
             >
+              {{ tag.name }}
+            </van-tag>
           </template>
           <template #footer>
             <van-stepper

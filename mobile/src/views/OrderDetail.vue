@@ -39,9 +39,9 @@
       </van-list>
       <div class="order-subTitle">消费结算:</div>
       <div>
-        <van-row>消费时间: {{ orderTime.toLocaleString() }}</van-row>
+        <van-row>消费时间: {{ orderTime }}</van-row>
         <van-row>消费金额: {{ originMoney | numFilter }}</van-row>
-        <van-row>活动优惠: {{ discountMoney | numFilter }}</van-row>
+        <van-row>活动优惠: {{ (total - originMoney) | numFilter }}</van-row>
         <van-row>实际金额: {{ total | numFilter }}</van-row>
       </div>
       <div class="order-subTitle">留言备注:</div>
@@ -54,6 +54,7 @@
         maxlength="120"
         placeholder="请输入留言"
         show-word-limit
+        :readonly="!!id"
       />
       <van-goods-action>
         <van-goods-action-button
@@ -62,9 +63,28 @@
           @click="onClickReturn"
         />
         <van-goods-action-button
+          v-if="!id"
           type="danger"
           text="立即购买"
           @click="onClickSubmitOrder"
+        />
+        <van-goods-action-button
+          v-if="id && order.status == 1"
+          type="danger"
+          text="立即付款"
+          @click="onClickPayOrder"
+        />
+        <van-goods-action-button
+          v-if="id && order.status == 2"
+          type="danger"
+          text="取消订单"
+          @click="onClickCancelOrder"
+        />
+        <van-goods-action-button
+          v-if="id && [3,4,5].includes(order.status)"
+          type="danger"
+          text="申请退款"
+          @click="onClickCancelOrder"
         />
       </van-goods-action>
     </div>
@@ -92,7 +112,12 @@
 <script>
 import { addrGetAPI, addrListAPI } from "../apis/address.apis";
 import { dishCartAPI } from "../apis/dish.apis";
-import { orderAddAPI } from "../apis/order.apis";
+import {
+  orderAddAPI,
+  orderCancelAPI,
+  orderGetAPI,
+  orderPayAPI,
+} from "../apis/order.apis";
 import AddrComp from "../components/AddrComp.vue";
 
 export default {
@@ -107,19 +132,25 @@ export default {
       addrId: 0,
       dishes: [],
       listLoading: true,
-      orderTime: new Date(),
+      orderTime: new Date().toLocaleString(),
       originMoney: 0,
-      discountMoney: 0,
       total: 0,
       note: "",
+      id: null,
+      order: {},
     };
   },
   created() {
+    this.id = this.$route.query.id;
     this.userInfo = this.$store.state.common.userInfo;
     this.addrId = this.userInfo.default_addr;
-    this.cart = JSON.parse(localStorage.getItem("cart"));
-    this.loadDishes();
-    this.loadAddr();
+    if (this.id) {
+      this.loadOrder();
+    } else {
+      this.cart = JSON.parse(localStorage.getItem("cart"));
+      this.loadDishes();
+      this.loadAddr();
+    }
   },
   filters: {
     numFilter(value) {
@@ -135,7 +166,22 @@ export default {
       this.$dialog
         .confirm({ title: "确认取消订单" })
         .then(() => {
-          this.$toast("取消订单");
+          orderCancelAPI({ id: this.id })
+            .then((resp) => {
+              if (resp.data.success) {
+                this.$toast.success("取消订单成功");
+                this.userInfo.balance += this.total
+                this.$store.dispatch("common/setUserInfo", this.userInfo);
+                this.$router.replace("/orders?type=all");
+              } else {
+                this.$toast.fail("resp.data.data.msg");
+                this.$toast.fail("取消订单失败");
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+              this.$toast.fail("取消订单失败");
+            });
         })
         .catch(() => {
           this.$toast("不取消");
@@ -156,6 +202,7 @@ export default {
         });
     },
     onClickShowAddrs() {
+      if (this.id) return;
       this.showAddressList = true;
       addrListAPI()
         .then((resp) => {
@@ -168,6 +215,9 @@ export default {
         });
     },
     loadDishes() {
+      if (this.id) return;
+
+      this.listLoading = true;
       this.total = 0;
       this.originMoney = 0;
       var dishes = [];
@@ -189,7 +239,6 @@ export default {
               });
             }
             this.listLoading = false;
-            this.discountMoney = this.total - this.originMoney;
           }
         })
         .catch((err) => {
@@ -205,6 +254,16 @@ export default {
         .then((resp) => {
           if (resp.data.success) {
             this.$toast.success("提交成功");
+            this.$router.replace("/orderDetail?id=" + resp.data.data.id);
+            for (var key in this.cart) {
+              this.cart[key] = 0;
+            }
+            localStorage.setItem("cart", JSON.stringify(this.cart));
+            if (!this.cartBadge) {
+              this.cartBadge = null;
+            }
+            localStorage.removeItem("cartBadge");
+            window.location.reload();
           }
         })
         .catch((err) => {
@@ -212,6 +271,52 @@ export default {
             message: "订单提交失败, 请稍后重试",
             type: "danger",
           });
+          console.error(err);
+        });
+    },
+    onClickPayOrder() {
+      this.$dialog
+        .confirm({ title: "确认支付", message: "共计:" + this.total + "元" })
+        .then(() => {
+          orderPayAPI({ id: this.id })
+            .then((resp) => {
+              if (resp.data.success) {
+                this.userInfo.balance -= this.total
+                this.$store.dispatch("common/setUserInfo", this.userInfo);
+                this.$toast.success("支付成功");
+                this.$router.replace("/orders?type=all");
+              } else {
+                this.$toast.fail("支付失败");
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+              this.$toast.fail("支付失败");
+            });
+        })
+        .catch(() => {
+          this.$toast("取消支付");
+        });
+    },
+    loadOrder() {
+      this.originMoney = 0;
+      this.total = 0;
+      orderGetAPI({ id: this.id })
+        .then((resp) => {
+          if (resp.data.success) {
+            this.order = resp.data.data.order;
+            this.address = this.order.address;
+            this.dishes = this.order.dishes;
+            this.dishes.forEach((dish) => {
+              this.originMoney += dish.price * dish.count;
+            });
+            this.total = this.order.money;
+            this.orderTime = this.order.create_time;
+            this.note = this.order.note;
+          }
+          this.listLoading = false;
+        })
+        .catch((err) => {
           console.error(err);
         });
     },

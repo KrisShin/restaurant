@@ -18,6 +18,29 @@
         finished-text="没有更多了"
         @load="loadOrders"
       >
+        <van-card
+          v-for="(order, index) in list"
+          :key="index"
+          :num="order.amount"
+          :price="order.money"
+          :desc="order.address.address"
+          :title="order.address.name"
+          :thumb="order.index_img"
+          lazy-load
+          @click="onClickToDetail(order.id)"
+        >
+          <template #tags>
+            <van-tag plain>
+              {{ order.create_time.toLocaleString() }}
+            </van-tag>
+            <van-tag plain type="success" v-if="order.note">
+              {{ order.note }}
+            </van-tag>
+            <van-tag :color="order.status_color">
+              {{ order.status_desc }}
+            </van-tag>
+          </template>
+        </van-card>
       </van-list>
     </van-pull-refresh>
   </div>
@@ -42,17 +65,26 @@ export default {
     this.userInfo = this.$store.state.common.userInfo;
     this.loadOrders();
   },
+  afterRouteEnter(to, form, next) {
+    this.point = 0;
+    this.list = [];
+    next();
+  },
   methods: {
     loadOrders() {
       this.loading = true;
-      orderListAPI()
+      orderListAPI({ point: this.point })
         .then((resp) => {
           if (resp.data.success) {
-            console.log(resp.data);
-            this.loading = false;
-            return;
+            resp.data.data.orders.forEach((order) => {
+              this.list.push(order);
+            });
+            this.point = this.list.length;
+            if (resp.data.data.orders.length < 5) {
+              this.finished = true;
+            }
           }
-          this.finished = true;
+          this.loading = false;
         })
         .catch((err) => {
           console.error(err);
@@ -74,7 +106,7 @@ export default {
       this.onLoad();
     },
     onClickToDetail(id) {
-      this.$router.push("/dishDetail?dish=" + id);
+      this.$router.push("/orderDetail?id=" + id);
     },
   },
 };

@@ -18,9 +18,17 @@ export function orderDelAPI(data) {
 }
 
 export function orderListAPI(data) {
-    return axios.get(`/order/list`, data)
+    return axios.post(`/order/list`, data)
 }
 
 export function orderStatusAPI(data) {
     return axios.get(`/order/status`, data)
+}
+
+export function orderPayAPI(data) {
+    return axios.post(`/order/pay`, data)
+}
+
+export function orderCancelAPI(data) {
+    return axios.post(`/order/cancel`, data)
 }
