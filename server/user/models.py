@@ -106,6 +106,9 @@ class Address(db.Model):
     def set_update_time(self):
         self.update_time = datetime.now()
 
+    def delete(self):
+        db.session.delete(self)
+
 
 class Account(db.Model):
     __tablename__ = "account"

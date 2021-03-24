@@ -10,7 +10,7 @@ export function addrGetAPI(data) {
 }
 
 export function addrAddAPI(data) {
-    return axios.post(`/addr/${0}`, data)
+    return axios.post(`/addr/0`, data)
 }
 
 export function addrEditAPI(data) {

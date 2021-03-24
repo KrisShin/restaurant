@@ -174,7 +174,7 @@ export default {
     onSubmit() {
       // this.$toast.success("下单成功");
       if (this.total > 0) {
-        this.$router.push("/order");
+        this.$router.push("/orderDetail");
       } else {
         this.$toast.fail("请先点餐吧");
         setTimeout(() => {

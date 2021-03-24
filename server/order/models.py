@@ -1,4 +1,5 @@
 from datetime import datetime
+from utils.util import gen_uuid_name
 from config.global_params import db
 from dish.models import Dish
 
@@ -9,11 +10,11 @@ dishes = db.Table('rs_dish_order',
 
 class Order(db.Model):
     __tablename__ = 'order'
-    id = db.Column(db.String(32), primary_key=True)
-    create_time = db.Column(db.DateTime, default=datetime.now)
+    id = db.Column(db.String(32), primary_key=True, default=gen_uuid_name)
     money = db.Column(db.Float, default=0.0)
-    status = db.Column(db.Integer, default=1)  # 1-待支付/2-已支付/3-已接单/4-已完成/0-已取消
+    status = db.Column(db.Integer, default=1)  # 1-待支付/2-已支付/3-已接单/4-待评价/5-已完成/0-已取消
     note = db.Column(db.String(256))  # 备注
+    dish_amount = db.Column(db.JSON(), nullable=False)
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime)
 
@@ -29,6 +30,9 @@ class Order(db.Model):
     def set_update_time(self):
         self.update_time = datetime.now()
 
+    def delete(self):
+        db.session.delete(self)
+
 
 class Comment(db.Model):
     __tablename__ = 'comment'
@@ -43,3 +47,5 @@ class Comment(db.Model):
     def __init__(self, *args, **kwargs):
         super(Comment, self).__init__(**kwargs)
 
+    def delete(self):
+        db.session.delete(self)

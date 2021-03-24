@@ -46,6 +46,7 @@ ADDR_LACK_DATA = 1102
 # 地址不存在
 ADDR_NOT_EXISIT = 1103
 
+
 # order module
 # 提交订单没有菜品
-ORDER_NO_DISH = 1201
+ORDER_EMPTY_CART = 1201

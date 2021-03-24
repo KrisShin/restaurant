@@ -47,6 +47,40 @@
         </van-tag>
       </van-row>
     </div>
+    <van-tabbar
+      v-model="orderActive"
+      active-color="#7777FF"
+      inactive-color="#EF6611"
+      :fixed="false"
+    >
+      <van-tabbar-item
+        name="waitPay"
+        icon="card"
+        :badge="orderStatus.waitPay || null"
+      >
+        待支付
+      </van-tabbar-item>
+      <van-tabbar-item name="paid" icon="bag" :badge="orderStatus.paid || null">
+        已支付
+      </van-tabbar-item>
+      <van-tabbar-item
+        name="gotOrder"
+        icon="goods-collect"
+        :badge="orderStatus.gotOrder || null"
+      >
+        已接单
+      </van-tabbar-item>
+      <van-tabbar-item
+        name="waitComment"
+        icon="checked"
+        :badge="orderStatus.waitComment || null"
+      >
+        待评价
+      </van-tabbar-item>
+      <van-tabbar-item name="allOrder" icon="balance-list">
+        全部订单
+      </van-tabbar-item>
+    </van-tabbar>
     <van-cell-group title="个人管理">
       <van-cell title="编辑信息" is-link to="/editInfo" />
       <van-cell
@@ -105,6 +139,7 @@
 </template>
 <script>
 import { userSendCaptchaAPI, userLogoutAPI } from "../apis/user.apis.js";
+import { orderStatusAPI } from "../apis/order.apis";
 export default {
   name: "Profile",
   data() {
@@ -120,10 +155,13 @@ export default {
         : null,
       localDishCount: localStorage.getItem("localDishCount"),
       dishCount: this.$store.state.common.dishCount,
+      orderActive: null,
+      orderStatus: {},
     };
   },
   created() {
     this.userInfo = this.$store.state.common.userInfo;
+    this.loadOrderStatus();
   },
   methods: {
     clickToShowActive() {
@@ -167,6 +205,17 @@ export default {
         this.$store.dispatch("common/setUserInfo", null);
         this.$router.replace("/");
       });
+    },
+    loadOrderStatus() {
+      orderStatusAPI()
+        .then((resp) => {
+          if (resp.data.success) {
+            this.orderStatus = resp.data.data.orderStatus;
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
   },
 };

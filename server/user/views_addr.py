@@ -45,7 +45,7 @@ def oprate_address(addr_id):
 
     if request.method == 'DELETE':
         addr = Address.query.filter_by(id=addr_id).first()
-        db.session.delete(addr)
+        addr.delete()
         db.session.commit()
         return jsonify({'success': True})
 

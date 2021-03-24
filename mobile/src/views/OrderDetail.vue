@@ -1,5 +1,5 @@
 <template>
-  <div id="order">
+  <div id="orderDetail">
     <van-nav-bar
       title="恰了木有-订单"
       @click-left="onClickReturn"
@@ -12,14 +12,14 @@
       </template>
     </van-nav-bar>
     <div id="content">
-      <div id="orderAddr" class="margin-b">
-        <div class="order-subTitle">收货地址:</div>
+      <div id="orderAddr">
+        <div>收货地址:</div>
         <div @click="onClickShowAddrs">
           <AddrComp :addr="address" :switchable="false" :is_border="true" />
         </div>
       </div>
       <div class="order-subTitle">菜品列表:</div>
-      <van-list :loading="listLoading" class="margin-b">
+      <van-list :loading="listLoading">
         <van-cell v-for="dish in dishes" :key="dish.id" :title="dish.name">
           <template #title>
             <span>{{ dish.name }}</span>
@@ -44,6 +44,17 @@
         <van-row>活动优惠: {{ discountMoney | numFilter }}</van-row>
         <van-row>实际金额: {{ total | numFilter }}</van-row>
       </div>
+      <div class="order-subTitle">留言备注:</div>
+      <van-field
+        v-model="note"
+        rows="2"
+        class="margin-b3"
+        autosize
+        type="textarea"
+        maxlength="120"
+        placeholder="请输入留言"
+        show-word-limit
+      />
       <van-goods-action>
         <van-goods-action-button
           type="warning"
@@ -81,10 +92,11 @@
 <script>
 import { addrGetAPI, addrListAPI } from "../apis/address.apis";
 import { dishCartAPI } from "../apis/dish.apis";
+import { orderAddAPI } from "../apis/order.apis";
 import AddrComp from "../components/AddrComp.vue";
 
 export default {
-  name: "Order",
+  name: "OrderDetail",
   components: { AddrComp },
   data() {
     return {
@@ -99,6 +111,7 @@ export default {
       originMoney: 0,
       discountMoney: 0,
       total: 0,
+      note: "",
     };
   },
   created() {
@@ -184,7 +197,23 @@ export default {
         });
     },
     onClickSubmitOrder() {
-      console.log(1);
+      orderAddAPI({
+        note: this.note,
+        cart: JSON.stringify(this.cart),
+        addrId: this.addrId,
+      })
+        .then((resp) => {
+          if (resp.data.success) {
+            this.$toast.success("提交成功");
+          }
+        })
+        .catch((err) => {
+          this.$notify({
+            message: "订单提交失败, 请稍后重试",
+            type: "danger",
+          });
+          console.error(err);
+        });
     },
   },
 };
@@ -197,5 +226,8 @@ export default {
   margin: 1.2rem 0 0.3rem 0;
   border-bottom: dashed grey;
   border-width: 0.1rem;
+}
+.margin-b3 {
+  margin-bottom: 3rem;
 }
 </style>
