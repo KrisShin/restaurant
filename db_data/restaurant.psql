@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 11.10
--- Dumped by pg_dump version 11.10
+-- Dumped from database version 12.6 (Ubuntu 12.6-0ubuntu0.20.04.1)
+-- Dumped by pg_dump version 12.6 (Ubuntu 12.6-0ubuntu0.20.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -43,7 +43,7 @@ ALTER TYPE public.role_enum OWNER TO restuser;
 
 SET default_tablespace = '';
 
-SET default_with_oids = false;
+SET default_table_access_method = heap;
 
 --
 -- Name: account; Type: TABLE; Schema: public; Owner: restuser
@@ -93,9 +93,9 @@ CREATE TABLE public.address (
     phone character varying(11) NOT NULL,
     location json NOT NULL,
     create_time timestamp without time zone,
+    update_time timestamp without time zone,
     is_default boolean,
-    user_id integer,
-    update_time timestamp without time zone
+    user_id integer
 );
 
 
@@ -179,9 +179,9 @@ ALTER SEQUENCE public.comment_id_seq OWNED BY public.comment.id;
 CREATE TABLE public.discount (
     id integer NOT NULL,
     discount_type integer NOT NULL,
+    description character varying(200) NOT NULL,
     start_time timestamp without time zone,
     end_time timestamp without time zone,
-    description character varying(200) NOT NULL,
     discount double precision
 );
 
@@ -295,6 +295,7 @@ CREATE TABLE public."order" (
     money double precision,
     status integer,
     note character varying(256),
+    dish_amount json NOT NULL,
     create_time timestamp without time zone,
     update_time timestamp without time zone,
     user_id integer,
@@ -346,7 +347,7 @@ ALTER TABLE public.rs_user_tag OWNER TO restuser;
 
 CREATE TABLE public.tag (
     id integer NOT NULL,
-    weight integer DEFAULT 1,
+    weight integer,
     name character varying(32),
     create_time timestamp without time zone
 );
@@ -392,8 +393,8 @@ CREATE TABLE public."user" (
     is_new boolean,
     is_email_active boolean,
     create_time timestamp without time zone,
-    role public.role_enum,
-    update_time timestamp without time zone
+    update_time timestamp without time zone,
+    role public.role_enum
 );
 
 
@@ -482,7 +483,7 @@ ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_
 --
 
 COPY public.account (id, user_id, is_vip, start_time, end_time, balance) FROM stdin;
-1	1	f	\N	\N	0
+2	1	f	\N	\N	340.96
 \.
 
 
@@ -490,10 +491,9 @@ COPY public.account (id, user_id, is_vip, start_time, end_time, balance) FROM st
 -- Data for Name: address; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public.address (id, name, phone, location, create_time, is_default, user_id, update_time) FROM stdin;
-4	吴京666	14332133214	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u4e50\\u5c71\\u5e02", "county": "\\u5e02\\u4e2d\\u533a", "addressDetail": "\\u7231\\u7684\\u65b9\\u5f0f", "areaCode": "511102"}	2021-03-10 17:06:36.564771	f	1	2021-03-10 17:21:46.903463
-5	惊雷1	14323565443	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u7709\\u5c71\\u5e02", "county": "\\u6d2a\\u96c5\\u53bf", "addressDetail": "\\u554a\\u9876\\u9876\\u9876\\u9876\\u9876", "areaCode": "511423"}	2021-03-10 17:10:13.899607	f	1	2021-03-10 17:21:54.548244
-6	make	15523432345	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u5df4\\u4e2d\\u5e02", "county": "\\u5357\\u6c5f\\u53bf", "addressDetail": "\\u4e94\\u9053\\u53e3\\u804c\\u4e1a\\u6280\\u672f\\u5b66\\u9662", "areaCode": "511922"}	2021-03-10 17:22:33.883056	t	1	2021-03-17 13:52:38.577062
+COPY public.address (id, name, phone, location, create_time, update_time, is_default, user_id) FROM stdin;
+7	吴彦祖	13463636636	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u5e7f\\u5143\\u5e02", "county": "\\u671d\\u5929\\u533a", "addressDetail": "\\u90ae\\u5c40\\u5bf9\\u9762", "areaCode": "510812"}	2021-05-09 00:07:41.197691	2021-05-09 00:07:41.195468	f	1
+8	刘的话	14555554444	{"country": "", "province": "\\u56db\\u5ddd\\u7701", "city": "\\u963f\\u575d\\u85cf\\u65cf\\u7f8c\\u65cf\\u81ea\\u6cbb\\u5dde", "county": "\\u5c0f\\u91d1\\u53bf", "addressDetail": "\\u83dc\\u9e1f\\u4e00\\u6218", "areaCode": "513227"}	2021-05-09 00:08:13.944587	2021-05-09 00:08:13.941787	t	1
 \.
 
 
@@ -502,6 +502,7 @@ COPY public.address (id, name, phone, location, create_time, is_default, user_id
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
+25e3b7c748e6
 fea6be4c19ba
 \.
 
@@ -518,12 +519,12 @@ COPY public.comment (id, content, create_time, user_id, order_id, rate) FROM std
 -- Data for Name: discount; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public.discount (id, discount_type, start_time, end_time, description, discount) FROM stdin;
-4	3	\N	\N	第二件半价	\N
-1	0	\N	\N	无折扣	1
-2	1	\N	\N	95折	0.949999999999999956
-5	4	\N	\N	两件8折	0.800000000000000044
-3	2	\N	\N	买一送一	\N
+COPY public.discount (id, discount_type, description, start_time, end_time, discount) FROM stdin;
+4	3	第二件半价	\N	\N	\N
+1	0	无折扣	\N	\N	1
+2	1	95折	\N	\N	0.95
+5	4	两件8折	\N	\N	0.8
+3	2	买一送一	\N	\N	\N
 \.
 
 
@@ -533,9 +534,9 @@ COPY public.discount (id, discount_type, start_time, end_time, description, disc
 
 COPY public.dish (id, name, price, amount, description, discount_id, create_time, update_time) FROM stdin;
 1	青椒土豆丝	13.5	0	青椒和土豆丝爆炒, 味道香辣, 口感爽脆	1	2021-03-11 10:43:35	\N
-2	超级佛跳墙	499.990000000000009	0	超级无敌海景佛跳墙, 只能说什么都有, 超级滋补, 酬宾95折	2	2021-03-11 10:48:31	\N
-3	蒜苗回锅肉	28.879999999999999	0	这么香的回锅肉, 收你28.88不算过分吧	1	2021-03-11 10:49:55	\N
-4	鱼香茄子	12.8800000000000008	0	黑多的鱼香, 茄子比较耙, 酸甜酸甜不腻	2	2021-03-11 10:51:14	\N
+2	超级佛跳墙	499.99	0	超级无敌海景佛跳墙, 只能说什么都有, 超级滋补, 酬宾95折	2	2021-03-11 10:48:31	\N
+3	蒜苗回锅肉	28.88	0	这么香的回锅肉, 收你28.88不算过分吧	1	2021-03-11 10:49:55	\N
+4	鱼香茄子	12.88	0	黑多的鱼香, 茄子比较耙, 酸甜酸甜不腻	2	2021-03-11 10:51:14	\N
 \.
 
 
@@ -558,7 +559,8 @@ COPY public.dishimg (id, is_index, uri, dish_id) FROM stdin;
 -- Data for Name: order; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public."order" (id, money, status, note, create_time, update_time, user_id, address_id) FROM stdin;
+COPY public."order" (id, money, status, note, dish_amount, create_time, update_time, user_id, address_id) FROM stdin;
+932cf3661a304ef392ab186c5de53674	40.5	1	武器而	{"1": 3}	2021-05-09 00:08:29.767125	\N	1	8
 \.
 
 
@@ -567,6 +569,7 @@ COPY public."order" (id, money, status, note, create_time, update_time, user_id,
 --
 
 COPY public.rs_dish_order (dish_id, order_id) FROM stdin;
+1	932cf3661a304ef392ab186c5de53674
 \.
 
 
@@ -575,11 +578,10 @@ COPY public.rs_dish_order (dish_id, order_id) FROM stdin;
 --
 
 COPY public.rs_dish_tag (dish_id, tag_id) FROM stdin;
-1	8
-1	16
-2	4
-3	3
-4	16
+1	7
+2	11
+4	10
+3	2
 \.
 
 
@@ -589,11 +591,9 @@ COPY public.rs_dish_tag (dish_id, tag_id) FROM stdin;
 
 COPY public.rs_user_tag (user_id, tag_id) FROM stdin;
 1	3
+1	9
+1	13
 1	14
-1	16
-1	4
-1	2
-1	15
 \.
 
 
@@ -602,22 +602,22 @@ COPY public.rs_user_tag (user_id, tag_id) FROM stdin;
 --
 
 COPY public.tag (id, weight, name, create_time) FROM stdin;
-3	2	麻辣	2021-03-11 09:25:05
 1	0	甜点	2021-03-10 17:39:06
 6	0	重辣	2021-03-11 09:25:14
 7	0	特辣	2021-03-11 09:25:17
-9	0	广东辣	2021-03-11 09:25:23
 11	0	不吃香菜	2021-03-11 09:25:29
-13	0	热饮	2021-03-11 09:25:34
-8	1	微辣	2021-03-11 09:25:20
 14	1	半糖	2021-03-11 09:25:37
-16	3	时蔬	2021-03-11 09:25:43
-4	2	海鲜	2021-03-11 09:25:08
-2	1	奶茶	2021-03-11 09:25:02
-15	1	果汁	2021-03-11 09:25:41
 12	0	腌制品	2021-03-11 09:25:31
 10	0	不吃葱	2021-03-11 09:25:26
 5	0	冰饮	2021-03-11 09:25:11
+3	1	麻辣	2021-03-11 09:25:05
+9	1	广东辣	2021-03-11 09:25:23
+13	1	热饮	2021-03-11 09:25:34
+8	0	微辣	2021-03-11 09:25:20
+16	0	时蔬	2021-03-11 09:25:43
+4	0	海鲜	2021-03-11 09:25:08
+2	0	奶茶	2021-03-11 09:25:02
+15	0	果汁	2021-03-11 09:25:41
 \.
 
 
@@ -625,8 +625,8 @@ COPY public.tag (id, weight, name, create_time) FROM stdin;
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: restuser
 --
 
-COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, is_new, is_email_active, create_time, role, update_time) FROM stdin;
-1	test	14	13433334444	/static/avatar/6ea1ebed100443f697d6921594d9f19a.jpeg	\N	2edb9182f33059a951e637e5ef8eeaf6	f	t	t	2021-03-10 16:55:54.282033	admin	2021-03-17 14:21:01.222273
+COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, is_new, is_email_active, create_time, update_time, role) FROM stdin;
+1	test	14	13433334444	/static/avatar/6ea1ebed100443f697d6921594d9f19a.jpeg	\N	2edb9182f33059a951e637e5ef8eeaf6	f	t	t	2021-03-10 16:55:54.282033	2021-05-09 00:05:00.057619	admin
 \.
 
 
@@ -634,14 +634,14 @@ COPY public."user" (id, nickname, age, phone, avatar, email, password, gender, i
 -- Name: account_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.account_id_seq', 1, true);
+SELECT pg_catalog.setval('public.account_id_seq', 2, true);
 
 
 --
 -- Name: address_id_seq; Type: SEQUENCE SET; Schema: public; Owner: restuser
 --
 
-SELECT pg_catalog.setval('public.address_id_seq', 6, true);
+SELECT pg_catalog.setval('public.address_id_seq', 8, true);
 
 
 --

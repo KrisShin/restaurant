@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 5ec20bffd8a6
+Revision ID: 8548f3c84490
 Revises: 
-Create Date: 2021-03-24 18:25:58.575079
+Create Date: 2021-05-08 23:57:34.052769
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5ec20bffd8a6'
+revision = '8548f3c84490'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -44,7 +44,7 @@ def upgrade():
     sa.Column('email', sa.String(length=128), nullable=True),
     sa.Column('password', sa.String(length=128), nullable=False),
     sa.Column('gender', sa.Boolean(), nullable=True),
-    sa.Column('role', sa.Enum('user', 'admin', name='role_enum'), nullable=True),
+    # sa.Column('role', sa.Enum('user', 'admin', name='role_enum'), nullable=True),
     sa.Column('is_new', sa.Boolean(), nullable=True),
     sa.Column('is_email_active', sa.Boolean(), nullable=True),
     sa.Column('create_time', sa.DateTime(), nullable=True),
@@ -126,7 +126,7 @@ def upgrade():
     op.create_table('comment',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('content', sa.String(length=512), nullable=True),
-    sa.Column('rate', sa.Enum('good', 'ok', 'bad', name='rate_enum'), nullable=True),
+    # sa.Column('rate', sa.Enum('good', 'ok', 'bad', name='rate_enum'), nullable=True),
     sa.Column('create_time', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('order_id', sa.String(length=32), nullable=True),
