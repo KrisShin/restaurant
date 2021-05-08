@@ -4,7 +4,7 @@ import vue from '../main'
 
 const service = axios.create({
     baseURL: 'http://127.0.0.1:9096', //process.env.BASE_API,
-    timeout: 3 * 1000
+    timeout: 3000
 })
 
 // 请求拦截
@@ -38,7 +38,6 @@ service.interceptors.response.use(res => {
     }
     return res
 }, (error) => {
-    // console.log(error, 123123, code)
     Promise.reject(error)
 })
 

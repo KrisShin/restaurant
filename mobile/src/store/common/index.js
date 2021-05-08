@@ -33,7 +33,7 @@ export default {
     mutationUserInfo(state, user) {
       state.userInfo = user
       // localStorage.setItem('userInfo', user)
-      sessionStorage.setItem('userInfo', user)
+      sessionStorage.setItem('userInfo', JSON.stringify(user))
     },
     mutationDishCount(state, dishCount) {
       state.dishCount = dishCount

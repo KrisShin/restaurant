@@ -34,17 +34,57 @@
         </van-col>
         <van-col>余额:{{ userInfo.balance }}</van-col>
       </van-row>
-      <van-tag
-        v-for="(tag, index) in userInfo.tags"
-        :key="index"
-        :color="tag.color"
-        round
-        size="medium"
-        @click="onClickAddTag(tag, index)"
-      >
-        {{ tag.name }}
-      </van-tag>
+      <van-row type="flex" justify="center">
+        <van-tag
+          v-for="(tag, index) in userInfo.tags"
+          :key="index"
+          :color="tag.color"
+          round
+          size="medium"
+          plain
+        >
+          {{ tag.name }}
+        </van-tag>
+      </van-row>
     </div>
+    <van-tabbar
+      v-model="orderActive"
+      active-color="#7777FF"
+      inactive-color="#EF6611"
+      :fixed="false"
+    >
+      <van-tabbar-item
+        name="waitPay"
+        icon="card"
+        :badge="orderStatus.waitPay || null"
+      >
+        待支付
+      </van-tabbar-item>
+      <van-tabbar-item name="paid" icon="bag" :badge="orderStatus.paid || null">
+        已支付
+      </van-tabbar-item>
+      <van-tabbar-item
+        name="gotOrder"
+        icon="goods-collect"
+        :badge="orderStatus.gotOrder || null"
+      >
+        已接单
+      </van-tabbar-item>
+      <van-tabbar-item
+        name="waitComment"
+        icon="checked"
+        :badge="orderStatus.waitComment || null"
+      >
+        待评价
+      </van-tabbar-item>
+      <van-tabbar-item
+        name="allOrder"
+        icon="balance-list"
+        to="/orders?type=all"
+      >
+        全部订单
+      </van-tabbar-item>
+    </van-tabbar>
     <van-cell-group title="个人管理">
       <van-cell title="编辑信息" is-link to="/editInfo" />
       <van-cell
@@ -57,9 +97,9 @@
       <van-cell title="地址管理" is-link to="/address" />
     </van-cell-group>
     <van-cell-group title="订单管理">
-      <van-cell title="我的订单" :value="orderCount" />
+      <van-cell title="我的订单" :value="orderCount" to="/orders?type=all" />
       <van-cell title="我的评价" :value="commentCount" />
-      <van-cell title="Demo" value="内容" label="描述信息" />
+      <!-- <van-cell title="Demo" value="内容" label="描述信息" /> -->
     </van-cell-group>
     <van-button type="danger" block @click="clickToLogout">
       退出登录
@@ -84,7 +124,7 @@
       >
         结算
       </van-tabbar-item>
-      <van-tabbar-item name="my" icon="user-o" badge="20" to="/profile">
+      <van-tabbar-item name="my" icon="user-o" :badge="myBadge" to="/profile">
         我的
       </van-tabbar-item>
     </van-tabbar>
@@ -94,12 +134,16 @@
       show-cancel-button
       @confirm="confirmToActive"
     >
+      <van-row type="flex" justify="center">
+        <span class="dialog-tip-msg">(点击邮箱可编辑)</span>
+      </van-row>
       <van-field v-model="email" />
     </van-dialog>
   </div>
 </template>
 <script>
 import { userSendCaptchaAPI, userLogoutAPI } from "../apis/user.apis.js";
+import { orderStatusAPI } from "../apis/order.apis";
 export default {
   name: "Profile",
   data() {
@@ -115,10 +159,14 @@ export default {
         : null,
       localDishCount: localStorage.getItem("localDishCount"),
       dishCount: this.$store.state.common.dishCount,
+      orderActive: null,
+      orderStatus: {},
+      myBadge: 0,
     };
   },
   created() {
     this.userInfo = this.$store.state.common.userInfo;
+    this.loadOrderStatus();
   },
   methods: {
     clickToShowActive() {
@@ -163,6 +211,28 @@ export default {
         this.$router.replace("/");
       });
     },
+    loadOrderStatus() {
+      orderStatusAPI()
+        .then((resp) => {
+          if (resp.data.success) {
+            this.orderStatus = resp.data.data.orderStatus;
+            this.orderCount = resp.data.data.orderCount;
+            this.myBadge =
+              this.orderStatus.waitPay +
+              this.orderStatus.paid +
+              this.orderStatus.gotOrder +
+              this.orderStatus.waitComment;
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
   },
 };
 </script>
+<style>
+.dialog-tip-msg {
+  font-size: 0.6em;
+}
+</style>

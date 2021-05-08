@@ -36,13 +36,13 @@ def auth(func):
         if status == 200 and auth_s and role:
             return func(*args, **kwargs)
         else:
-            return jsonify({'success': False, 'code': status})# , status
+            return jsonify({'success': False, 'code': status})  # , status
     return wrapper
 
 
 def set_login_cache(auth, user_id):
     print(auth)
-    r.set_val(f'user:{auth}', user_id, 1800)
+    r.set_val(f'user:{auth}', user_id, 3600 * 1)
 
 
 def clear_login_cache(req):

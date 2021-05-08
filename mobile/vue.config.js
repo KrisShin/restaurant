@@ -1,8 +1,8 @@
 module.exports = {
   devServer: {
-    host: 'localhost',//'0.0.0.0', // 允许外部ip访问
+    host: '0.0.0.0', // 允许外部ip访问
     port: 9093,
-    https: true, // 启用https
+    https: false, // 启用https
     disableHostCheck: true,
     proxy: {
       '/api': {

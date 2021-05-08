@@ -9,8 +9,8 @@
     />
     <div>
       <van-address-list
-        v-model="chosenAddressId"
         :list="list"
+        :switchable="false"
         default-tag-text="默认"
         @add="onAdd"
         @edit="onEdit"
@@ -19,12 +19,11 @@
   </div>
 </template>
 <script>
-import { addrListAPI } from "../apis/address.api";
+import { addrListAPI } from "../apis/address.apis";
 export default {
   name: "Address",
   data() {
     return {
-      chosenAddressId: "1",
       list: [],
     };
   },

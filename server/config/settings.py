@@ -25,14 +25,23 @@ EMAIL_AUTH = r'tdlzctihcooodgbc'
 HTTP_HOST = 'http://127.0.0.1:9096'
 
 TAG_COLOR = {
-    1: '#cccccc',
-    2: '#808089',
-    3: '#aa3030',
-    4: '#ff00ff',
-    5: '#0000ff',
-    6: '#00ffff',
-    7: '#00ff00',
-    8: '#cccc00',
-    9: '#ff5500',
-    10: '#ff0000',
+    0: '#cccccc',
+    1: '#808089',
+    2: '#aa3030',
+    3: '#ff00ff',
+    4: '#0000ff',
+    5: '#00ffff',
+    6: '#00ff00',
+    7: '#cccc00',
+    8: '#ff5500',
+    9: '#ff0000',
+}
+
+ORDER_STATUS = {
+    0: 'cancelOrder',
+    1: 'waitPay',
+    2: 'paid',
+    3: 'gotOrder',
+    4: 'waitComment',
+    5: 'doneOrder',
 }

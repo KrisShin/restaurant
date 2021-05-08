@@ -26,7 +26,7 @@ import {
   addrEditAPI,
   addrAddAPI,
   addrGetAPI,
-} from "../apis/address.api";
+} from "../apis/address.apis";
 import areaList from "../assets/Aera.ts";
 export default {
   name: "AddrEdit",

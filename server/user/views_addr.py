@@ -1,5 +1,3 @@
-import json
-
 from flask import Blueprint, request, jsonify
 
 from .models import User, Address
@@ -47,7 +45,7 @@ def oprate_address(addr_id):
 
     if request.method == 'DELETE':
         addr = Address.query.filter_by(id=addr_id).first()
-        db.session.delete(addr)
+        addr.delete()
         db.session.commit()
         return jsonify({'success': True})
 
@@ -73,9 +71,12 @@ def operate_an_addr(addr, user, data):
     }
 
     is_default = data.get('isDefault')
-    if is_default:
-        for a in user.address:
-            a.is_default = False
+    if user.address:
+        if is_default:
+            for a in user.address:
+                a.is_default = False
+    else:
+        is_default = True
     if not all((name, phone, location, user, addr)):
         return
     addr.name = name,
@@ -85,3 +86,16 @@ def operate_an_addr(addr, user, data):
     addr.is_default = is_default
     addr.set_update_time()
     return addr
+
+
+# @address.route('/getDefault', methods=['GET'])
+# @auth
+# def get_default_addr():
+#     user = User.query.filter_by(id=get_userId(request)).first()
+#     addr = Address.query.filter_by(is_default=True, user_id=user.id).first()
+#     if addr:
+#         return jsonify({'success': True, 'data': [dict(addr)]})
+
+#     if user.address:
+#         addr = dict(user.address[0])
+#     return jsonify({'success': True, 'data': [addr]})

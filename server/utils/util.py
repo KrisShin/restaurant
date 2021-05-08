@@ -25,14 +25,14 @@ def check_password(password, real_password) -> bool:
     return real_password == pwd
 
 
-def gen_filename(ext):
+def gen_uuid_name(ext=''):
     return uuid4().hex + ext
 
 
 def save_img(path, base64_str):
     undeal_str, img_content = base64_str.split(',')
     ext = r'.' + undeal_str[11:-7]
-    filename = gen_filename(ext)
+    filename = gen_uuid_name(ext)
     path = f'statics/{path}/{filename}'
     with open(path, 'wb') as fp:
         img = b64decode(img_content)
