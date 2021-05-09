@@ -1,7 +1,7 @@
 from flask import Blueprint, json, jsonify, request
 from config.global_params import db
 from config.status_code import *
-from config.settings import ORDER_STATUS
+from config.settings import ORDER_ACCEPTED, ORDER_CANCELED, ORDER_COMMNETED, ORDER_COMPLETE, ORDER_PAID, ORDER_REFUNDING, ORDER_UNPAY, ORDER_STATUS, ORDER_STATUS_REVERSE
 from utils.wraps import auth, get_userId
 from user.models import User, Address
 from dish.models import Dish
@@ -65,8 +65,12 @@ def operate_order(order_id):
 def post_order_list():
     user = User.query.filter_by(id=get_userId(request)).first()
     point = request.get_json().get('point', 0)
-    print(point)
-    orders = [dict(order) for order in user.orders[point:point+5]]
+    status = request.get_json().get('status')
+    if status == 'all' or not status:
+        orders = [dict(order) for order in user.orders[point: point+5]]
+    else:
+        orders = [dict(order) for order in user.orders
+                  if order.status == ORDER_STATUS_REVERSE[status]]
     return jsonify({'success': True, 'data': {'orders': orders}})
 
 
@@ -74,17 +78,18 @@ def post_order_list():
 @auth
 def get_order_status():
     user = User.query.filter_by(id=get_userId(request)).first()
-    order_status = {
-        'waitPay': 0,
-        'paid': 0,
-        'gotOrder': 0,
-        'waitComment': 0,
-        'doneOrder': 0,
-        'cancelOrder': 0
+    order_status_count = {
+        'orderUnpay': 0,
+        'orderPaid': 0,
+        'orderAccept': 0,
+        'orderCommented': 0,
+        'orderComplete': 0,
+        'orderCanceled': 0,
+        'orderRefunding': 0
     }
     for order in user.orders:
-        order_status[ORDER_STATUS[order.status]] += 1
-    return jsonify({'success': True, 'data': {'orderStatus': order_status, 'orderCount': len(user.orders)}})
+        order_status_count[ORDER_STATUS[order.status]] += 1
+    return jsonify({'success': True, 'data': {'orderStatus': order_status_count, 'orderCount': len(user.orders)}})
 
 
 @order.route('/pay', methods=['POST'])
@@ -93,8 +98,21 @@ def post_order_pay():
     id = request.get_json().get('id')
     user = User.query.filter_by(id=get_userId(request)).first()
     order = Order.query.filter_by(id=id).first()
+    if user.account.balance < order.money:
+        return jsonify({'success': False, 'data': {'message': '余额不足, 请先充值'}})
     user.account.balance -= order.money
-    order.status = 2
+    order.status = ORDER_PAID
+    db.session.commit()
+    return jsonify({'success': True, 'data': {'balance': user.account.balance}})
+
+
+@order.route('/complete', methods=['POST'])
+@auth
+def post_order_complete():
+    id = request.get_json().get('id')
+    order = Order.query.filter_by(id=id).first()
+    if order.status in (ORDER_ACCEPTED, ORDER_COMMNETED):
+        order.status = ORDER_COMPLETE
     db.session.commit()
     return jsonify({'success': True})
 
@@ -106,15 +124,15 @@ def post_order_cancel():
     user = User.query.filter_by(id=get_userId(request)).first()
     order = Order.query.filter_by(id=id).first()
     msg = ''
-    if order.status == 1:
-        order.status = 0
-    elif order.status == 2:
+    if order.status == ORDER_UNPAY:
+        order.status = ORDER_CANCELED
+    elif order.status == ORDER_PAID:
         user.account.balance += order.money
-        order.status = 0
-    elif 6 > order.status > 2:
+        order.status = ORDER_CANCELED
+    elif order.status in (ORDER_ACCEPTED, ORDER_COMMNETED, ORDER_COMPLETE):
         msg = '等待商家审批退款'
-        order.status = 6
-    elif order.status in [0, 6]:
+        order.status = ORDER_REFUNDING
+    elif order.status in [ORDER_UNPAY, ORDER_REFUNDING]:
         msg = '该状态下无法退款, 如有疑问请前往申诉'
     db.session.commit()
     return jsonify({'success': True, 'data': {'message': msg}})

@@ -483,7 +483,7 @@ ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_
 --
 
 COPY public.account (id, user_id, is_vip, start_time, end_time, balance) FROM stdin;
-2	1	f	\N	\N	340.96
+2	1	f	\N	\N	300.46
 \.
 
 
@@ -560,7 +560,8 @@ COPY public.dishimg (id, is_index, uri, dish_id) FROM stdin;
 --
 
 COPY public."order" (id, money, status, note, dish_amount, create_time, update_time, user_id, address_id) FROM stdin;
-932cf3661a304ef392ab186c5de53674	40.5	1	武器而	{"1": 3}	2021-05-09 00:08:29.767125	\N	1	8
+932cf3661a304ef392ab186c5de53674	40.5	2	武器而	{"1": 3}	2021-05-09 00:08:29.767125	\N	1	8
+1d0a4054088440678acfd48e73b8ba61	949.98	1	不好吃	{"2": 2}	2021-05-09 22:58:16.820577	\N	1	8
 \.
 
 
@@ -570,6 +571,7 @@ COPY public."order" (id, money, status, note, dish_amount, create_time, update_t
 
 COPY public.rs_dish_order (dish_id, order_id) FROM stdin;
 1	932cf3661a304ef392ab186c5de53674
+2	1d0a4054088440678acfd48e73b8ba61
 \.
 
 
@@ -604,11 +606,8 @@ COPY public.rs_user_tag (user_id, tag_id) FROM stdin;
 COPY public.tag (id, weight, name, create_time) FROM stdin;
 1	0	甜点	2021-03-10 17:39:06
 6	0	重辣	2021-03-11 09:25:14
-7	0	特辣	2021-03-11 09:25:17
-11	0	不吃香菜	2021-03-11 09:25:29
 14	1	半糖	2021-03-11 09:25:37
 12	0	腌制品	2021-03-11 09:25:31
-10	0	不吃葱	2021-03-11 09:25:26
 5	0	冰饮	2021-03-11 09:25:11
 3	1	麻辣	2021-03-11 09:25:05
 9	1	广东辣	2021-03-11 09:25:23
@@ -616,8 +615,11 @@ COPY public.tag (id, weight, name, create_time) FROM stdin;
 8	0	微辣	2021-03-11 09:25:20
 16	0	时蔬	2021-03-11 09:25:43
 4	0	海鲜	2021-03-11 09:25:08
-2	0	奶茶	2021-03-11 09:25:02
 15	0	果汁	2021-03-11 09:25:41
+7	1	特辣	2021-03-11 09:25:17
+11	1	不吃香菜	2021-03-11 09:25:29
+10	1	不吃葱	2021-03-11 09:25:26
+2	1	奶茶	2021-03-11 09:25:02
 \.
 
 

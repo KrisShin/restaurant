@@ -81,7 +81,7 @@
           @click="onClickCancelOrder"
         />
         <van-goods-action-button
-          v-if="id && [3,4,5].includes(order.status)"
+          v-if="id && [3, 4, 5].includes(order.status)"
           type="danger"
           text="申请退款"
           @click="onClickCancelOrder"
@@ -117,6 +117,7 @@ import {
   orderCancelAPI,
   orderGetAPI,
   orderPayAPI,
+  orderCompleteAPI,
 } from "../apis/order.apis";
 import AddrComp from "../components/AddrComp.vue";
 
@@ -138,6 +139,9 @@ export default {
       note: "",
       id: null,
       order: {},
+      myBadge: localStorage.getItem("myBadge")
+        ? JSON.parse(localStorage.getItem("myBadge"))
+        : null,
     };
   },
   created() {
@@ -170,7 +174,7 @@ export default {
             .then((resp) => {
               if (resp.data.success) {
                 this.$toast.success("取消订单成功");
-                this.userInfo.balance += this.total
+                this.userInfo.balance += this.total;
                 this.$store.dispatch("common/setUserInfo", this.userInfo);
                 this.$router.replace("/orders?type=all");
               } else {
@@ -262,7 +266,9 @@ export default {
             if (!this.cartBadge) {
               this.cartBadge = null;
             }
+            this.myBadge += 1;
             localStorage.removeItem("cartBadge");
+            localStorage.setItem("myBadge", this.myBadge);
             window.location.reload();
           }
         })
@@ -281,17 +287,50 @@ export default {
           orderPayAPI({ id: this.id })
             .then((resp) => {
               if (resp.data.success) {
-                this.userInfo.balance -= this.total
+                this.userInfo.balance -= resp.data.data.balance;
                 this.$store.dispatch("common/setUserInfo", this.userInfo);
                 this.$toast.success("支付成功");
                 this.$router.replace("/orders?type=all");
               } else {
-                this.$toast.fail("支付失败");
+                if (resp.data.data) {
+                  this.$toast.fail(resp.data.data.message);
+                } else {
+                  this.$toast.fail("支付失败");
+                }
               }
             })
             .catch((err) => {
               console.error(err);
               this.$toast.fail("支付失败");
+            });
+        })
+        .catch(() => {
+          this.$toast("取消支付");
+        });
+    },
+    onClickCompleteOrder() {
+      this.$dialog
+        .confirm({
+          title: "确认完成订单?",
+          message: "共计:" + this.total + "元",
+        })
+        .then(() => {
+          orderCompleteAPI({ id: this.id })
+            .then((resp) => {
+              if (resp.data.success) {
+                this.myBadge -= 1;
+                localStorage.setItem("myBadge", this.myBadge);
+                if (this.myBadge == 0) {
+                  localStorage.removeItem("myBadge");
+                }
+                this.$router.push("/profile");
+              } else {
+                this.$toast.fail("提交失败");
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+              this.$toast.fail("提交失败");
             });
         })
         .catch(() => {

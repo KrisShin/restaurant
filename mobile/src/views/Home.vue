@@ -91,7 +91,7 @@
         >
           结算
         </van-tabbar-item>
-        <van-tabbar-item name="my" icon="user-o" badge="20" to="/profile">
+        <van-tabbar-item name="my" icon="user-o" :badge="myBadge" to="/profile">
           我的
         </van-tabbar-item>
       </van-tabbar>
@@ -131,6 +131,9 @@ export default {
         ? JSON.parse(localStorage.getItem("localDishCount"))
         : 0,
       dishCount: this.$store.state.common.dishCount,
+      myBadge: localStorage.getItem("myBadge")
+        ? JSON.parse(localStorage.getItem("myBadge"))
+        : null
     };
   },
   created() {
