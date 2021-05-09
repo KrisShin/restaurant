@@ -54,28 +54,36 @@
       :fixed="false"
     >
       <van-tabbar-item
-        name="waitPay"
+        name="orderUnpay"
         icon="card"
-        :badge="orderStatus.waitPay || null"
+        :badge="orderStatus.orderUnpay || null"
+        to="/orders?type=orderUnpay"
       >
         待支付
       </van-tabbar-item>
-      <van-tabbar-item name="paid" icon="bag" :badge="orderStatus.paid || null">
+      <van-tabbar-item
+        name="orderPaid"
+        icon="bag"
+        :badge="orderStatus.orderPaid || null"
+        to="/orders?type=orderPaid"
+      >
         已支付
       </van-tabbar-item>
       <van-tabbar-item
-        name="gotOrder"
+        name="orderAccept"
         icon="goods-collect"
-        :badge="orderStatus.gotOrder || null"
+        :badge="orderStatus.orderAccept || null"
+        to="/orders?type=orderAccept"
       >
         已接单
       </van-tabbar-item>
       <van-tabbar-item
-        name="waitComment"
+        name="orderCommented"
         icon="checked"
-        :badge="orderStatus.waitComment || null"
+        :badge="orderStatus.orderCommented || null"
+        to="/orders?type=orderCommented"
       >
-        待评价
+        已评价
       </van-tabbar-item>
       <van-tabbar-item
         name="allOrder"
@@ -220,10 +228,10 @@ export default {
             this.orderStatus = resp.data.data.orderStatus;
             this.orderCount = resp.data.data.orderCount;
             this.myBadge =
-              this.orderStatus.waitPay +
-              this.orderStatus.paid +
-              this.orderStatus.gotOrder +
-              this.orderStatus.waitComment;
+              this.orderStatus.orderUnpay +
+              this.orderStatus.orderPaid +
+              this.orderStatus.orderAccept +
+              this.orderStatus.orderCommented;
             localStorage.setItem("myBadge", this.myBadge);
           }
         })

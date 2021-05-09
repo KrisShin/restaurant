@@ -1,3 +1,4 @@
+### http request
 # user module
 # 用户不存在
 USER_NOT_EXIST = 1001

@@ -14,7 +14,7 @@ class Order(db.Model):
     __tablename__ = 'order'
     id = db.Column(db.String(32), primary_key=True, default=gen_uuid_name)
     money = db.Column(db.Float, default=0.0)
-    # 1-待支付/2-已支付/3-已接单/4-待评价/5-已完成/6-申请退款/0-已取消
+    # 1-待支付/2-已支付/3-已接单/4-已评价/5-已完成/6-申请退款/0-已取消
     status = db.Column(db.Integer, default=1)
     note = db.Column(db.String(256))  # 备注
     dish_amount = db.Column(db.JSON(), nullable=False)

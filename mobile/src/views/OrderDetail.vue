@@ -292,7 +292,11 @@ export default {
                 this.$toast.success("支付成功");
                 this.$router.replace("/orders?type=all");
               } else {
-                this.$toast.fail("支付失败");
+                if (resp.data.data) {
+                  this.$toast.fail(resp.data.data.message);
+                } else {
+                  this.$toast.fail("支付失败");
+                }
               }
             })
             .catch((err) => {
@@ -326,7 +330,7 @@ export default {
             })
             .catch((err) => {
               console.error(err);
-              this.$toast.fail("支付失败");
+              this.$toast.fail("提交失败");
             });
         })
         .catch(() => {

@@ -53,16 +53,16 @@ export default {
     return {
       list: [],
       active: "dishes",
-      userInfo: {},
       loading: false,
       finished: false,
       refreshing: false,
+      status: null,
       point: 0,
       cart: {},
     };
   },
   created() {
-    this.userInfo = this.$store.state.common.userInfo;
+    this.status = this.$route.query.type;
     this.loadOrders();
   },
   afterRouteEnter(to, form, next) {
@@ -73,7 +73,7 @@ export default {
   methods: {
     loadOrders() {
       this.loading = true;
-      orderListAPI({ point: this.point })
+      orderListAPI({ point: this.point, status: this.status })
         .then((resp) => {
           if (resp.data.success) {
             resp.data.data.orders.forEach((order) => {

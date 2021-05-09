@@ -37,11 +37,30 @@ TAG_COLOR = {
     9: '#ff0000',
 }
 
+ORDER_CANCELED = 0
+ORDER_UNPAY = 1
+ORDER_PAID = 2
+ORDER_ACCEPTED = 3
+ORDER_COMMNETED = 4
+ORDER_COMPLETE = 5
+ORDER_REFUNDING = 6
+
 ORDER_STATUS = {
-    0: 'cancelOrder',
-    1: 'waitPay',
-    2: 'paid',
-    3: 'gotOrder',
-    4: 'waitComment',
-    5: 'doneOrder',
+    ORDER_CANCELED: 'orderCanceled',
+    ORDER_UNPAY: 'orderUnpay',
+    ORDER_PAID: 'orderPaid',
+    ORDER_ACCEPTED: 'orderAccept',
+    ORDER_COMMNETED: 'orderCommented',
+    ORDER_COMPLETE: 'orderComplete',
+    ORDER_REFUNDING: 'orderRefund'
+}
+
+ORDER_STATUS_REVERSE = {
+    'orderCanceled': ORDER_CANCELED,
+    'orderUnpay': ORDER_UNPAY,
+    'orderPaid': ORDER_PAID,
+    'orderAccept': ORDER_ACCEPTED,
+    'orderCommented': ORDER_COMMNETED,
+    'orderComplete': ORDER_COMPLETE,
+    'orderRefund': ORDER_REFUNDING
 }
