@@ -29,6 +29,10 @@ export function orderPayAPI(data) {
     return axios.post(`/order/pay`, data)
 }
 
+export function orderCompleteAPI(data) {
+    return axios.post(`/order/complete`, data)
+}
+
 export function orderCancelAPI(data) {
     return axios.post(`/order/cancel`, data)
 }

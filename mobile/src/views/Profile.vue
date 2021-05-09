@@ -161,7 +161,9 @@ export default {
       dishCount: this.$store.state.common.dishCount,
       orderActive: null,
       orderStatus: {},
-      myBadge: 0,
+      myBadge: localStorage.getItem("myBadge")
+        ? JSON.parse(localStorage.getItem("myBadge"))
+        : null,
     };
   },
   created() {
@@ -222,6 +224,7 @@ export default {
               this.orderStatus.paid +
               this.orderStatus.gotOrder +
               this.orderStatus.waitComment;
+            localStorage.setItem("myBadge", this.myBadge);
           }
         })
         .catch((err) => {
