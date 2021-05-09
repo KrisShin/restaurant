@@ -56,13 +56,13 @@ def push_dishes():
     tags = []
     if user:
         tags += user.tags
-        tags_swiper += tags[:3]
-        tags += Tag.query.filter(~Tag.id.in_(
+        tags_swiper += tags[:4]
+        tags = Tag.query.filter(Tag.id.notin_(
             [t.id for t in user.tags])).order_by(Tag.weight.desc()).all()
-        tags_swiper += tags[:3]
-    else:
-        tags += Tag.query.order_by(Tag.weight.desc()).all()
         tags_swiper += tags[:6]
+    else:
+        tags += Tag.query.filter(Tag.weight>0).order_by(Tag.weight.desc()).all()
+        tags_swiper += tags[:10]
 
     ex_dish_ids = []
     for tag in tags:
