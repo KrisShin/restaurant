@@ -5,7 +5,7 @@ from config.global_params import db
 from config.status_code import *
 from utils.wraps import auth, get_userId
 
-address = Blueprint('Address', __name__, url_prefix='/addr')
+address = Blueprint('Address', __name__, url_prefix='/customer/addr')
 
 
 @address.route('/<int:addr_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])

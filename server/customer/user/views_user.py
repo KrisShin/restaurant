@@ -9,14 +9,14 @@ from .models import User, Account
 from config.global_params import db
 from config.status_code import *
 from config.settings import KEY, HTTP_HOST
-from dish.models import Tag
+from customer.dish.models import Tag
 from utils.mail_sender import sender
 from utils.rest_redis import r
 from utils.util import make_password, check_password, get_captcha, save_img, del_invalify_image
 from utils.wraps import auth, clear_login_cache, get_userId, set_login_cache
 
 
-user = Blueprint('User', __name__, url_prefix='/user')
+user = Blueprint('User', __name__, url_prefix='/customer/user')
 
 
 @user.route('/register', methods=['POST'])

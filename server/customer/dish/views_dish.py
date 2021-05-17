@@ -1,11 +1,11 @@
 from flask import Blueprint, jsonify, request
 from .models import Dish, Tag
-from user.models import User
+from customer.user.models import User
 from utils.wraps import auth, get_userId
 from config.global_params import db
 from utils.rest_redis import r
 
-dish = Blueprint('Dish', __name__, url_prefix='/dish')
+dish = Blueprint('Dish', __name__, url_prefix='/customer/dish')
 
 
 # @dish.route('', methods=['POST', 'GET'])
