@@ -20,9 +20,10 @@ cd server
 5.  run server: python manage.py
 6.  default administrator account: 13355553333/admin123, default user account: 13344443333/user123.
 
-##### front side (Watting for develop)
+##### front side (developing)
 cd front
 1.  npm i
+2.  npm run serve
 
 ##### mobile side (developing)
 cd mobile
