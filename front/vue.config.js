@@ -19,14 +19,20 @@ module.exports = {
     }
   },
   devServer: {
-    port: 9527,
+    host: '0.0.0.0', // 允许外部ip访问
+    port: 9091,
+    https: false, // 启用https
     open: true,
-    openPage: '/index.html',
+    disableHostCheck: true,
     proxy: {
-      '/apis': {
-        target: 'http://www.shuiyue.info:12600',
-        pathRewrite: {'/apis': ''}
+      '/api': {
+        target: 'http://127.0.0.1:9096/merchant',
+        changeOrigin: true,
+        secure: false,
+        pathRewrite: {
+          '^/api': '/api'
+        }
       }
     }
-  }
+  },  
 }

@@ -1,10 +1,14 @@
 import Vue from 'vue'
 import router from './router'
 import store from './store'
-import { Button, Select } from 'element-ui';
+import { Button, Select, Container, Header, Main,Footer } from 'element-ui';
 import App from './App.vue';
 
 Vue.use(Button)
+Vue.use(Container)
+Vue.use(Footer)
+Vue.use(Header)
+Vue.use(Main)
 Vue.use(Select)
  
 
