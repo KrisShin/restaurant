@@ -7,7 +7,6 @@ from flask import Blueprint, jsonify, request
 from apps.user.models import User
 import jwt
 
-
 merchant = Blueprint(__name__, url_prefix='/admin/user')
 
 
@@ -37,4 +36,4 @@ def login():
     # Set the token in Cache to sign this user already logined.
     set_login_cache(Authorization, user.id)
 
-    return jsonify({"success": True, "info": "",  'token': Authorization})
+    return jsonify({"success": True, "info": "", 'token': Authorization})

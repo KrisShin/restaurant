@@ -1,5 +1,6 @@
-from config.global_params import redis
 import json
+
+from config.global_params import redis
 
 
 class Redis(object):

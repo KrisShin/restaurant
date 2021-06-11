@@ -1,7 +1,7 @@
 from datetime import datetime
+
 from config.global_params import db
 from config.settings import HTTP_HOST, TAG_COLOR
-
 
 tags = db.Table('rs_dish_tag',
                 db.Column('dish_id', db.Integer, db.ForeignKey(
@@ -10,6 +10,7 @@ tags = db.Table('rs_dish_tag',
 
 
 class Dish(db.Model):
+    '''Dish model'''
     __tablename__ = "dish"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -31,7 +32,8 @@ class Dish(db.Model):
         super(Dish, self).__init__(**kwargs)
 
     def keys(self):
-        return ('id', 'name', 'price', 'amount', 'description', 'discount', 'discount_desc', 'tags', 'images', 'index_img')
+        return (
+            'id', 'name', 'price', 'amount', 'description', 'discount', 'discount_desc', 'tags', 'images', 'index_img')
 
     def __getitem__(self, item):
         if item == 'discount_desc':
@@ -55,6 +57,7 @@ class Dish(db.Model):
 
 
 class Tag(db.Model):
+    '''Tag model'''
     __tablename__ = 'tag'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -71,7 +74,7 @@ class Tag(db.Model):
     @classmethod
     def update_weight(cls):
         for tag in Tag.query.all():
-            tag.weight = len(tag.users)+len(tag.dishes)
+            tag.weight = len(tag.users) + len(tag.dishes)
             db.session.commit()
 
     def __getitem__(self, item):
@@ -82,6 +85,7 @@ class Tag(db.Model):
 
 
 class Discount(db.Model):
+    '''Discount model'''
     __tablename__ = 'discount'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -99,6 +103,7 @@ class Discount(db.Model):
 
 
 class DishImg(db.Model):
+    '''Dish image Model'''
     __tablename__ = 'dishimg'
     id = db.Column(db.Integer, primary_key=True)
 

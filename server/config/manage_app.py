@@ -1,12 +1,13 @@
 from flask import Flask
+from flask_cors import CORS
+
+from apps.dish.views_dish import dish as customer_dish
+from apps.order.views_order import order as customer_order
+from apps.user.views_addr import address as customer_addr
+from apps.user.views_user import user as customer_user
 from .db_config import DBConfig
 from .global_params import db, redis
 from .settings import REDIS_HOST, REDIS_PORT, REDIS_USER, REDIS_PWD, REDIS_DB, STATIC_FOLDER, STATIC_PATH
-from apps.user.views_user import user as customer_user
-from apps.user.views_addr import address as customer_addr
-from apps.dish.views_dish import dish as customer_dish
-from apps.order.views_order import order as customer_order
-from flask_cors import CORS
 
 
 def create_app():
@@ -31,7 +32,7 @@ def create_app():
 
 
 def register_blueprint(app):
-    '''注册路由蓝图'''
+    '''Register all the blueprints from apps.'''
     app.register_blueprint(customer_user)
     app.register_blueprint(customer_addr)
     app.register_blueprint(customer_dish)

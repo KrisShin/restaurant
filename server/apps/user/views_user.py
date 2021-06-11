@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 import jwt
 import re
@@ -14,7 +13,6 @@ from utils.mail_sender import sender
 from utils.rest_redis import r
 from utils.util import make_password, check_password, get_captcha, save_img, del_invalify_image
 from utils.wraps import auth, clear_login_cache, get_userId, set_login_cache
-
 
 user = Blueprint('User', __name__, url_prefix='/customer/user')
 
@@ -71,11 +69,14 @@ def user_login():
 
     set_login_cache(Authorization, user.id)
 
-    return jsonify({"success": True, "info": "",  'token': Authorization})
+    return jsonify({"success": True, "info": "", 'token': Authorization})
 
 
 @user.route('/email_captcha', methods=['POST'])
 def send_captcha_email():
+    '''
+    Send captcha email to user.
+    '''
     data = request.get_json()
     email = data.get('email')
     if not email:
@@ -131,11 +132,14 @@ def user_change_pwd():
 def user_profile():
     '''check user profile'''
     if request.method == 'GET':
+        '''Get user profile.'''
         user = User.query.filter_by(id=get_userId(request)).first()
         resp = dict(user)
         return jsonify({'success': True, 'data': resp})
     elif request.method == 'PUT':
+        '''Modify user.'''
         data = request.get_json()
+        # Get base64 code and tranform to picture and save.
         base64_str = data.get('avatar')
         avatar_path = None
         if base64_str:
@@ -154,16 +158,18 @@ def user_profile():
         user.set_update_time()
         db.session.commit()
 
-        return jsonify({'success': True, 'data': {'avatar': HTTP_HOST+user.avatar}})
+        return jsonify({'success': True, 'data': {'avatar': HTTP_HOST + user.avatar}})
 
 
 @user.route('/change_email', methods=['PUT'])
 @auth
 def user_edit_email():
+    '''Change user's email'''
     data = request.get_json()
     email = data.get('email')
     captcha = data.get('captcha')
     user = User.query.filter_by(id=get_userId(request)).first()
+    # TODO: adbstract authorize captcha in a isolation function.
     real_cap = r.get_val(f'user_{user.id}:captcha')
     if not real_cap:
         return jsonify({'success': False, 'code': USER_CAPTCHA_EXPIRED})
@@ -183,39 +189,10 @@ def user_edit_email():
     return jsonify({'success': True})
 
 
-# @user.route('/add_tags', methods=['POST'])
-# @auth
-# def user_add_tags():
-#     data = request.get_json()
-#     tags = data.get('tags')
-#     user = User.query.filter_by(id=get_userId()).first()
-
-#     tag_list = list()
-#     for tag in tags:
-#         t = Tag.query.filter_by(name=tag).first() or Tag(name=tag)
-#         tag_list.append(t)
-#     user.tags = tag_list
-#     db.session.commit()
-#     return jsonify({'success': True})
-
-
-# @user.route('/upload_avatar', methods=['POST'])
-# @auth
-# def user_avatar():
-#     data = request.get_json()
-#     base64_str = data.get('avatar')
-#     avatar_path = save_img('avatar', base64_str)
-#     user = User.query.filter_by(id=get_userId(request)).first()
-
-#     user.avatar = avatar_path
-
-#     db.session.commit()
-#     return jsonify({'success': True})
-
-
 @user.route('/logout', methods=['POST'])
 @auth
 def user_logout():
+    '''User logout.'''
     clear_login_cache(request)
     return jsonify({'success': True})
 
@@ -224,6 +201,7 @@ def user_logout():
 @auth
 def tags():
     if request.method == 'PUT':
+        '''User add tag.'''
         data = request.get_json()
         user = User.query.filter_by(id=get_userId(request)).first()
         exist_tags = data.get('ex_tags')

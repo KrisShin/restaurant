@@ -4,13 +4,13 @@ from utils.util import gen_uuid_name
 from config.global_params import db
 from config.settings import ORDER_STATUS, TAG_COLOR
 
-
 dishes = db.Table('rs_dish_order',
                   db.Column('dish_id', db.Integer, db.ForeignKey('dish.id'), primary_key=True),
                   db.Column('order_id', db.String(32), db.ForeignKey('order.id'), primary_key=True))
 
 
 class Order(db.Model):
+    '''Order Model.'''
     __tablename__ = 'order'
     id = db.Column(db.String(32), primary_key=True, default=gen_uuid_name)
     money = db.Column(db.Float, default=0.0)
@@ -32,7 +32,10 @@ class Order(db.Model):
         super(Order, self).__init__(**kwargs)
 
     def keys(self):
-        return ('id', 'money', 'status', 'status_desc', 'note', 'create_time', 'update_time', 'address', 'index_img', 'amount', 'dishes', 'status_color')
+        return (
+            'id', 'money', 'status', 'status_desc', 'note', 'create_time', 'update_time', 'address', 'index_img',
+            'amount',
+            'dishes', 'status_color')
 
     def __getitem__(self, item):
         if item == 'status_desc':
@@ -86,6 +89,7 @@ class Order(db.Model):
 
 
 class Comment(db.Model):
+    '''Comment Model.'''
     __tablename__ = 'comment'
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(512))  # 内容
