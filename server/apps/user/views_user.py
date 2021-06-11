@@ -9,7 +9,7 @@ from .models import User, Account
 from config.global_params import db
 from config.status_code import *
 from config.settings import KEY, HTTP_HOST
-from customer.dish.models import Tag
+from apps.dish.models import Tag
 from utils.mail_sender import sender
 from utils.rest_redis import r
 from utils.util import make_password, check_password, get_captcha, save_img, del_invalify_image
@@ -22,14 +22,6 @@ user = Blueprint('User', __name__, url_prefix='/customer/user')
 @user.route('/register', methods=['POST'])
 def user_register():
     '''register a new user.
-    resp:
-    {
-        "success": true,
-        "info": "OK",
-        "data":{
-            "phone":"13433334444"
-        }
-    }
     '''
     data = request.get_json()
     nickname = data.get('nickname')
@@ -61,31 +53,6 @@ def user_register():
 @user.route('/login', methods=['POST'])
 def user_login():
     '''Login user by phone and password.
-    resp:
-    {
-        "success": true,
-        "info": "OK",
-        "data": {
-            "user_id": user_id,
-            "nickname": nickname,
-            "is_vip": true/false,
-            "is_email_active": true/false,
-            "is_new": true/false,
-            "gender": true/false,
-            "balance": 0.00,
-            // 下面的内容完善中, 暂时会写死或者返回空值
-            "tags":["微辣", "甜点", "奶茶", "小龙虾"],
-            "push_dishes":[
-                {
-                    "name":"鱼香肉丝",
-                    "img":"dish_img_url", 
-                    "tag":["微辣","酸甜"],
-                    "price":23.78, 
-                    "amount":18 // 累计销量
-                },
-            ]
-        }
-    }
     '''
 
     data = request.get_json()

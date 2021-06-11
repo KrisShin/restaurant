@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from .models import Dish, Tag
-from customer.user.models import User
+from apps.user.models import User
 from utils.wraps import auth, get_userId
 from config.global_params import db
 from utils.rest_redis import r

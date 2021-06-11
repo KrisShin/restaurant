@@ -3,8 +3,8 @@ from config.global_params import db
 from config.status_code import *
 from config.settings import ORDER_ACCEPTED, ORDER_CANCELED, ORDER_COMMNETED, ORDER_COMPLETE, ORDER_PAID, ORDER_REFUNDING, ORDER_UNPAY, ORDER_STATUS, ORDER_STATUS_REVERSE
 from utils.wraps import auth, get_userId
-from customer.user.models import User, Address
-from customer.dish.models import Dish
+from apps.user.models import User, Address
+from apps.dish.models import Dish
 from .models import Order, Comment
 
 order = Blueprint('Order', __name__, url_prefix='/customer/order')
