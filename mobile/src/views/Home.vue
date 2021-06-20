@@ -20,7 +20,7 @@
           round
           fit="cover"
           lazy-load
-          src="http://127.0.0.1:9096/static/avatar/default.jpg"
+          :src=defaultAvatar
           @click="onClickToLogin"
         />
         <div @click="onClickToLogin">请登录</div>
@@ -120,6 +120,7 @@ export default {
   name: "Home",
   data: function () {
     return {
+      defaultAvatar: BASE_API+"/static/avatar/default.jpg",
       isLogin: "",
       userInfo: "",
       active: "login",

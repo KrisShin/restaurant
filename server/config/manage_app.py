@@ -26,7 +26,7 @@ def create_app():
     db.init_app(app)
     redis.init_app(app)
 
-    CORS(app, supports_credentials=True)
+    CORS(app, supports_credentials=True, resources=r'/*')
     return app
 
 
