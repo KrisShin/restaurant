@@ -10,6 +10,7 @@ from utils.rest_redis import r
 
 
 def jwt_auth(auth, alg='HS256'):
+    '''JWT encoding to authorization user.'''
     if not r.get_val(f'user:{auth.decode()}'):
         print(auth.decode())
         return USER_TOKEN_EXPIRE, False, None, False  # token过期
@@ -29,6 +30,8 @@ def jwt_auth(auth, alg='HS256'):
 
 
 def auth(func):
+    '''Authorization is user logined.'''
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         auth = request.headers.get('Authorization')
@@ -37,17 +40,21 @@ def auth(func):
             return func(*args, **kwargs)
         else:
             return jsonify({'success': False, 'code': status})  # , status
+
     return wrapper
 
 
 def set_login_cache(auth, user_id):
+    '''Set user logined cache. And cache will delete in one hour.'''
     print(auth)
     r.set_val(f'user:{auth}', user_id, 3600 * 1)
 
 
 def clear_login_cache(req):
+    '''Manually delete the user logined cache.'''
     r.del_val(f'user:{req.headers.get("Authorization")}')
 
 
 def get_userId(req):
+    '''Get current logined user's ID from cache'''
     return r.get_val(f'user:{req.headers.get("Authorization")}')

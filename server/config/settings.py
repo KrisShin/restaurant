@@ -22,7 +22,7 @@ EMAIL_NICKNAME = r'恰了木有APP'
 EMAIL_ACCOUNT = r'2855829886@qq.com'
 EMAIL_AUTH = r'tdlzctihcooodgbc'
 
-HTTP_HOST = 'http://127.0.0.1:9096'
+HTTP_HOST = 'http://3.36.97.169:9096'
 
 TAG_COLOR = {
     0: '#cccccc',
@@ -36,6 +36,8 @@ TAG_COLOR = {
     8: '#ff5500',
     9: '#ff0000',
 }
+
+# TODO: Constract the ORDER_STATUS code with list, and the numeric status code should be index of the list
 
 ORDER_CANCELED = 0
 ORDER_UNPAY = 1

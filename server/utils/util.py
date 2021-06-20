@@ -1,16 +1,11 @@
-from base64 import b64decode
-from hashlib import md5
 import os
 import random
-import smtplib
 import string
+from base64 import b64decode
+from hashlib import md5
 from uuid import uuid4
 
-from email.mime.image import MIMEImage
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-
-from config.settings import SALT, TAG_COLOR, STATIC_FOLDER
+from config.settings import SALT
 
 
 def make_password(password) -> str:
@@ -50,4 +45,4 @@ def del_invalify_image(path):
 
 
 def get_captcha():
-    return ''.join(random.choices(string.digits+string.ascii_letters, k=8))
+    return ''.join(random.choices(string.digits + string.ascii_letters, k=8))

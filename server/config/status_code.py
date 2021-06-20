@@ -36,6 +36,8 @@ USER_INVALID_TOKEN = 10011
 # 确认密码与新密码不一致
 USER_WRONG_CONFIRM_PASSWORD = 10012
 
+# 用户不是管理员
+USER_NOT_ADMIN = 10013
 
 # addr module
 # 地址数据有误(创建地址带上了id)
@@ -46,7 +48,6 @@ ADDR_LACK_DATA = 1102
 
 # 地址不存在
 ADDR_NOT_EXISIT = 1103
-
 
 # order module
 # 提交订单没有菜品

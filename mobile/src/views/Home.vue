@@ -20,7 +20,7 @@
           round
           fit="cover"
           lazy-load
-          src="http://127.0.0.1:9096/static/avatar/default.jpg"
+          :src=defaultAvatar
           @click="onClickToLogin"
         />
         <div @click="onClickToLogin">请登录</div>
@@ -59,6 +59,7 @@
         <template #footer>
           <van-stepper
             v-model="dish.count"
+            :before-change="beforeChangeDishCount"
             @change="changeDishCount"
             theme="round"
             default-value="0"
@@ -119,6 +120,7 @@ export default {
   name: "Home",
   data: function () {
     return {
+      defaultAvatar: '',
       isLogin: "",
       userInfo: "",
       active: "login",
@@ -139,6 +141,7 @@ export default {
   created() {
     this.isLogin = this.$store.state.common.isLogin;
     this.userInfo = this.$store.state.common.userInfo;
+    this.defaultAvatar = this.$BASE_API+"/static/avatar/default.jpg";
     var cart = JSON.parse(localStorage.getItem("cart"));
 
     this.active = "recommend";
@@ -193,19 +196,22 @@ export default {
       this.$router.push("/profile");
     },
     changeDishCount() {
-      if (!this.isLogin) {
-        this.$toast("请先登录");
-        setTimeout(() => {
-          this.$router.push("/login");
-        }, 300);
-      } else {
+      console.log(Boolean(this.isLogin))
+      // if (!this.isLogin) {
+      //   this.$toast("请先登录");
+      //   setTimeout(() => {
+      //     this.$router.push("/login");
+      //   }, 300);
+      // }
+      //  else {
         var count = 0;
         this.pushDish.forEach((dish) => {
           count += dish.count;
         });
         sessionStorage.setItem("cartBadge", count);
         this.cartBadge = count || null;
-      }
+        return
+      // }
     },
     onClickToDetail(id) {
       if (!this.isLogin) {
@@ -217,6 +223,38 @@ export default {
         this.$router.push("/dishDetail?dish=" + id);
       }
     },
+  },
+    setup() {
+
+    const beforeChangeDishCount=()=>{
+      console.log(1)
+      return new Promise((resolve)=>{
+        if (!this.isLogin) {
+          this.$toast("请先登录");
+          setTimeout(() => {
+            this.$router.push("/login");
+          }, 300);
+        }
+      })
+      
+    }
+    const beforeChange = (value) => {
+      Toast.loading({ forbidClick: true });
+
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          Toast.clear();
+          // 在 resolve 函数中返回 true 或 false
+          resolve(true);
+        }, 500);
+      });
+    };
+
+    return {
+      value,
+      beforeChangeDishCount,
+      beforeChange,
+    };
   },
 };
 </script>
