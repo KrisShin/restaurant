@@ -120,7 +120,7 @@ export default {
   name: "Home",
   data: function () {
     return {
-      defaultAvatar: BASE_API+"/static/avatar/default.jpg",
+      defaultAvatar: '',
       isLogin: "",
       userInfo: "",
       active: "login",
@@ -141,6 +141,7 @@ export default {
   created() {
     this.isLogin = this.$store.state.common.isLogin;
     this.userInfo = this.$store.state.common.userInfo;
+    this.defaultAvatar = this.$BASE_API+"/static/avatar/default.jpg";
     var cart = JSON.parse(localStorage.getItem("cart"));
 
     this.active = "recommend";

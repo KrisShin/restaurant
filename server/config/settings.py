@@ -22,7 +22,7 @@ EMAIL_NICKNAME = r'恰了木有APP'
 EMAIL_ACCOUNT = r'2855829886@qq.com'
 EMAIL_AUTH = r'tdlzctihcooodgbc'
 
-HTTP_HOST = 'http://127.0.0.1:9096'
+HTTP_HOST = 'http://3.36.97.169:9096'
 
 TAG_COLOR = {
     0: '#cccccc',
