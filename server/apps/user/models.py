@@ -3,14 +3,13 @@ from datetime import datetime
 from config.global_params import db
 from config.settings import HTTP_HOST
 
-
-
 tags = db.Table('rs_user_tag',
                 db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
                 db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True))
 
 
 class User(db.Model):
+    '''User model'''
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -40,7 +39,9 @@ class User(db.Model):
 
     def keys(self):
         '''serilize object keys'''
-        return ('user_id', 'avatar', 'email', 'balance', 'nickname', 'gender', 'is_email_active', 'is_new', 'phone', 'age', 'tags', 'default_addr')
+        return (
+            'user_id', 'avatar', 'email', 'balance', 'nickname', 'gender', 'is_email_active', 'is_new', 'phone', 'age',
+            'tags', 'default_addr')
 
     def __getitem__(self, item):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''
@@ -68,6 +69,7 @@ class User(db.Model):
 
 
 class Address(db.Model):
+    '''Address model'''
     __tablename__ = "address"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
@@ -108,6 +110,7 @@ class Address(db.Model):
 
 
 class Account(db.Model):
+    '''User's account'''
     __tablename__ = "account"
     id = db.Column(db.Integer, primary_key=True)
 

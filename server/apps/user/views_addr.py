@@ -11,7 +11,9 @@ address = Blueprint('Address', __name__, url_prefix='/customer/addr')
 @address.route('/<int:addr_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 @auth
 def oprate_address(addr_id):
+    '''All operation of address'''
     if request.method == 'GET':
+        '''Get an addres.'''
         addr = Address.query.filter_by(id=addr_id).first()
         if addr:
             return jsonify({'success': True, 'data': dict(addr)})
@@ -19,6 +21,7 @@ def oprate_address(addr_id):
             return jsonify({'success': False, 'code': ADDR_NOT_EXISIT})
 
     if request.method == 'POST':
+        '''Create an address'''
         if addr_id != 0:
             return jsonify({'success': False, 'code': ADDR_DATA_ERROR})
         data = request.get_json()
@@ -32,6 +35,7 @@ def oprate_address(addr_id):
         return jsonify({'success': True})
 
     if request.method == 'PUT':
+        '''Modify infomation of address'''
         if addr_id == 0:
             return jsonify({'success': False, 'code': ADDR_DATA_ERROR})
         addr = Address.query.filter_by(id=addr_id).first()
@@ -44,6 +48,7 @@ def oprate_address(addr_id):
         return jsonify({'success': True})
 
     if request.method == 'DELETE':
+        '''Delete the address'''
         addr = Address.query.filter_by(id=addr_id).first()
         addr.delete()
         db.session.commit()
@@ -53,12 +58,14 @@ def oprate_address(addr_id):
 @address.route('/list', methods=["GET"])
 @auth
 def get_addr_by_id():
+    '''All address list.'''
     user = User.query.filter_by(id=get_userId(request)).first()
     addrs = [dict(addr) for addr in user.address]
     return jsonify({'success': True, 'data': {'addresses': addrs}})
 
 
 def operate_an_addr(addr, user, data):
+    '''Set address properties.'''
     name = data.get('name')
     phone = data.get('tel')
     location = {
@@ -71,6 +78,7 @@ def operate_an_addr(addr, user, data):
     }
 
     is_default = data.get('isDefault')
+    # if this address was set as default, other address unset default.
     if user.address:
         if is_default:
             for a in user.address:
@@ -86,7 +94,6 @@ def operate_an_addr(addr, user, data):
     addr.is_default = is_default
     addr.set_update_time()
     return addr
-
 
 # @address.route('/getDefault', methods=['GET'])
 # @auth

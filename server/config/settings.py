@@ -37,6 +37,8 @@ TAG_COLOR = {
     9: '#ff0000',
 }
 
+# TODO: Constract the ORDER_STATUS code with list, and the numeric status code should be index of the list
+
 ORDER_CANCELED = 0
 ORDER_UNPAY = 1
 ORDER_PAID = 2
