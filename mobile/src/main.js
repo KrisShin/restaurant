@@ -14,7 +14,7 @@ import {
 
 
 Vue.config.productionTip = false
-Vue.prototype.$BASE_API = 'http://3.36.97.169:9096' // 'http://127.0.0.1:9096'
+Vue.prototype.$BASE_API = 'http://127.0.0.1:9096' // 'http://3.36.97.169:9096'
 
 Vue.use(ActionSheet);
 Vue.use(AddressEdit);
