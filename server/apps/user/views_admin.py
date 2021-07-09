@@ -19,7 +19,7 @@ def login():
     phone = data.get('phone')
     password = data.get('password')
 
-    user = User.query.filter_by(phone=phone).first()
+    user = User.query.filter_by(phone=phone, role='admin').first()
     if not user:
         return jsonify({'success': False, 'code': USER_NOT_EXIST})
 
@@ -37,3 +37,9 @@ def login():
     set_login_cache(Authorization, user.id)
 
     return jsonify({"success": True, "info": "", 'token': Authorization})
+
+
+@merchant.route('/list', methods=['GET'])
+def get_customer_list():
+    data = [dict(user).remove() for user in User.query.filter(role='user')]
+    return jsonify({'success': True, "info": "", "data": data})
