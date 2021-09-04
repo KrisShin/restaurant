@@ -3,7 +3,7 @@
 **/dist
 
 **/__pycache__
-
+**/*.pyc
 
 # local env files
 **/.env.local
