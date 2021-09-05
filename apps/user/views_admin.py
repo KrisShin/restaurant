@@ -10,7 +10,7 @@ import jwt
 merchant = Blueprint(__name__, url_prefix='/admin/user')
 
 
-@merchant.route('/login')
+@merchant.route('/login/')
 def login():
     '''
     Function: Merchant login view.
@@ -39,7 +39,7 @@ def login():
     return jsonify({"success": True, "info": "", 'token': Authorization})
 
 
-@merchant.route('/list', methods=['GET'])
+@merchant.route('/list/', methods=['GET'])
 def get_customer_list():
     data = [dict(user).remove() for user in User.query.filter(role='user')]
     return jsonify({'success': True, "info": "", "data": data})

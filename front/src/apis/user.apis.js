@@ -1,4 +1,4 @@
-import axios from '../axios'
+import axios from './axios'
 
 
 export function userLoginAPI(data) {
@@ -30,15 +30,15 @@ export function userTagsAPI(data) {
 }
 
 export function userSendCaptchaAPI(data) {
-    return axios.post(`/user/email_captcha`, data)
+    return axios.post(`/user/email_captcha/`, data)
 }
 
 export function userChangePwdAPI(data) {
-    return axios.put(`/user/change_pwd`, data)
+    return axios.put(`/user/change_pwd/`, data)
 }
 
 export function userTestAPI(data) {
-    return axios.post(`/user/test`, data)
+    return axios.post(`/user/test/`, data)
 }
 
 // export function uploadAvatarAPI(params) {

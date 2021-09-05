@@ -17,7 +17,7 @@ from utils.wraps import auth, clear_login_cache, get_userId, set_login_cache
 user = Blueprint('User', __name__, url_prefix='/customer/user')
 
 
-@user.route('/register', methods=['POST'])
+@user.route('/register/', methods=['POST'])
 def user_register():
     '''register a new user.
     '''
@@ -48,7 +48,7 @@ def user_register():
     return jsonify({'success': True, 'info': ''})
 
 
-@user.route('/login', methods=['POST'])
+@user.route('/login/', methods=['POST'])
 def user_login():
     '''Login user by phone and password.
     '''
@@ -72,7 +72,7 @@ def user_login():
     return jsonify({"success": True, "info": "", 'token': Authorization})
 
 
-@user.route('/email_captcha', methods=['POST'])
+@user.route('/email_captcha/', methods=['POST'])
 def send_captcha_email():
     '''
     Send captcha email to user.
@@ -95,7 +95,7 @@ def send_captcha_email():
     return jsonify({'success': True})
 
 
-@user.route('/change_pwd', methods=['PUT'])
+@user.route('/change_pwd/', methods=['PUT'])
 @auth
 def user_change_pwd():
     '''user change password'''
@@ -127,7 +127,7 @@ def user_change_pwd():
     return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
 
-@user.route('/profile', methods=['GET', 'PUT'])
+@user.route('/profile/', methods=['GET', 'PUT'])
 @auth
 def user_profile():
     '''check user profile'''
@@ -161,7 +161,7 @@ def user_profile():
         return jsonify({'success': True, 'data': {'avatar': HTTP_HOST + user.avatar}})
 
 
-@user.route('/change_email', methods=['PUT'])
+@user.route('/change_email/', methods=['PUT'])
 @auth
 def user_edit_email():
     '''Change user's email'''
@@ -189,7 +189,7 @@ def user_edit_email():
     return jsonify({'success': True})
 
 
-@user.route('/logout', methods=['POST'])
+@user.route('/logout/', methods=['POST'])
 @auth
 def user_logout():
     '''User logout.'''
@@ -197,7 +197,7 @@ def user_logout():
     return jsonify({'success': True})
 
 
-@user.route('/tags', methods=['PUT'])
+@user.route('/tags/', methods=['PUT'])
 @auth
 def tags():
     if request.method == 'PUT':
@@ -214,7 +214,7 @@ def tags():
         return jsonify({'success': True})
 
 
-@user.route('/test', methods=['POST', 'GET', 'PUT', 'DELETE'])
+@user.route('/test/', methods=['POST', 'GET', 'PUT', 'DELETE'])
 # @auth
 def test():
     # mail = {
