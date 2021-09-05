@@ -5,7 +5,13 @@
       <el-main>
         <el-row>
           <el-col :span="3">
-            <el-input v-model="phone" placeholder="请输入手机号"></el-input>
+            <el-input
+              v-model="phone"
+              placeholder="请输入手机号"
+              @change="inputCheck"
+              maxlength="11"
+              clearable
+            ></el-input>
           </el-col>
         </el-row>
         <el-row>
@@ -15,11 +21,18 @@
               type="password"
               clearable
               placeholder="请输入密码"
+              @change="inputCheck"
             ></el-input>
           </el-col>
         </el-row>
         <el-row>
-          <el-button type="primary" @click="onClickLogin"> 登录 </el-button>/
+          <el-button
+            type="primary"
+            @click="onClickLogin"
+            :disabled="disableSumbmit"
+          >
+            登录 </el-button
+          >/
           <el-button type="primary" plain> 找回密码 </el-button>
         </el-row>
       </el-main>
@@ -36,12 +49,17 @@ export default {
     return {
       phone: "",
       password: "",
+      disableSumbmit: true,
     };
   },
   created() {
     this.phone = this.$route.query.phone;
   },
   methods: {
+    inputCheck() {
+      if (this.phone && this.password) this.disableSumbmit = false;
+      else this.disableSumbmit = true;
+    },
     onClickReturn() {
       this.$router.replace("/");
     },
@@ -50,7 +68,7 @@ export default {
       userLoginAPI({ phone: this.phone, password: this.password, login: true })
         .then((resp) => {
           if (resp.data.success) {
-            this.$toast("登陆成功");
+            _this.$message("登陆成功");
             _this.$store.dispatch("common/setToken", resp.data.token);
             setTimeout(() => {
               _this.$router.push("/");
@@ -58,12 +76,11 @@ export default {
           }
           if (resp.data.code == 1001) {
             // 用户不存在
-            this.$toast("用户不存在");
-            _this.$router.push("/register?phone=" + _this.phone);
+            _this.$message("用户不存在");
           } else if (resp.data.code == 1004) {
             // 密码错误
             _this.password = "";
-            this.$toast("密码错误");
+            _this.$message("密码错误");
           }
         })
         .catch((err) => {

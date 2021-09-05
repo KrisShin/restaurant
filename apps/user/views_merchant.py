@@ -7,10 +7,10 @@ from flask import Blueprint, jsonify, request
 from apps.user.models import User
 import jwt
 
-merchant = Blueprint(__name__, url_prefix='/admin/user')
+merchant = Blueprint('Merchant', __name__, url_prefix='/merchant/user')
 
 
-@merchant.route('/login/')
+@merchant.route('/login/', methods=['POST'])
 def login():
     '''
     Function: Merchant login view.

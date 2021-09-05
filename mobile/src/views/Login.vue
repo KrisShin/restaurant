@@ -15,6 +15,7 @@
         maxlength="11"
         label="手机号"
         placeholder="请输入手机号"
+        @change="inputCheck"
       />
       <!-- 输入密码 -->
       <van-field
@@ -22,11 +23,18 @@
         type="password"
         label="密码"
         placeholder="请输入密码"
+        @change="inputCheck"
       />
     </div>
 
     <van-row type="flex" justify="center">
-      <van-button type="primary" @click="onClickLogin"> 登录 </van-button>
+      <van-button
+        type="primary"
+        @click="onClickLogin"
+        :disabled="disableSumbmit"
+      >
+        登录
+      </van-button>
     </van-row>
     <van-row type="flex" justify="center">
       <span style="font-size: 11px; margin-top: 20px">
@@ -46,6 +54,7 @@ export default {
     return {
       phone: "",
       password: "",
+      disableSumbmit: true,
     };
   },
   created() {
@@ -54,6 +63,10 @@ export default {
   methods: {
     onClickReturn() {
       this.$router.replace("/");
+    },
+    inputCheck() {
+      if (this.phone && this.password) this.disableSumbmit = false;
+      else this.disableSumbmit = true;
     },
     onClickLogin() {
       var _this = this;
