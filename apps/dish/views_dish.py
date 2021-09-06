@@ -20,7 +20,7 @@ def add_tags():
     return jsonify({'msg': 'OK'})
 
 
-@dish.route('/tags', methods=['GET', 'POST'])
+@dish.route('/tags/', methods=['GET', 'POST'])
 def tags():
     '''All Operations of tag.'''
     if request.method == 'GET':
@@ -54,7 +54,7 @@ def tags():
         return jsonify({'success': True, 'data': dict(tag)})
 
 
-@dish.route('/push', methods=['GET'])
+@dish.route('/push/', methods=['GET'])
 def push_dishes():
     '''Get the popular dishes.'''
     user = User.query.filter_by(id=get_userId(request)).first()
@@ -93,7 +93,7 @@ def push_dishes():
     return jsonify({'success': True, 'data': {'pushSwiper': push_swiper, 'pushDish': push, 'dishCount': dish_count}})
 
 
-@dish.route('/list', methods=['POST'])
+@dish.route('/list/', methods=['POST'])
 @auth
 def post_dish_list():
     '''All dishes list. Order by dish's update time. and return 5 dishes on per refresh.'''
@@ -105,7 +105,7 @@ def post_dish_list():
     return jsonify({'success': True, 'data': dishes})
 
 
-@dish.route('/cart', methods=['POST'])
+@dish.route('/cart/', methods=['POST'])
 @auth
 def post_dish_cart():
     '''Return dishes which user add in cart.'''

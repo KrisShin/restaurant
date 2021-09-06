@@ -8,7 +8,7 @@ from utils.wraps import auth, get_userId
 address = Blueprint('Address', __name__, url_prefix='/customer/addr')
 
 
-@address.route('/<int:addr_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@address.route('/<int:addr_id>/', methods=['GET', 'POST', 'PUT', 'DELETE'])
 @auth
 def oprate_address(addr_id):
     '''All operation of address'''
@@ -55,7 +55,7 @@ def oprate_address(addr_id):
         return jsonify({'success': True})
 
 
-@address.route('/list', methods=["GET"])
+@address.route('/list/', methods=["GET"])
 @auth
 def get_addr_by_id():
     '''All address list.'''

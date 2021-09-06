@@ -1,7 +1,8 @@
 <template>
-  <div class="login">
-    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
+  <div class="home">
+    <img alt="Vue logo" src="../assets/logo.png">
+    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    fuck
   </div>
 </template>
 
@@ -10,7 +11,7 @@
 import HelloWorld from "@/components/HelloWorld.vue";
 
 export default {
-  name: "Login",
+  name: "Home",
   components: {
     HelloWorld,
   },

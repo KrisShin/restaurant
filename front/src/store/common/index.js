@@ -3,7 +3,9 @@ export default {
   namespaced: true,
   state: {
     token: '',
-    userInfo: ''
+    isLogin: '',
+    userInfo: '',
+    dishCount: 0
   },
   getters: {
     getToken: state => state.token,
@@ -11,19 +13,38 @@ export default {
   },
   actions: {
     // 定义一个设置 token 值的动作，第一个参数为 action 的形参 store 对象
-    setToken({commit}, token) {
+    setToken({
+      commit
+    }, token) {
       commit('mutationToken', token)
     },
-    setUserInfo({commit}, user) {
+    setUserInfo({
+      commit
+    }, user) {
       commit('mutationUserInfo', user)
+    },
+    setDishCount({
+      commit
+    }, dishCount) {
+      commit('mutationDishCount', dishCount)
     }
   },
   mutations: {
     mutationToken(state, token) {
       state.token = token
+      state.isLogin = state.token ? true : false
+      sessionStorage.setItem('token', token)
+      localStorage.setItem('token', token)
+      sessionStorage.setItem('isLogin', state.isLogin)
     },
     mutationUserInfo(state, user) {
       state.userInfo = user
+      localStorage.setItem('userInfo', JSON.stringify(user))
+      sessionStorage.setItem('userInfo', JSON.stringify(user))
+    },
+    mutationDishCount(state, dishCount) {
+      state.dishCount = dishCount
+      sessionStorage.setItem('dishCount', dishCount)
     }
   }
 }

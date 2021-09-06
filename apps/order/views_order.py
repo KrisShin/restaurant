@@ -11,7 +11,7 @@ from .models import Order, Comment
 order = Blueprint('Order', __name__, url_prefix='/customer/order')
 
 
-@order.route('/<string:order_id>', methods=['POST', 'GET', 'PUT', 'DELETE'])
+@order.route('/<string:order_id>/', methods=['POST', 'GET', 'PUT', 'DELETE'])
 @auth
 def operate_order(order_id):
     '''All operations of order.'''
@@ -71,7 +71,7 @@ def operate_order(order_id):
         return jsonify({'success': True})
 
 
-@order.route('/list', methods=['POST'])
+@order.route('/list/', methods=['POST'])
 @auth
 def post_order_list():
     '''Get many types of orders list.'''
@@ -86,7 +86,7 @@ def post_order_list():
     return jsonify({'success': True, 'data': {'orders': orders}})
 
 
-@order.route('/status', methods=['GET'])
+@order.route('/status/', methods=['GET'])
 @auth
 def get_order_status():
     '''Calculate the orders in each status'''
@@ -105,7 +105,7 @@ def get_order_status():
     return jsonify({'success': True, 'data': {'orderStatus': order_status_count, 'orderCount': len(user.orders)}})
 
 
-@order.route('/pay', methods=['POST'])
+@order.route('/pay/', methods=['POST'])
 @auth
 def post_order_pay():
     '''Pay the order.'''
@@ -120,7 +120,7 @@ def post_order_pay():
     return jsonify({'success': True, 'data': {'balance': user.account.balance}})
 
 
-@order.route('/complete', methods=['POST'])
+@order.route('/complete/', methods=['POST'])
 @auth
 def post_order_complete():
     '''Sign the order is completed.'''
@@ -132,7 +132,7 @@ def post_order_complete():
     return jsonify({'success': True})
 
 
-@order.route('/cancel', methods=['POST'])
+@order.route('/cancel/', methods=['POST'])
 @auth
 def post_order_cancel():
     '''Cancel the order'''
