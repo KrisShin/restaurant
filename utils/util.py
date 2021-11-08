@@ -1,23 +1,28 @@
 import os
 import random
 import string
-from base64 import b64decode
-from hashlib import md5
+from base64 import b64decode, decodebytes, encodebytes
 from uuid import uuid4
 
-from config.settings import SALT
+from config.settings import KEY
+from Crypto.Cipher import AES
+
+aes = AES.new(str.encode(KEY), AES.MODE_ECB)
 
 
-def make_password(password) -> str:
-    '''Generate password with salt.'''
-    pwd = SALT + password
-    return md5(pwd.encode()).hexdigest()
+def make_password(pwd):
+    encode_pwd = str.encode(pwd.rjust(16, '@'))
+    encrypt_str = str(encodebytes(aes.encrypt(encode_pwd)), encoding='utf-8')
+    return encrypt_str
 
 
-def check_password(password, real_password) -> bool:
-    '''Check password.'''
-    pwd = make_password(password)
-    return real_password == pwd
+def check_password(encrypt_str, input_password):
+    decrypt_str = (
+        aes.decrypt(decodebytes(encrypt_str.encode(encoding='utf-8')))
+        .decode()
+        .replace('@', '')
+    )
+    return decrypt_str == input_password
 
 
 def gen_uuid_name(ext=''):
@@ -44,5 +49,9 @@ def del_invalify_image(path):
         print(e)
 
 
-def get_captcha():
-    return ''.join(random.choices(string.digits + string.ascii_letters, k=8))
+def get_captcha(length=8):
+    return ''.join(random.choices(string.digits + string.ascii_letters, k=length))
+
+
+def get_parse_response(items):
+    return [dict(i) for i in items]
