@@ -10,7 +10,7 @@ STATIC_PATH = '/static'
 UPLOAD_DIR = os.path.join(BASE_DIR, 'static', 'upload')
 
 SALT = r'0.3qxl9vc_j7kv!ja'
-KEY = r'734&jai<,oqe).ac*'
+KEY = r'734&jai<,oqe).ac'
 
 REDIS_USER = ''
 REDIS_PWD = r"R3D1Su@er"

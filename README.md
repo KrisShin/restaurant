@@ -12,6 +12,25 @@ web管理端+移动端使用Vue
 
 #### 安装教程
 
+##### 创建数据库
+1. 进入postgresql, 创建user
+
+    ```sql
+    create user restuser with password 'R35Tus#r';
+    ```
+
+2. 创建database
+
+    ```sql
+    create database restaurant with owner 'restuser';
+    ```
+
+3. 授权database
+
+    ```sql
+    grant all on database restaurant to restuser;
+    ```
+
 ##### server端
 首先进入server
 1.  pip install -r server/requirements
