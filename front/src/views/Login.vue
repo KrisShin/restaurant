@@ -74,9 +74,7 @@ export default {
           if (resp.data.success) {
             _this.$message("登陆成功");
             _this.$store.dispatch("common/setToken", resp.data.token);
-            setTimeout(() => {
-              _this.$router.push("/");
-            }, 500);
+            _this.$router.push("/home");
           }
           if (resp.data.code == 1001) {
             // 用户不存在
@@ -102,7 +100,7 @@ export default {
   color: aliceblue;
   font-size: 30px;
 }
-.el-row{
+.el-row {
   margin: 1%;
   line-height: initial;
 }
