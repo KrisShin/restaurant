@@ -23,9 +23,9 @@ class User(BaseModel):
     email = db.Column(db.String(128), unique=True)  # 邮箱号(辅助找回密码)
     password = db.Column(db.String(128), nullable=False)
     gender = db.Column(db.Boolean, default=0)  # 性别 0-女/ 1-男
-    # role = db.Column(
-    #     db.Enum('user', 'admin', name='role_enum'), default='user'
-    # )  # 权限user(用户)/admin(管理员)
+    role = db.Column(
+        db.Enum('user', 'admin', name='role_enum'), default='user'
+    )  # 权限user(用户)/admin(管理员)
     is_new = db.Column(db.Boolean, default=1)  # 0-否/ 1-是
     account = db.relationship("Account", backref="user", lazy=True, uselist=False)
     is_email_active = db.Column(db.Boolean, default=0)  # 是否已激活
@@ -80,9 +80,6 @@ class User(BaseModel):
                     return 0
         return getattr(self, item)
 
-    def set_update_time(self):
-        self.update_time = datetime.now()
-
 
 class Address(BaseModel):
     '''Address model'''
@@ -123,12 +120,6 @@ class Address(BaseModel):
             return ' '.join(self.location.values())[:-7]
 
         return getattr(self, item)
-
-    def set_update_time(self):
-        self.update_time = datetime.now()
-
-    def delete(self):
-        db.session.delete(self)
 
 
 class Account(BaseModel):

@@ -26,14 +26,21 @@ def login():
     if user.role != 'admin':
         return jsonify({'success': False, 'code': USER_NOT_ADMIN})
 
-    # if not check_password(password, user.password):
-    #     return jsonify({'success': False, 'code': USER_WRONG_PASSWORD})
-    user.password = make_password(password)
-    user.save()
+    if not check_password(user.password, password):
+        return jsonify({'success': False, 'code': USER_WRONG_PASSWORD})
+    # user.password = make_password(password)
+    # user.save()
 
     # Use Key and JWT encode the user infomation to generate a token
     Authorization = jwt.encode(
-        {'user_id': user.id, 'exp': datetime.now() + timedelta(hours=2), 'role': user.role}, KEY, 'HS256')
+        {
+            'user_id': user.id,
+            'exp': datetime.now() + timedelta(hours=2),
+            'role': user.role,
+        },
+        KEY,
+        'HS256',
+    )
 
     # Set the token in Cache to sign this user already logined.
     set_login_cache(Authorization, user.id)

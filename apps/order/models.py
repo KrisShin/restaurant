@@ -95,27 +95,18 @@ class Order(BaseModel):
 
         return getattr(self, item)
 
-    def set_update_time(self):
-        self.update_time = datetime.now()
-
-    def delete(self):
-        db.session.delete(self)
-
 
 class Comment(BaseModel):
     '''Comment Model.'''
 
     __tablename__ = 'comment'
     content = db.Column(db.String(512))  # 内容
-    # rate = db.Column(
-    #     db.Enum('good', 'ok', 'bad', name='rate_enum'), default='good'
-    # )  # 1-好评/2-中评/3-差评
+    rate = db.Column(
+        db.Enum('good', 'ok', 'bad', name='rate_enum'), default='good'
+    )  # 1-好评/2-中评/3-差评
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     order_id = db.Column(db.Integer, db.ForeignKey("order.id"))
 
     def __init__(self, *args, **kwargs):
         super(Comment, self).__init__(**kwargs)
-
-    def delete(self):
-        db.session.delete(self)

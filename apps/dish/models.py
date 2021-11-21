@@ -63,9 +63,6 @@ class Dish(BaseModel):
                     return HTTP_HOST + img.uri
         return getattr(self, item)
 
-    def set_update_time(self):
-        self.update_time = datetime.now()
-
 
 class Tag(BaseModel):
     '''Tag model'''
@@ -85,7 +82,7 @@ class Tag(BaseModel):
     def update_weight(cls):
         for tag in Tag.query.all():
             tag.weight = len(tag.users) + len(tag.dishes)
-            db.session.commit()
+            tag.save()
 
     def __getitem__(self, item):
         '''内置方法, 当使用obj['name']的形式的时候, 将调用这个方法, 这里返回的结果就是值'''

@@ -3,13 +3,13 @@
     <el-container>
       <el-header>恰了木有-管理端</el-header>
       <el-main class="mainbox">
-        <div class="mainbox">
+        <div class="loginFormBox">
           <el-row type="flex" justify="center">
             <el-col :span="3">
               <el-input
                 v-model="phone"
                 placeholder="请输入手机号"
-                @change="inputCheck"
+                @input="inputCheck"
                 maxlength="11"
                 clearable
               ></el-input>
@@ -22,7 +22,7 @@
                 type="password"
                 clearable
                 placeholder="请输入密码"
-                @change="inputCheck"
+                @input="inputCheck"
               ></el-input>
             </el-col>
           </el-row>
@@ -97,7 +97,6 @@ export default {
 <style>
 .el-main {
   padding: 10%;
-  line-height: 0%;
 }
 .el-header {
   color: aliceblue;
@@ -105,8 +104,6 @@ export default {
 }
 .el-row{
   margin: 1%;
-}
-.mainbox{
-  border: 2px solid black;
+  line-height: initial;
 }
 </style>

@@ -1,8 +1,17 @@
 from flask import Blueprint, json, jsonify, request
 from config.global_params import db
 from config.status_code import *
-from config.settings import ORDER_ACCEPTED, ORDER_CANCELED, ORDER_COMMNETED, ORDER_COMPLETE, ORDER_PAID, \
-    ORDER_REFUNDING, ORDER_UNPAY, ORDER_STATUS, ORDER_STATUS_REVERSE
+from config.settings import (
+    ORDER_ACCEPTED,
+    ORDER_CANCELED,
+    ORDER_COMMNETED,
+    ORDER_COMPLETE,
+    ORDER_PAID,
+    ORDER_REFUNDING,
+    ORDER_UNPAY,
+    ORDER_STATUS,
+    ORDER_STATUS_REVERSE,
+)
 from utils.wraps import auth, get_userId
 from apps.user.models import User, Address
 from apps.dish.models import Dish
@@ -42,14 +51,14 @@ def operate_order(order_id):
         if not addr:
             # if not choose an address, use the default address of the user.
             addr = Address.query.filter(
-                Address.user == user, Address.is_default == True).first()
+                Address.user == user, Address.is_default == True
+            ).first()
         dishes = Dish.query.filter(Dish.id.in_(dish_amount.keys())).all()
         money = 0
         # Calculate the money.
         # TODO: Support other type of discount, not just discount by percentage.
         for dish in dishes:
-            money += dish_amount[str(dish.id)] * \
-                     dish.price * dish.discount.discount
+            money += dish_amount[str(dish.id)] * dish.price * dish.discount.discount
         money = round(money, 2)
 
         order = Order(
@@ -60,14 +69,12 @@ def operate_order(order_id):
             user=user,
             dishes=dishes,
         )
-        db.session.add(order)
-        db.session.commit()
+        order.save()
         return jsonify({'success': True, 'data': {'id': order.id}})
     if request.method == 'DELETE':
         # Delete the order.
         order = Order.query.filter_by(id=order_id).first()
         order.delete()
-        db.session.commit()
         return jsonify({'success': True})
 
 
@@ -79,10 +86,13 @@ def post_order_list():
     point = request.get_json().get('point', 0)
     status = request.get_json().get('status')
     if status == 'all' or not status:
-        orders = [dict(order) for order in user.orders[point: point + 5]]
+        orders = [dict(order) for order in user.orders[point : point + 5]]
     else:
-        orders = [dict(order) for order in user.orders
-                  if order.status == ORDER_STATUS_REVERSE[status]]
+        orders = [
+            dict(order)
+            for order in user.orders
+            if order.status == ORDER_STATUS_REVERSE[status]
+        ]
     return jsonify({'success': True, 'data': {'orders': orders}})
 
 
@@ -98,11 +108,16 @@ def get_order_status():
         'orderCommented': 0,
         'orderComplete': 0,
         'orderCanceled': 0,
-        'orderRefunding': 0
+        'orderRefunding': 0,
     }
     for order in user.orders:
         order_status_count[ORDER_STATUS[order.status]] += 1
-    return jsonify({'success': True, 'data': {'orderStatus': order_status_count, 'orderCount': len(user.orders)}})
+    return jsonify(
+        {
+            'success': True,
+            'data': {'orderStatus': order_status_count, 'orderCount': len(user.orders)},
+        }
+    )
 
 
 @order.route('/pay/', methods=['POST'])
@@ -116,7 +131,8 @@ def post_order_pay():
         return jsonify({'success': False, 'data': {'message': '余额不足, 请先充值'}})
     user.account.balance -= order.money
     order.status = ORDER_PAID
-    db.session.commit()
+    order.save()
+    user.save()
     return jsonify({'success': True, 'data': {'balance': user.account.balance}})
 
 
@@ -128,7 +144,7 @@ def post_order_complete():
     order = Order.query.filter_by(id=id).first()
     if order.status in (ORDER_ACCEPTED, ORDER_COMMNETED):
         order.status = ORDER_COMPLETE
-    db.session.commit()
+    order.save()
     return jsonify({'success': True})
 
 
@@ -147,6 +163,7 @@ def post_order_cancel():
         # if order paid and merchant not accept the order, sign order canceled and refund.
         user.account.balance += order.money
         order.status = ORDER_CANCELED
+        user.save()
     elif order.status in (ORDER_ACCEPTED, ORDER_COMMNETED, ORDER_COMPLETE):
         # if order is paid, need merchant confirm then refund to user.
         msg = '等待商家审批退款'
@@ -154,5 +171,5 @@ def post_order_cancel():
     elif order.status in [ORDER_UNPAY, ORDER_REFUNDING]:
         # if order is waiting for merchant confirm.
         msg = '该状态下无法退款, 如有疑问请前往申诉'
-    db.session.commit()
+    order.save()
     return jsonify({'success': True, 'data': {'message': msg}})

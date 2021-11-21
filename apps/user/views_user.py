@@ -11,7 +11,13 @@ from config.settings import KEY, HTTP_HOST
 from apps.dish.models import Tag
 from utils.mail_sender import sender
 from utils.rest_redis import r
-from utils.util import make_password, check_password, get_captcha, save_img, del_invalify_image
+from utils.util import (
+    make_password,
+    check_password,
+    get_captcha,
+    save_img,
+    del_invalify_image,
+)
 from utils.wraps import auth, clear_login_cache, get_userId, set_login_cache
 
 user = Blueprint('User', __name__, url_prefix='/customer/user')
@@ -19,8 +25,7 @@ user = Blueprint('User', __name__, url_prefix='/customer/user')
 
 @user.route('/register/', methods=['POST'])
 def user_register():
-    '''register a new user.
-    '''
+    '''register a new user.'''
     data = request.get_json()
     nickname = data.get('nickname')
     phone = data.get('phone')
@@ -38,20 +43,25 @@ def user_register():
     if user:
         return jsonify({'success': False, 'code': USER_EXISTED})
 
-    user = User(nickname=nickname, phone=phone, age=age, email=email,
-                password=password, gender=gender, avatar='/static/avatar/default.jpg')
+    user = User(
+        nickname=nickname,
+        phone=phone,
+        age=age,
+        email=email,
+        password=password,
+        gender=gender,
+        avatar='/static/avatar/default.jpg',
+    )
     account = Account(user=user)
-    db.session.add(user)
-    db.session.add(account)
-    db.session.commit()
+    user.save()
+    account.save()
 
     return jsonify({'success': True, 'info': ''})
 
 
 @user.route('/login/', methods=['POST'])
 def user_login():
-    '''Login user by phone and password.
-    '''
+    '''Login user by phone and password.'''
 
     data = request.get_json()
     phone = data.get('phone')
@@ -61,11 +71,18 @@ def user_login():
     if not user:
         return jsonify({'success': False, 'code': USER_NOT_EXIST})
 
-    if not check_password(password, user.password):
+    if not check_password(user.password, password):
         return jsonify({'success': False, 'code': USER_WRONG_PASSWORD})
 
     Authorization = jwt.encode(
-        {'user_id': user.id, 'exp': datetime.now() + timedelta(hours=2), 'role': user.role}, KEY, 'HS256')
+        {
+            'user_id': user.id,
+            'exp': datetime.now() + timedelta(hours=2),
+            'role': user.role,
+        },
+        KEY,
+        'HS256',
+    )
 
     set_login_cache(Authorization, user.id)
 
@@ -89,7 +106,8 @@ def send_captcha_email():
     captcha = get_captcha()
     mail = {
         'subject': f'恰了木有验证码',
-        'content': f'<div>感谢您使用恰了木有APP, 您的验证码为</div><span style="font-size: 30px;font-weight: 600;background: #313131;color: #6dc4ff;">{captcha}</span><div>请在10分钟之内完成验证</div>'}
+        'content': f'<div>感谢您使用恰了木有APP, 您的验证码为</div><span style="font-size: 30px;font-weight: 600;background: #313131;color: #6dc4ff;">{captcha}</span><div>请在10分钟之内完成验证</div>',
+    }
     r.set_val(f'user_{user.id}:captcha', captcha, 600)
     sender.send(email, mail)
     return jsonify({'success': True})
@@ -118,12 +136,11 @@ def user_change_pwd():
         return jsonify({'success': False, 'code': USER_WRONG_CAPTCHA})
 
     user = User.query.filter_by(id=get_userId(request)).first()
-    if not check_password(old_passwd, user.password):
+    if not check_password(user.password, old_passwd):
         return jsonify({'success': False, 'code': USER_WRONG_PASSWORD})
 
     user.password = make_password(new_passwd)
-    user.set_update_time()
-    db.session.commit()
+    user.save()
     return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
 
 
@@ -155,8 +172,7 @@ def user_profile():
             user.age = age
         if nickname:
             user.nickname = nickname
-        user.set_update_time()
-        db.session.commit()
+        user.save()
 
         return jsonify({'success': True, 'data': {'avatar': HTTP_HOST + user.avatar}})
 
@@ -176,16 +192,14 @@ def user_edit_email():
     if (not captcha) or (captcha != real_cap):
         return jsonify({'success': False, 'code': USER_WRONG_CAPTCHA})
 
-    ex_user = User.query.filter(
-        User.email == email, User.id != user.id).first()
+    ex_user = User.query.filter(User.email == email, User.id != user.id).first()
     if ex_user:
         return jsonify({'success': False, 'code': USER_EXISTED})
 
     user.email = email
     if not user.is_email_active:
         user.is_email_active = True
-    user.set_update_time()
-    db.session.commit()
+    user.save()
     return jsonify({'success': True})
 
 
@@ -208,8 +222,7 @@ def tags():
 
         tags = Tag.query.filter(Tag.id.in_(exist_tags)).all()
         user.tags = tags
-        user.set_update_time()
-        db.session.commit()
+        user.save()
         Tag.update_weight()
         return jsonify({'success': True})
 

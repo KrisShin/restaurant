@@ -11,7 +11,7 @@ aes = AES.new(str.encode(KEY), AES.MODE_ECB)
 
 
 def make_password(pwd):
-    encode_pwd = str.encode(pwd.rjust(16, '@'))
+    encode_pwd = str.encode(pwd.rjust(32, '@'))
     encrypt_str = str(encodebytes(aes.encrypt(encode_pwd)), encoding='utf-8')
     return encrypt_str
 
