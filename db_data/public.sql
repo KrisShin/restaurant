@@ -12,7 +12,7 @@
  Target Server Version : 140000
  File Encoding         : 65001
 
- Date: 18/11/2021 23:06:33
+ Date: 21/11/2021 13:25:34
 */
 
 
@@ -188,7 +188,7 @@ CREATE TABLE "public"."alembic_version" (
 -- ----------------------------
 -- Records of alembic_version
 -- ----------------------------
-INSERT INTO "public"."alembic_version" VALUES ('17d30965bd4a');
+INSERT INTO "public"."alembic_version" VALUES ('a07c914f8d20');
 
 -- ----------------------------
 -- Table structure for comment
@@ -200,7 +200,8 @@ CREATE TABLE "public"."comment" (
   "update_time" timestamp(6),
   "content" varchar(512) COLLATE "pg_catalog"."default",
   "user_id" int4,
-  "order_id" int4
+  "order_id" int4,
+  "rate" "public"."rate_enum"
 )
 ;
 
@@ -362,14 +363,16 @@ CREATE TABLE "public"."user" (
   "password" varchar(128) COLLATE "pg_catalog"."default" NOT NULL,
   "gender" bool,
   "is_new" bool,
-  "is_email_active" bool
+  "is_email_active" bool,
+  "role" "public"."role_enum"
 )
 ;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO "public"."user" VALUES (1, NULL, NULL, 'admin', 20, '13433334444', NULL, '2855829886@qq.com', '123', 't', 't', 't');
+INSERT INTO "public"."user" VALUES (1, NULL, '2021-11-21 13:07:17.758135', 'admin', 20, '13433334444', NULL, '2855829886@qq.com', '7RaqFOMZmUozaG/li5ojQg==
+', 't', 't', 't', 'admin');
 
 -- ----------------------------
 -- Alter sequences owned by
