@@ -2,39 +2,43 @@
   <div class="login">
     <el-container>
       <el-header>恰了木有-管理端</el-header>
-      <el-main>
-        <el-row>
-          <el-col :span="3">
-            <el-input
-              v-model="phone"
-              placeholder="请输入手机号"
-              @change="inputCheck"
-              maxlength="11"
-              clearable
-            ></el-input>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="3">
-            <el-input
-              v-model="password"
-              type="password"
-              clearable
-              placeholder="请输入密码"
-              @change="inputCheck"
-            ></el-input>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-button
-            type="primary"
-            @click="onClickLogin"
-            :disabled="disableSumbmit"
-          >
-            登录 </el-button
-          >/
-          <el-button type="primary" plain> 找回密码 </el-button>
-        </el-row>
+      <el-main class="mainbox">
+        <div class="loginFormBox">
+          <el-row type="flex" justify="center">
+            <el-col :span="3">
+              <el-input
+                v-model="phone"
+                placeholder="请输入手机号"
+                @input="inputCheck"
+                maxlength="11"
+                clearable
+              ></el-input>
+            </el-col>
+          </el-row>
+          <el-row type="flex" justify="center">
+            <el-col :span="3">
+              <el-input
+                v-model="password"
+                type="password"
+                clearable
+                placeholder="请输入密码"
+                @input="inputCheck"
+              ></el-input>
+            </el-col>
+          </el-row>
+          <el-row type="flex" justify="center">
+            <el-col>
+              <el-button
+                type="primary"
+                @click="onClickLogin"
+                :disabled="disableSumbmit"
+              >
+                登录 </el-button
+              >/
+              <el-button type="primary" plain> 找回密码 </el-button>
+            </el-col>
+          </el-row>
+        </div>
       </el-main>
     </el-container>
   </div>
@@ -90,3 +94,16 @@ export default {
   },
 };
 </script>
+<style>
+.el-main {
+  padding: 10%;
+}
+.el-header {
+  color: aliceblue;
+  font-size: 30px;
+}
+.el-row{
+  margin: 1%;
+  line-height: initial;
+}
+</style>

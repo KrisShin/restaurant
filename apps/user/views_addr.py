@@ -30,8 +30,7 @@ def oprate_address(addr_id):
         addr = operate_an_addr(addr, user, data)
         if not addr:
             return jsonify({'success': False, 'code': ADDR_LACK_DATA})
-        db.session.add(addr)
-        db.session.commit()
+        addr.save()
         return jsonify({'success': True})
 
     if request.method == 'PUT':
@@ -44,14 +43,13 @@ def oprate_address(addr_id):
         addr = operate_an_addr(addr, user, data)
         if not addr:
             return jsonify({'success': False, 'code': ADDR_LACK_DATA})
-        db.session.commit()
+        addr.save()
         return jsonify({'success': True})
 
     if request.method == 'DELETE':
         '''Delete the address'''
         addr = Address.query.filter_by(id=addr_id).first()
         addr.delete()
-        db.session.commit()
         return jsonify({'success': True})
 
 
@@ -74,7 +72,7 @@ def operate_an_addr(addr, user, data):
         'city': data.get('city'),
         'county': data.get('county'),
         'addressDetail': data.get('addressDetail'),
-        'areaCode': data.get('areaCode')
+        'areaCode': data.get('areaCode'),
     }
 
     is_default = data.get('isDefault')
@@ -87,13 +85,13 @@ def operate_an_addr(addr, user, data):
         is_default = True
     if not all((name, phone, location, user, addr)):
         return
-    addr.name = name,
+    addr.name = (name,)
     addr.phone = phone
     addr.location = location
     addr.user = user
     addr.is_default = is_default
-    addr.set_update_time()
     return addr
+
 
 # @address.route('/getDefault', methods=['GET'])
 # @auth
