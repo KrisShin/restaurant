@@ -72,17 +72,17 @@ export default {
       userLoginAPI({ phone: this.phone, password: this.password, login: true })
         .then((resp) => {
           if (resp.data.success) {
-            _this.$message("登陆成功");
+            _this.$message.success("登陆成功");
             _this.$store.dispatch("common/setToken", resp.data.token);
             _this.$router.push("/home");
           }
           if (resp.data.code == 1001) {
             // 用户不存在
-            _this.$message("用户不存在");
+            _this.$message.error("用户不存在");
           } else if (resp.data.code == 1004) {
             // 密码错误
             _this.password = "";
-            _this.$message("密码错误");
+            _this.$message.error("密码错误");
           }
         })
         .catch((err) => {

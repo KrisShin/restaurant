@@ -1,18 +1,17 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <SideNavBar />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import SideNavBar from "@/components/SideNavBar.vue";
 
 export default {
   name: "Home",
   components: {
-    HelloWorld,
+    SideNavBar,
   },
 };
 </script>
@@ -43,5 +42,8 @@ body > .el-container {
 
 .el-container:nth-child(7) .el-aside {
   line-height: 320px;
+}
+.home{
+  height: 100%;
 }
 </style>
