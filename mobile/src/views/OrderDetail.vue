@@ -172,7 +172,7 @@ export default {
         .then(() => {
           orderCancelAPI({ id: this.id })
             .then((resp) => {
-              if (resp.data.success) {
+              if (resp.data.code === 200) {
                 this.$toast.success("取消订单成功");
                 this.userInfo.balance += this.total;
                 this.$store.dispatch("common/setUserInfo", this.userInfo);
@@ -197,7 +197,7 @@ export default {
     loadAddr() {
       addrGetAPI({ id: this.addrId })
         .then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             this.address = resp.data.data;
           }
         })
@@ -210,7 +210,7 @@ export default {
       this.showAddressList = true;
       addrListAPI()
         .then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             this.list = resp.data.data.addresses;
           }
         })
@@ -232,7 +232,7 @@ export default {
       }
       dishCartAPI({ dishes })
         .then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             const data = resp.data.data;
             if (data && data.length > 0) {
               this.dishes = data;
@@ -256,7 +256,7 @@ export default {
         addrId: this.addrId,
       })
         .then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             this.$toast.success("提交成功");
             this.$router.replace("/orderDetail?id=" + resp.data.data.id);
             for (var key in this.cart) {
@@ -286,14 +286,14 @@ export default {
         .then(() => {
           orderPayAPI({ id: this.id })
             .then((resp) => {
-              if (resp.data.success) {
+              if (resp.data.code === 200) {
                 this.userInfo.balance -= resp.data.data.balance;
                 this.$store.dispatch("common/setUserInfo", this.userInfo);
                 this.$toast.success("支付成功");
                 this.$router.replace("/orders?type=all");
               } else {
                 if (resp.data.data) {
-                  this.$toast.fail(resp.data.data.message);
+                  this.$toast.fail(resp.data.msg);
                 } else {
                   this.$toast.fail("支付失败");
                 }
@@ -317,7 +317,7 @@ export default {
         .then(() => {
           orderCompleteAPI({ id: this.id })
             .then((resp) => {
-              if (resp.data.success) {
+              if (resp.data.code === 200) {
                 this.myBadge -= 1;
                 localStorage.setItem("myBadge", this.myBadge);
                 if (this.myBadge == 0) {
@@ -342,7 +342,7 @@ export default {
       this.total = 0;
       orderGetAPI({ id: this.id })
         .then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             this.order = resp.data.data.order;
             this.address = this.order.address;
             this.dishes = this.order.dishes;

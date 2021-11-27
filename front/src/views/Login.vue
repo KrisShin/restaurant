@@ -35,17 +35,46 @@
               >
                 登录 </el-button
               >/
-              <el-button type="primary" plain> 找回密码 </el-button>
+              <el-button type="primary" plain @click="onClickResetPwdDialog">
+                找回密码
+              </el-button>
             </el-col>
           </el-row>
         </div>
       </el-main>
     </el-container>
+    <el-dialog title="找回密码" :visible.sync="dialogFormVisible" width="400px">
+      <el-form :model="form">
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="form.email" autocomplete="off">
+            <el-button slot="append" @click="onClickSendCaptcha"
+              >发送验证码</el-button
+            >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="活动区域" :label-width="formLabelWidth">
+          <el-select v-model="form.region" placeholder="请选择活动区域">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { userLoginAPI } from "../apis/user.apis";
+import {
+  userLoginAPI,
+  userSendCaptchaAPI,
+  userChangePwdAPI,
+} from "../apis/user.apis";
 
 export default {
   name: "Login",
@@ -54,6 +83,19 @@ export default {
       phone: "",
       password: "",
       disableSumbmit: true,
+      dialogFormVisible: true,
+      form: {
+        email: "",
+        name: "",
+        region: "",
+        date1: "",
+        date2: "",
+        delivery: false,
+        type: [],
+        resource: "",
+        desc: "",
+      },
+      formLabelWidth: "70px",
     };
   },
   created() {
@@ -71,25 +113,32 @@ export default {
       var _this = this;
       userLoginAPI({ phone: this.phone, password: this.password, login: true })
         .then((resp) => {
-          if (resp.data.success) {
-            _this.$message("登陆成功");
+          if (resp.data.code === 200) {
+            _this.$message.success("登陆成功");
             _this.$store.dispatch("common/setToken", resp.data.token);
-            setTimeout(() => {
-              _this.$router.push("/");
-            }, 500);
+            _this.$router.push("/home");
           }
           if (resp.data.code == 1001) {
             // 用户不存在
-            _this.$message("用户不存在");
+            _this.$message.error("用户不存在");
           } else if (resp.data.code == 1004) {
             // 密码错误
             _this.password = "";
-            _this.$message("密码错误");
+            _this.$message.error("密码错误");
           }
         })
         .catch((err) => {
           console.error(err);
         });
+    },
+    onClickResetPwdDialog() {
+      this.dialogFormVisible = true;
+    },
+    onClickSendCaptcha() {
+      userSendCaptchaAPI({ email: this.form.email });
+    },
+    onClickResetPwd() {
+      userChangePwdAPI(this.form);
     },
   },
 };
@@ -102,7 +151,7 @@ export default {
   color: aliceblue;
   font-size: 30px;
 }
-.el-row{
+.el-row {
   margin: 1%;
   line-height: initial;
 }

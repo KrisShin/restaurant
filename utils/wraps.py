@@ -3,9 +3,10 @@ from functools import wraps
 
 from flask import request, jsonify
 import jwt
+from apps.user.models import User
 
 from config.settings import KEY
-from config.status_code import USER_TOKEN_EXPIRE, USER_INVALID_TOKEN
+from config import status_code
 from utils.rest_redis import r
 
 
@@ -13,7 +14,7 @@ def jwt_auth(auth, alg='HS256'):
     '''JWT encoding to authorization user.'''
     if not r.get_val(f'user:{auth.decode()}'):
         print(auth.decode())
-        return USER_TOKEN_EXPIRE, False, None, False  # token过期
+        return status_code.USER_TOKEN_EXPIRE, False, None, False  # token过期
     try:
         decode_auth = jwt.decode(auth, KEY, alg)
         exp = datetime.utcfromtimestamp(decode_auth['exp'])
@@ -21,12 +22,12 @@ def jwt_auth(auth, alg='HS256'):
         if (exp - datetime.now()).total_seconds() > 0:
             return 200, True, decode_auth['user_id'], admin
     except jwt.exceptions.ExpiredSignatureError:
-        return USER_TOKEN_EXPIRE, False, None, False  # token过期
+        return status_code.USER_TOKEN_EXPIRE, False, None, False  # token过期
     except Exception as e:
         print(e)
-        return USER_INVALID_TOKEN, False, None, False
+        return status_code.USER_INVALID_TOKEN, False, None, False
     else:
-        return USER_INVALID_TOKEN, False, None, False  # 非法的token
+        return status_code.USER_INVALID_TOKEN, False, None, False  # 非法的token
 
 
 def auth(func):
@@ -39,7 +40,7 @@ def auth(func):
         if status == 200 and auth_s and role:
             return func(*args, **kwargs)
         else:
-            return jsonify({'success': False, 'code': status})  # , status
+            return jsonify({'code': status})  # , status
 
     return wrapper
 
@@ -55,6 +56,8 @@ def clear_login_cache(req):
     r.del_val(f'user:{req.headers.get("Authorization")}')
 
 
-def get_userId(req):
+def get_current_user(req):
     '''Get current logined user's ID from cache'''
-    return r.get_val(f'user:{req.headers.get("Authorization")}')
+    return User.query.filter_by(
+        id=r.get_val(f'user:{req.headers.get("Authorization")}')
+    ).first()

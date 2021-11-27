@@ -92,7 +92,7 @@ export default {
         age: this.age,
       })
         .then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             this.userInfo.avatar = resp.data.data.avatar;
             this.userInfo.nickname = this.nickname;
             this.userInfo.age = this.age;

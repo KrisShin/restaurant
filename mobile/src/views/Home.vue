@@ -148,7 +148,7 @@ export default {
     if (this.isLogin && !this.userInfo) {
       userInfoAPI()
         .then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             var userInfo = resp.data.data;
             this.$store.dispatch("common/setUserInfo", userInfo);
             this.userInfo = userInfo;
@@ -160,7 +160,7 @@ export default {
     }
     dishPushAPI()
       .then((resp) => {
-        if (resp.data.success) {
+        if (resp.data.code === 200) {
           this.pushDish = resp.data.data.pushDish;
           this.pushSwiper = resp.data.data.pushSwiper;
           this.pushDish.forEach((dish) => {

@@ -193,7 +193,7 @@ export default {
         } else {
           var _this = this;
           userSendCaptchaAPI({ email: this.userInfo.email }).then((resp) => {
-            if (resp.data.success) {
+            if (resp.data.code === 200) {
               _this.$router.push("/auth?email=" + this.email);
             } else if (resp.data.code === 1006) {
               _this.$notify({
@@ -209,7 +209,7 @@ export default {
     },
     clickToLogout() {
       userLogoutAPI().then((resp) => {
-        if (resp.data.success) {
+        if (resp.data.code === 200) {
           this.$notify({
             message: "退出登录",
             type: "success",
@@ -224,7 +224,7 @@ export default {
     loadOrderStatus() {
       orderStatusAPI()
         .then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             this.orderStatus = resp.data.data.orderStatus;
             this.orderCount = resp.data.data.orderCount;
             this.myBadge =

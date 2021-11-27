@@ -134,7 +134,7 @@ export default {
     loadDishes(dishes) {
       dishCartAPI({ dishes })
         .then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             const data = resp.data.data;
             if (data && data.length > 0) {
               this.dishes = data;

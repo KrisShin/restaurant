@@ -43,12 +43,13 @@ USER_NOT_ADMIN = 10013
 # 地址数据有误(创建地址带上了id)
 ADDR_DATA_ERROR = 1101
 
-# 地址数据不完整
-ADDR_LACK_DATA = 1102
-
 # 地址不存在
-ADDR_NOT_EXISIT = 1103
+ADDR_NOT_EXISIT = 1102
 
 # order module
 # 提交订单没有菜品
 ORDER_EMPTY_CART = 1201
+
+
+# Common
+PARAM_LACK = 9999

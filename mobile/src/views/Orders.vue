@@ -75,7 +75,7 @@ export default {
       this.loading = true;
       orderListAPI({ point: this.point, status: this.status })
         .then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             resp.data.data.orders.forEach((order) => {
               this.list.push(order);
             });

@@ -12,7 +12,7 @@
  Target Server Version : 140000
  File Encoding         : 65001
 
- Date: 21/11/2021 13:25:34
+ Date: 27/11/2021 22:43:06
 */
 
 
@@ -346,6 +346,25 @@ CREATE TABLE "public"."tag" (
 -- ----------------------------
 -- Records of tag
 -- ----------------------------
+INSERT INTO "public"."tag" VALUES (1, '2021-11-27 22:13:42.991576', NULL, 1, '蛋糕');
+INSERT INTO "public"."tag" VALUES (2, '2021-11-27 22:13:43.004755', NULL, 1, '奶茶');
+INSERT INTO "public"."tag" VALUES (3, '2021-11-27 22:13:43.010333', NULL, 1, '碳酸饮料');
+INSERT INTO "public"."tag" VALUES (4, '2021-11-27 22:13:43.014163', NULL, 1, '偏甜');
+INSERT INTO "public"."tag" VALUES (5, '2021-11-27 22:13:43.018164', NULL, 1, '咸香');
+INSERT INTO "public"."tag" VALUES (6, '2021-11-27 22:13:43.022146', NULL, 1, '香辣');
+INSERT INTO "public"."tag" VALUES (7, '2021-11-27 22:13:43.026788', NULL, 1, '麻辣');
+INSERT INTO "public"."tag" VALUES (8, '2021-11-27 22:13:43.030805', NULL, 1, '特辣');
+INSERT INTO "public"."tag" VALUES (9, '2021-11-27 22:13:43.035913', NULL, 1, '微辣');
+INSERT INTO "public"."tag" VALUES (10, '2021-11-27 22:13:43.040861', NULL, 1, '中辣');
+INSERT INTO "public"."tag" VALUES (11, '2021-11-27 22:13:43.046859', NULL, 1, '广东辣');
+INSERT INTO "public"."tag" VALUES (12, '2021-11-27 22:13:43.051077', NULL, 1, '少油');
+INSERT INTO "public"."tag" VALUES (13, '2021-11-27 22:13:43.055596', NULL, 1, '少盐');
+INSERT INTO "public"."tag" VALUES (14, '2021-11-27 22:13:43.059639', NULL, 1, '少糖');
+INSERT INTO "public"."tag" VALUES (15, '2021-11-27 22:13:43.063922', NULL, 1, '甜点');
+INSERT INTO "public"."tag" VALUES (16, '2021-11-27 22:13:43.068094', NULL, 1, '海鲜');
+INSERT INTO "public"."tag" VALUES (17, '2021-11-27 22:13:43.071835', NULL, 1, '生鲜');
+INSERT INTO "public"."tag" VALUES (18, '2021-11-27 22:13:43.076095', NULL, 1, '五香');
+INSERT INTO "public"."tag" VALUES (19, '2021-11-27 22:13:43.080005', NULL, 1, '糖醋');
 
 -- ----------------------------
 -- Table structure for user
@@ -428,7 +447,7 @@ SELECT setval('"public"."order_id_seq"', 2, false);
 -- ----------------------------
 ALTER SEQUENCE "public"."tag_id_seq"
 OWNED BY "public"."tag"."id";
-SELECT setval('"public"."tag_id_seq"', 2, false);
+SELECT setval('"public"."tag_id_seq"', 20, true);
 
 -- ----------------------------
 -- Alter sequences owned by

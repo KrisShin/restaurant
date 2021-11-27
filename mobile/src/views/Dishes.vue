@@ -128,7 +128,7 @@ export default {
     onLoad() {
       dishListAPI({ point: this.point })
         .then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             if (resp.data.data) {
               resp.data.data.forEach((dish) => {
                 dish.count = this.cart[dish.id];

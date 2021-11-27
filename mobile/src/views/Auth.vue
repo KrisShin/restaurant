@@ -57,7 +57,7 @@ export default {
       const _this = this;
       userChangeEmailAPI({ email: this.email, captcha: this.captcha })
         .then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             this.$toast("验证成功");
             var userInfo = _this.$store.state.common.userInfo;
             userInfo.email = _this.email;

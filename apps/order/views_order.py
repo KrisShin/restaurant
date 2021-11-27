@@ -1,6 +1,5 @@
 from flask import Blueprint, json, jsonify, request
-from config.global_params import db
-from config.status_code import *
+from config import status_code
 from config.settings import (
     ORDER_ACCEPTED,
     ORDER_CANCELED,
@@ -12,10 +11,10 @@ from config.settings import (
     ORDER_STATUS,
     ORDER_STATUS_REVERSE,
 )
-from utils.wraps import auth, get_userId
-from apps.user.models import User, Address
+from utils.wraps import auth, get_current_user
+from apps.user.models import Address
 from apps.dish.models import Dish
-from .models import Order, Comment
+from .models import Order
 
 order = Blueprint('Order', __name__, url_prefix='/customer/order')
 
@@ -27,11 +26,11 @@ def operate_order(order_id):
     if request.method == 'GET':
         '''Get an order by ID.'''
         order = Order.query.filter_by(id=order_id).first()
-        return jsonify({'success': True, 'data': {'order': dict(order)}})
+        return jsonify({'code': status_code.OK, 'data': {'order': dict(order)}})
     if request.method == 'PUT':
         '''Update an Order'''
         # Todo: Is this a function of customer or merchant?
-        return jsonify({'success': True})
+        return jsonify({'code': status_code.OK})
     if request.method == 'POST':
         '''Create an order, order ID is unnecessary.'''
         data = request.get_json()
@@ -39,14 +38,14 @@ def operate_order(order_id):
         note = data.get('note')
         addr_id = data.get('addrId')
         if not cart:
-            return jsonify({'success': False, 'code': ORDER_EMPTY_CART})
+            return jsonify({'code': status_code.ORDER_EMPTY_CART, 'msg': '用户购物车为空'})
         cart = json.loads(cart)
 
         # Get all dish's ID and amount.
         dish_amount = {k: v for k, v in cart.items() if v}
         if not dish_amount:
-            return jsonify({'success': False, 'code': ORDER_EMPTY_CART})
-        user = User.query.filter_by(id=get_userId(request)).first()
+            return jsonify({'code': status_code.ORDER_EMPTY_CART, 'msg': '用户购物车为空'})
+        user = get_current_user()
         addr = Address.query.filter_by(id=addr_id).first()
         if not addr:
             # if not choose an address, use the default address of the user.
@@ -70,19 +69,19 @@ def operate_order(order_id):
             dishes=dishes,
         )
         order.save()
-        return jsonify({'success': True, 'data': {'id': order.id}})
+        return jsonify({'code': status_code.OK, 'data': {'id': order.id}})
     if request.method == 'DELETE':
         # Delete the order.
         order = Order.query.filter_by(id=order_id).first()
         order.delete()
-        return jsonify({'success': True})
+        return jsonify({'code': status_code.OK})
 
 
 @order.route('/list/', methods=['POST'])
 @auth
 def post_order_list():
     '''Get many types of orders list.'''
-    user = User.query.filter_by(id=get_userId(request)).first()
+    user = get_current_user()
     point = request.get_json().get('point', 0)
     status = request.get_json().get('status')
     if status == 'all' or not status:
@@ -93,14 +92,14 @@ def post_order_list():
             for order in user.orders
             if order.status == ORDER_STATUS_REVERSE[status]
         ]
-    return jsonify({'success': True, 'data': {'orders': orders}})
+    return jsonify({'code': status_code.OK, 'data': {'orders': orders}})
 
 
 @order.route('/status/', methods=['GET'])
 @auth
 def get_order_status():
     '''Calculate the orders in each status'''
-    user = User.query.filter_by(id=get_userId(request)).first()
+    user = get_current_user()
     order_status_count = {
         'orderUnpay': 0,
         'orderPaid': 0,
@@ -114,7 +113,7 @@ def get_order_status():
         order_status_count[ORDER_STATUS[order.status]] += 1
     return jsonify(
         {
-            'success': True,
+            'code': status_code.OK,
             'data': {'orderStatus': order_status_count, 'orderCount': len(user.orders)},
         }
     )
@@ -125,15 +124,15 @@ def get_order_status():
 def post_order_pay():
     '''Pay the order.'''
     id = request.get_json().get('id')
-    user = User.query.filter_by(id=get_userId(request)).first()
+    user = get_current_user()
     order = Order.query.filter_by(id=id).first()
     if user.account.balance < order.money:
-        return jsonify({'success': False, 'data': {'message': '余额不足, 请先充值'}})
+        return jsonify({'data': {'message': '余额不足, 请先充值'}})
     user.account.balance -= order.money
     order.status = ORDER_PAID
     order.save()
     user.save()
-    return jsonify({'success': True, 'data': {'balance': user.account.balance}})
+    return jsonify({'code': status_code.OK, 'data': {'balance': user.account.balance}})
 
 
 @order.route('/complete/', methods=['POST'])
@@ -145,7 +144,7 @@ def post_order_complete():
     if order.status in (ORDER_ACCEPTED, ORDER_COMMNETED):
         order.status = ORDER_COMPLETE
     order.save()
-    return jsonify({'success': True})
+    return jsonify({'code': status_code.OK})
 
 
 @order.route('/cancel/', methods=['POST'])
@@ -153,7 +152,7 @@ def post_order_complete():
 def post_order_cancel():
     '''Cancel the order'''
     id = request.get_json().get('id')
-    user = User.query.filter_by(id=get_userId(request)).first()
+    user = get_current_user()
     order = Order.query.filter_by(id=id).first()
     msg = ''
     if order.status == ORDER_UNPAY:
@@ -172,4 +171,4 @@ def post_order_cancel():
         # if order is waiting for merchant confirm.
         msg = '该状态下无法退款, 如有疑问请前往申诉'
     order.save()
-    return jsonify({'success': True, 'data': {'message': msg}})
+    return jsonify({'code': status_code.OK, 'msg': msg})

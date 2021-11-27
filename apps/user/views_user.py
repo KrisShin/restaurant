@@ -5,8 +5,7 @@ import re
 from flask import Blueprint, jsonify, request
 
 from .models import User, Account
-from config.global_params import db
-from config.status_code import *
+from config import status_code
 from config.settings import KEY, HTTP_HOST
 from apps.dish.models import Tag
 from utils.mail_sender import sender
@@ -18,7 +17,7 @@ from utils.util import (
     save_img,
     del_invalify_image,
 )
-from utils.wraps import auth, clear_login_cache, get_userId, set_login_cache
+from utils.wraps import auth, clear_login_cache, get_current_user, set_login_cache
 
 user = Blueprint('User', __name__, url_prefix='/customer/user')
 
@@ -37,11 +36,11 @@ def user_register():
     # check phone number
     reg_phone = r'^1[3-9]\d{9}$'
     if not re.match(reg_phone, phone):
-        return jsonify({'success': False, 'code': USER_WRONG_PHONE_FORMAT})
+        return jsonify({'code': status_code.USER_WRONG_PHONE_FORMAT, 'msg': '手机号格式错误'})
 
     user = User.query.filter_by(phone=phone).first()
     if user:
-        return jsonify({'success': False, 'code': USER_EXISTED})
+        return jsonify({'code': status_code.USER_EXISTED, 'msg': '手机号已注册'})
 
     user = User(
         nickname=nickname,
@@ -56,7 +55,7 @@ def user_register():
     user.save()
     account.save()
 
-    return jsonify({'success': True, 'info': ''})
+    return jsonify({'code': status_code.OK})
 
 
 @user.route('/login/', methods=['POST'])
@@ -69,10 +68,10 @@ def user_login():
 
     user = User.query.filter_by(phone=phone).first()
     if not user:
-        return jsonify({'success': False, 'code': USER_NOT_EXIST})
+        return jsonify({'code': status_code.USER_NOT_EXIST, 'msg': '用户不存在'})
 
     if not check_password(user.password, password):
-        return jsonify({'success': False, 'code': USER_WRONG_PASSWORD})
+        return jsonify({'code': status_code.USER_WRONG_PASSWORD, 'msg': '密码错误'})
 
     Authorization = jwt.encode(
         {
@@ -86,7 +85,7 @@ def user_login():
 
     set_login_cache(Authorization, user.id)
 
-    return jsonify({"success": True, "info": "", 'token': Authorization})
+    return jsonify({"code": status_code.OK, 'token': Authorization})
 
 
 @user.route('/email_captcha/', methods=['POST'])
@@ -97,20 +96,29 @@ def send_captcha_email():
     data = request.get_json()
     email = data.get('email')
     if not email:
-        return jsonify({'success': False, 'code': USER_EMAIL_NOT_EXIST})
+        return jsonify({'code': status_code.PARAM_LACK, 'msg': '缺少参数'})
     user = User.query.filter_by(email=email).first()
 
+    if not user:
+        return jsonify({'code': status_code.USER_NOT_EXIST, 'msg': '用户不存在'})
+
     if r.get_val(f'user_{user.id}:captcha'):
-        return jsonify({'success': False, 'code': USER_CAPTCHA_SENDED})
+        return jsonify(
+            {'code': status_code.USER_CAPTCHA_SENDED, 'msg': '验证码已发送, 请10分钟之后重试'}
+        )
 
     captcha = get_captcha()
+    print(captcha)
     mail = {
         'subject': f'恰了木有验证码',
-        'content': f'<div>感谢您使用恰了木有APP, 您的验证码为</div><span style="font-size: 30px;font-weight: 600;background: #313131;color: #6dc4ff;">{captcha}</span><div>请在10分钟之内完成验证</div>',
+        'content': f'''
+        <div>感谢您使用恰了木有APP, 您的验证码为</div>
+        <span style="font-size: 30px;font-weight: 600;background: #313131;color: #6dc4ff;">{captcha}</span>
+        <div>请在10分钟之内完成验证</div>''',
     }
     r.set_val(f'user_{user.id}:captcha', captcha, 600)
-    sender.send(email, mail)
-    return jsonify({'success': True})
+    # sender.send(email, mail)
+    return jsonify({'code': status_code.OK})
 
 
 @user.route('/change_pwd/', methods=['PUT'])
@@ -122,37 +130,42 @@ def user_change_pwd():
     old_passwd = data.get('old_password')
     new_passwd = data.get('new_password')
     confirm_passwd = data.get('cfm_password')
+    user = get_current_user()
 
     if confirm_passwd != new_passwd:
-        return jsonify({'success': False, 'code': USER_WRONG_CONFIRM_PASSWORD})
+        return jsonify(
+            {'code': status_code.USER_WRONG_CONFIRM_PASSWORD, 'msg': '两次输入密码不同'}
+        )
 
     if old_passwd == new_passwd:
-        return jsonify({'success': False, 'code': USER_SAME_PASSWORD})
+        return jsonify({'code': status_code.USER_SAME_PASSWORD, 'msg': '新密码不能与旧密码相同'})
 
-    real_captcha = r.get_val(f'user_{get_userId(request)}:captcha')
+    real_captcha = r.get_val(f'user_{user.id}:captcha')
     if not real_captcha:
-        return jsonify({'success': False, 'code': USER_CAPTCHA_EXPIRED})
+        return jsonify(
+            {'code': status_code.USER_CAPTCHA_EXPIRED, 'msg': '验证码已过期, 请重新申请'}
+        )
     if captcha != real_captcha:
-        return jsonify({'success': False, 'code': USER_WRONG_CAPTCHA})
+        return jsonify({'code': status_code.USER_WRONG_CAPTCHA, 'msg': '验证码错误'})
 
-    user = User.query.filter_by(id=get_userId(request)).first()
     if not check_password(user.password, old_passwd):
-        return jsonify({'success': False, 'code': USER_WRONG_PASSWORD})
+        return jsonify({'code': status_code.USER_WRONG_PASSWORD, 'msg': '原密码错误'})
 
     user.password = make_password(new_passwd)
     user.save()
-    return jsonify({"success": True, "info": "修改密码成功, 请重新登录"})
+    clear_login_cache()
+    return jsonify({'code': status_code.OK, "msg": "修改密码成功, 请重新登录"})
 
 
 @user.route('/profile/', methods=['GET', 'PUT'])
 @auth
 def user_profile():
     '''check user profile'''
+    user = get_current_user()
     if request.method == 'GET':
         '''Get user profile.'''
-        user = User.query.filter_by(id=get_userId(request)).first()
         resp = dict(user)
-        return jsonify({'success': True, 'data': resp})
+        return jsonify({'code': status_code.OK, 'data': resp})
     elif request.method == 'PUT':
         '''Modify user.'''
         data = request.get_json()
@@ -163,7 +176,6 @@ def user_profile():
             avatar_path = save_img('avatar', base64_str)
         age = data.get('age')
         nickname = data.get('nickname')
-        user = User.query.filter_by(id=get_userId(request)).first()
 
         if avatar_path:
             del_invalify_image(user.avatar)
@@ -174,7 +186,9 @@ def user_profile():
             user.nickname = nickname
         user.save()
 
-        return jsonify({'success': True, 'data': {'avatar': HTTP_HOST + user.avatar}})
+        return jsonify(
+            {'code': status_code.OK, 'data': {'avatar': HTTP_HOST + user.avatar}}
+        )
 
 
 @user.route('/change_email/', methods=['PUT'])
@@ -184,23 +198,25 @@ def user_edit_email():
     data = request.get_json()
     email = data.get('email')
     captcha = data.get('captcha')
-    user = User.query.filter_by(id=get_userId(request)).first()
+    user = get_current_user()
     # TODO: adbstract authorize captcha in a isolation function.
     real_cap = r.get_val(f'user_{user.id}:captcha')
     if not real_cap:
-        return jsonify({'success': False, 'code': USER_CAPTCHA_EXPIRED})
+        return jsonify(
+            {'code': status_code.USER_CAPTCHA_EXPIRED, 'msg': '验证码已过期, 请重新申请'}
+        )
     if (not captcha) or (captcha != real_cap):
-        return jsonify({'success': False, 'code': USER_WRONG_CAPTCHA})
+        return jsonify({'code': status_code.USER_WRONG_CAPTCHA, 'msg': '验证码错误'})
 
     ex_user = User.query.filter(User.email == email, User.id != user.id).first()
     if ex_user:
-        return jsonify({'success': False, 'code': USER_EXISTED})
+        return jsonify({'code': status_code.USER_EXISTED, 'msg': '邮箱已注册'})
 
     user.email = email
     if not user.is_email_active:
         user.is_email_active = True
     user.save()
-    return jsonify({'success': True})
+    return jsonify({'code': status_code.OK})
 
 
 @user.route('/logout/', methods=['POST'])
@@ -208,7 +224,7 @@ def user_edit_email():
 def user_logout():
     '''User logout.'''
     clear_login_cache(request)
-    return jsonify({'success': True})
+    return jsonify({'code': status_code.OK})
 
 
 @user.route('/tags/', methods=['PUT'])
@@ -217,14 +233,14 @@ def tags():
     if request.method == 'PUT':
         '''User add tag.'''
         data = request.get_json()
-        user = User.query.filter_by(id=get_userId(request)).first()
+        user = get_current_user()
         exist_tags = data.get('ex_tags')
 
         tags = Tag.query.filter(Tag.id.in_(exist_tags)).all()
         user.tags = tags
         user.save()
         Tag.update_weight()
-        return jsonify({'success': True})
+        return jsonify({'code': status_code.OK})
 
 
 @user.route('/test/', methods=['POST', 'GET', 'PUT', 'DELETE'])
@@ -236,7 +252,6 @@ def test():
     # sender.send('krisshin@88.com', mail)
     # return jsonify({'msg': 'ok'})
     # data = request.get_json()
-    # print(get_userId())
     if request.method == "GET":
         # user = User.query.filter_by(id=1).first()
         # print(user.age, current_user.age)
