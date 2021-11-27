@@ -72,7 +72,7 @@ export default {
       var _this = this;
       userLoginAPI({ phone: this.phone, password: this.password, login: true })
         .then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             this.$toast("登陆成功");
             _this.$store.dispatch("common/setToken", resp.data.token);
             setTimeout(() => {

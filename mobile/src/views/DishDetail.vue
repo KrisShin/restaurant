@@ -99,7 +99,7 @@ export default {
     this.cart = JSON.parse(localStorage.getItem("cart"));
     dishCartAPI({ dishes: [dish_id] })
       .then((resp) => {
-        if (resp.data.success) {
+        if (resp.data.code === 200) {
           this.dish = resp.data.data[0];
           this.dish.images.forEach((img) => {
             this.images.push(img.uri);

@@ -1,14 +1,13 @@
 from flask import Blueprint, jsonify, request
 from .models import Dish, Tag
-from apps.user.models import User
-from utils.wraps import auth, get_userId
-from config.global_params import db
+from utils.wraps import auth, get_current_user
 from utils.rest_redis import r
+from config import status_code
 
 dish = Blueprint('Dish', __name__, url_prefix='/customer/dish')
 
 
-# @dish.route('', methods=['POST', 'GET'])
+@dish.route('', methods=['POST', 'GET'])
 def add_tags():
     '''Add some tags in database.'''
     tags = [
@@ -44,11 +43,10 @@ def tags():
     if request.method == 'GET':
         '''Get all tags infomation'''
         ex_tags = []
-        user_id = get_userId(request)
+        user = get_current_user(request)
         ex_ids = []
-        if user_id:
+        if user:
             '''If user logined, add user's tags at head of the list'''
-            user = User.query.filter_by(id=user_id).first()
             ex_tags = [dict(tag) for tag in user.tags]
             ex_ids = [tag['id'] for tag in ex_tags]
 
@@ -60,7 +58,9 @@ def tags():
             .all()
         ]
 
-        return jsonify({'success': True, 'data': {'tags': res, 'exist_tags': ex_tags}})
+        return jsonify(
+            {'code': status_code.OK, 'data': {'tags': res, 'exist_tags': ex_tags}}
+        )
     if request.method == 'POST':
         '''Create a tag.'''
         data = request.get_json()
@@ -69,13 +69,13 @@ def tags():
         tag = Tag(name=name)
         tag.save()
 
-        return jsonify({'success': True, 'data': dict(tag)})
+        return jsonify({'code': status_code.OK, 'data': dict(tag)})
 
 
 @dish.route('/push/', methods=['GET'])
 def push_dishes():
     '''Get the popular dishes.'''
-    user = User.query.filter_by(id=get_userId(request)).first()
+    user = get_current_user
     push_swiper = []
     push = []
     tags_swiper = []
@@ -113,7 +113,7 @@ def push_dishes():
     dish_count = int(r.get_val('dish_count') or 0)
     return jsonify(
         {
-            'success': True,
+            'code': status_code.OK,
             'data': {
                 'pushSwiper': push_swiper,
                 'pushDish': push,
@@ -137,7 +137,7 @@ def post_dish_list():
     )
 
     dishes = [dict(dish) for dish in dishes]
-    return jsonify({'success': True, 'data': dishes})
+    return jsonify({'code': status_code.OK, 'data': dishes})
 
 
 @dish.route('/cart/', methods=['POST'])
@@ -147,6 +147,6 @@ def post_dish_cart():
     data = request.get_json()
     dish_ids = data.get('dishes', [])
     if not dish_ids:
-        return jsonify({'success': True, 'data': None})
+        return jsonify({'code': status_code.OK, 'data': None})
     dishes = [dict(dish) for dish in Dish.query.filter(Dish.id.in_(dish_ids)).all()]
-    return jsonify({'success': True, 'data': dishes})
+    return jsonify({'code': status_code.OK, 'data': dishes})

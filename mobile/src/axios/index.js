@@ -23,7 +23,7 @@ service.interceptors.request.use(config => {
 // 响应拦截
 service.interceptors.response.use(res => {
     const { success, code } = res.data
-    if (success === false && (code === 10010 || code === 10011)) {
+    if (code === 10010 || code === 10011) {
         // 1. 提示
         if (code === 10010) vue.$toast.fail('登录过期, 请重新登录')
         else if (code === 10011) vue.$toast.fail('口令无效, 请重新登录')

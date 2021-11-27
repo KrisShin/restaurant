@@ -95,7 +95,7 @@ export default {
         tagIds.push(tag.id);
       });
       userTagsAPI({ ex_tags: tagIds }).then((resp) => {
-        if (resp.data.success) {
+        if (resp.data.code === 200) {
           this.$store.dispatch("common/setUserInfo", userInfo);
           this.$notify({
             message: "添加成功",

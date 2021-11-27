@@ -102,14 +102,14 @@ export default {
           new_password: this.newPassword,
           cfm_password: this.cfmPassword,
         }).then((resp) => {
-          if (resp.data.success) {
+          if (resp.data.code === 200) {
             this.$notify({
               message: "密码修改成功, 请重新登录",
               type: "success",
               duration: 800,
             });
             userLogoutAPI().then((resp) => {
-              if (resp.data.success) {
+              if (resp.data.code === 200) {
                 this.$notify({
                   message: "退出登录",
                   type: "success",
@@ -162,7 +162,7 @@ export default {
         } else {
           var _this = this;
           userSendCaptchaAPI({ email: this.email }).then((resp) => {
-            if (resp.data.success) {
+            if (resp.data.code === 200) {
               this.$toast.success("发送成功");
               // _this.$router.push("/auth?email=" + this.userInfo.email);
             } else if (resp.data.code === 1006) {

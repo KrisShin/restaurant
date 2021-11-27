@@ -49,7 +49,7 @@ export default {
     this.isEdit = this.$route.query.id ? true : false;
     if (this.isEdit) {
       addrGetAPI({ id: this.$route.query.id }).then((resp) => {
-        if (resp.data.success) {
+        if (resp.data.code === 200) {
           const data = resp.data.data;
           this.address = data;
         }else if (resp.data.code==1103){
@@ -101,7 +101,7 @@ export default {
         return;
       }
       addrDelAPI(val).then((resp) => {
-        if (resp.data.success) {
+        if (resp.data.code === 200) {
           this.$router.go(-1);
           this.$toast.success("删除完成");
         } else {
