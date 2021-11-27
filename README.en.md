@@ -10,7 +10,24 @@ database: postgresql
 cache: redis
 
 #### Installation
+##### created database
+1. create user
 
+    ```sql
+    create user restuser with password 'R35Tus#r';
+    ```
+
+2. create database
+
+    ```sql
+    create database restaurant with owner 'restuser';
+    ```
+
+3. grant database all privileges to user
+
+    ```sql
+    grant all on database restaurant to restuser;
+    ```
 ##### server
 cd server
 1.  pip install -r server/requirements
@@ -18,14 +35,14 @@ cd server
 3.  modify config/db_config.py host,username and password and port of postgresql.
 4.  cd .. , import test data in db_data folder: psql -U restuser -h localhost -p 35432 -d restaurant -f db_data/public.sql
 5.  run server: python manage.py
-6.  default administrator account: 13355553333/admin123, default user account: 13344443333/user123.
+6.  default account: 13433334444/wer4.
 
 ##### front side (developing)
 cd front
 1.  npm i
 2.  npm run serve
 
-##### mobile side (developing)
+##### mobile side (to be perfected)
 cd mobile
 1.  npm i
 2.  npm run serve
