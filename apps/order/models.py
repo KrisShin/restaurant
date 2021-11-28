@@ -7,23 +7,23 @@ from apps.models import BaseModel
 
 dishes = db.Table(
     'rs_dish_order',
-    db.Column('dish_id', db.Integer, db.ForeignKey('dish.id'), primary_key=True),
-    db.Column('order_id', db.Integer, db.ForeignKey('order.id'), primary_key=True),
+    db.Column('dish_id', db.Integer, db.ForeignKey('tb_dish.id'), primary_key=True),
+    db.Column('order_id', db.Integer, db.ForeignKey('tb_order.id'), primary_key=True),
 )
 
 
 class Order(BaseModel):
     '''Order Model.'''
 
-    __tablename__ = 'order'
+    __tablename__ = 'tb_order'
     money = db.Column(db.Float, default=0.0)
     # 1-待支付/2-已支付/3-已接单/4-已评价/5-已完成/6-申请退款/0-已取消
     status = db.Column(db.Integer, default=1)
     note = db.Column(db.String(256))  # 备注
     dish_amount = db.Column(db.JSON(), nullable=False)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    address_id = db.Column(db.Integer, db.ForeignKey('address.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('tb_user.id'))
+    address_id = db.Column(db.Integer, db.ForeignKey('tb_address.id'))
     dishes = db.relationship(
         'Dish',
         secondary=dishes,
@@ -99,14 +99,14 @@ class Order(BaseModel):
 class Comment(BaseModel):
     '''Comment Model.'''
 
-    __tablename__ = 'comment'
+    __tablename__ = 'tb_comment'
     content = db.Column(db.String(512))  # 内容
     rate = db.Column(
-        db.Enum('good', 'ok', 'bad', name='rate_enum'), default='good'
+        db.Enum('good', 'normal', 'bad', name='rate_enum'), default='good'
     )  # 1-好评/2-中评/3-差评
 
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    order_id = db.Column(db.Integer, db.ForeignKey("order.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("tb_user.id"))
+    order_id = db.Column(db.Integer, db.ForeignKey("tb_order.id"))
 
     def __init__(self, *args, **kwargs):
         super(Comment, self).__init__(**kwargs)
