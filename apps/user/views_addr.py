@@ -24,7 +24,7 @@ def oprate_address(addr_id):
         if addr_id != 0:
             return jsonify({'code': status_code.ADDR_DATA_ERROR, 'msg': '参数错误'})
         data = request.get_json()
-        user = get_current_user()
+        user = get_current_user(request)
         addr = Address()
         addr = operate_an_addr(addr, user, data)
         if not addr:
@@ -38,7 +38,7 @@ def oprate_address(addr_id):
             return jsonify({'code': status_code.ADDR_DATA_ERROR, 'msg': '参数错误'})
         addr = Address.query.filter_by(id=addr_id).first()
         data = request.get_json()
-        user = get_current_user()
+        user = get_current_user(request)
         addr = operate_an_addr(addr, user, data)
         if not addr:
             return jsonify({'code': status_code.PARAM_LACK, 'msg': '缺少参数'})
@@ -56,7 +56,7 @@ def oprate_address(addr_id):
 @auth
 def get_addr_by_id():
     '''All address list.'''
-    user = get_current_user()
+    user = get_current_user(request)
     addrs = [dict(addr) for addr in user.address]
     return jsonify({'code': status_code.OK, 'data': {'addresses': addrs}})
 
@@ -95,7 +95,7 @@ def operate_an_addr(addr, user, data):
 # @address.route('/getDefault', methods=['GET'])
 # @auth
 # def get_default_addr():
-#     user = get_current_user()
+#     user = get_current_user(request)
 #     addr = Address.query.filter_by(is_default=True, user_id=user.id).first()
 #     if addr:
 #         return jsonify({'code': status_code.OK, 'data': [dict(addr)]})

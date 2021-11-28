@@ -37,6 +37,10 @@ export function userChangePwdAPI(data) {
     return axios.put(`/user/change_pwd/`, data)
 }
 
+export function userResetPwdAPI(data) {
+    return axios.put(`/user/reset_pwd/`, data)
+}
+
 export function userTestAPI(data) {
     return axios.post(`/user/test/`, data)
 }

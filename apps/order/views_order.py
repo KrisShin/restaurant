@@ -45,7 +45,7 @@ def operate_order(order_id):
         dish_amount = {k: v for k, v in cart.items() if v}
         if not dish_amount:
             return jsonify({'code': status_code.ORDER_EMPTY_CART, 'msg': '用户购物车为空'})
-        user = get_current_user()
+        user = get_current_user(request)
         addr = Address.query.filter_by(id=addr_id).first()
         if not addr:
             # if not choose an address, use the default address of the user.
@@ -81,7 +81,7 @@ def operate_order(order_id):
 @auth
 def post_order_list():
     '''Get many types of orders list.'''
-    user = get_current_user()
+    user = get_current_user(request)
     point = request.get_json().get('point', 0)
     status = request.get_json().get('status')
     if status == 'all' or not status:
@@ -99,7 +99,7 @@ def post_order_list():
 @auth
 def get_order_status():
     '''Calculate the orders in each status'''
-    user = get_current_user()
+    user = get_current_user(request)
     order_status_count = {
         'orderUnpay': 0,
         'orderPaid': 0,
@@ -124,7 +124,7 @@ def get_order_status():
 def post_order_pay():
     '''Pay the order.'''
     id = request.get_json().get('id')
-    user = get_current_user()
+    user = get_current_user(request)
     order = Order.query.filter_by(id=id).first()
     if user.account.balance < order.money:
         return jsonify({'data': {'message': '余额不足, 请先充值'}})
@@ -152,7 +152,7 @@ def post_order_complete():
 def post_order_cancel():
     '''Cancel the order'''
     id = request.get_json().get('id')
-    user = get_current_user()
+    user = get_current_user(request)
     order = Order.query.filter_by(id=id).first()
     msg = ''
     if order.status == ORDER_UNPAY:

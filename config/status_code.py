@@ -1,4 +1,10 @@
 ### http request
+# common
+OK = 200
+NO_AUTH = 401
+NOT_FOUND = 404
+METHOD_NOT_ALLOW = 405
+
 # user module
 # 用户不存在
 USER_NOT_EXIST = 1001
@@ -38,6 +44,9 @@ USER_WRONG_CONFIRM_PASSWORD = 10012
 
 # 用户不是管理员
 USER_NOT_ADMIN = 10013
+
+# 用户输入邮箱错误
+USER_WRONG_EMAIL = 10014
 
 # addr module
 # 地址数据有误(创建地址带上了id)

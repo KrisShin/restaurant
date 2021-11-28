@@ -1,4 +1,4 @@
-from utils.wraps import set_login_cache
+from utils.wraps import auth, clear_login_cache, get_current_user, set_login_cache
 from config.settings import KEY
 from datetime import datetime, timedelta
 from config import status_code
@@ -81,6 +81,83 @@ def send_captcha_email():
     r.set_val(f'user_{user.id}:captcha', captcha, 600)
     # sender.send(email, mail)
     return jsonify({'code': status_code.OK})
+
+
+@merchant.route('/change_pwd/', methods=['PUT'])
+@auth
+def user_change_pwd():
+    '''user change password'''
+    data = request.get_json()
+    email = data.get('email')
+    captcha = data.get('captcha')
+    old_passwd = data.get('old_password')
+    new_passwd = data.get('new_password')
+    confirm_passwd = data.get('cfm_password')
+    user = get_current_user(request)
+
+    if email != user.email:
+        return jsonify({'code': status_code.USER_WRONG_EMAIL, 'msg': '请输入本人邮箱'})
+
+    if confirm_passwd != new_passwd:
+        return jsonify(
+            {'code': status_code.USER_WRONG_CONFIRM_PASSWORD, 'msg': '两次输入密码不同'}
+        )
+
+    if old_passwd == new_passwd:
+        return jsonify({'code': status_code.USER_SAME_PASSWORD, 'msg': '新密码不能与旧密码相同'})
+
+    real_captcha = r.get_val(f'user_{user.id}:captcha')
+    if not real_captcha:
+        return jsonify(
+            {'code': status_code.USER_CAPTCHA_EXPIRED, 'msg': '验证码已过期, 请重新申请'}
+        )
+    if captcha != real_captcha:
+        return jsonify({'code': status_code.USER_WRONG_CAPTCHA, 'msg': '验证码错误'})
+
+    if not check_password(user.password, old_passwd):
+        return jsonify({'code': status_code.USER_WRONG_PASSWORD, 'msg': '原密码错误'})
+
+    user.password = make_password(new_passwd)
+    user.save()
+    clear_login_cache()
+    r.del_val(f'user_{user.id}:captcha')
+    return jsonify({'code': status_code.OK, "msg": "修改密码成功, 请重新登录"})
+
+
+@merchant.route('/reset_pwd/', methods=['PUT'])
+def user_reset_pwd():
+    '''user reset password'''
+    data = request.get_json()
+    email = data.get('email')
+    captcha = data.get('captcha')
+    new_passwd = data.get('new_password')
+    confirm_passwd = data.get('cfm_password')
+
+    if not all((email, captcha, new_passwd, confirm_passwd)):
+        return jsonify({'code': status_code.PARAM_LACK, 'msg': '参数不全'})
+
+    user = User.query.filter_by(email=email).first()
+
+    if confirm_passwd != new_passwd:
+        return jsonify(
+            {'code': status_code.USER_WRONG_CONFIRM_PASSWORD, 'msg': '两次输入密码不同'}
+        )
+
+    if check_password(user.password, new_passwd):
+        return jsonify({'code': status_code.USER_SAME_PASSWORD, 'msg': '新密码不能与旧密码相同'})
+
+    real_captcha = r.get_val(f'user_{user.id}:captcha')
+    if not real_captcha:
+        return jsonify(
+            {'code': status_code.USER_CAPTCHA_EXPIRED, 'msg': '验证码已过期, 请重新申请'}
+        )
+    if captcha != real_captcha:
+        return jsonify({'code': status_code.USER_WRONG_CAPTCHA, 'msg': '验证码错误'})
+
+    user.password = make_password(new_passwd)
+    user.save()
+    r.del_val(f'user_{user.id}:captcha')
+    return jsonify({'code': status_code.OK, "msg": "重置密码成功"})
 
 
 # @merchant.route('/list/', methods=['GET'])
