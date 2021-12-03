@@ -10,8 +10,8 @@
 **/.env.*.local
 
 # local script
-start
-stop
+dbstart
+dbstop
 
 # Log files
 **/npm-debug.log*
