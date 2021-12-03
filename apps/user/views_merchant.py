@@ -160,7 +160,7 @@ def user_reset_pwd():
     return jsonify({'code': status_code.OK, "msg": "重置密码成功"})
 
 
-# @merchant.route('/list/', methods=['GET'])
+@merchant.route('/list/', methods=['GET'])
 def get_customer_list():
-    data = [dict(user).remove() for user in User.query.filter(role='user')]
+    data = [dict(user) for user in User.query.filter(role='user')]
     return jsonify({'code': status_code.OK, "info": "", "data": data})
