@@ -162,5 +162,13 @@ def user_reset_pwd():
 
 @merchant.route('/list/', methods=['GET'])
 def get_customer_list():
-    data = [dict(user) for user in User.query.filter(role='user')]
-    return jsonify({'code': status_code.OK, "info": "", "data": data})
+    data = request.args
+    page = int(data.get('page', 1))
+    pageSize = int(data.get('pageSize', 10))
+    resp = [
+        dict(user)
+        for user in User.query.filter(role='user')
+        .paginate(page=page, per_page=pageSize)
+        .items
+    ]
+    return jsonify({'code': status_code.OK, "data": resp})
