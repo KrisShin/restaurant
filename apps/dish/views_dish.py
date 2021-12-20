@@ -128,12 +128,11 @@ def push_dishes():
 def post_dish_list():
     '''All dishes list. Order by dish's update time. and return 5 dishes on per refresh.'''
     data = request.get_json()
-    point = data.get('point', 0)
+    page = data.get('page', 1) or 1
     dishes = (
         Dish.query.order_by(Dish.update_time.desc(), Dish.create_time.desc())
-        .offset(point)
-        .limit(5)
-        .all()
+        .paginate(page, 5)
+        .items
     )
 
     dishes = [dict(dish) for dish in dishes]
@@ -150,3 +149,18 @@ def post_dish_cart():
         return jsonify({'code': status_code.OK, 'data': None})
     dishes = [dict(dish) for dish in Dish.query.filter(Dish.id.in_(dish_ids)).all()]
     return jsonify({'code': status_code.OK, 'data': dishes})
+
+
+@dish.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@auth
+def operate_dish():
+    if request.method == 'GET':
+        data = request.args
+        return jsonify({'code': status_code.OK})
+    data = request.get_json()
+    if request.method == 'POST':
+        return jsonify({'code': status_code.OK})
+    if request.method == 'PUT':
+        return jsonify({'code': status_code.OK})
+    if request.method == 'DELETE':
+        return jsonify({'code': status_code.OK})

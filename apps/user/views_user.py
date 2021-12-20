@@ -126,11 +126,15 @@ def send_captcha_email():
 def user_change_pwd():
     '''user change password'''
     data = request.get_json()
+    email = data.get('email')
     captcha = data.get('captcha')
     old_passwd = data.get('old_password')
     new_passwd = data.get('new_password')
     confirm_passwd = data.get('cfm_password')
-    user = get_current_user()
+    user = get_current_user(request)
+
+    if email != user.email:
+        return jsonify({'code': status_code.USER_WRONG_EMAIL, 'msg': '请输入本人邮箱'})
 
     if confirm_passwd != new_passwd:
         return jsonify(
@@ -161,7 +165,7 @@ def user_change_pwd():
 @auth
 def user_profile():
     '''check user profile'''
-    user = get_current_user()
+    user = get_current_user(request)
     if request.method == 'GET':
         '''Get user profile.'''
         resp = dict(user)
@@ -198,7 +202,7 @@ def user_edit_email():
     data = request.get_json()
     email = data.get('email')
     captcha = data.get('captcha')
-    user = get_current_user()
+    user = get_current_user(request)
     # TODO: adbstract authorize captcha in a isolation function.
     real_cap = r.get_val(f'user_{user.id}:captcha')
     if not real_cap:
@@ -233,7 +237,7 @@ def tags():
     if request.method == 'PUT':
         '''User add tag.'''
         data = request.get_json()
-        user = get_current_user()
+        user = get_current_user(request)
         exist_tags = data.get('ex_tags')
 
         tags = Tag.query.filter(Tag.id.in_(exist_tags)).all()

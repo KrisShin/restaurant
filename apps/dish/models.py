@@ -6,22 +6,22 @@ from apps.models import BaseModel
 
 tags = db.Table(
     'rs_dish_tag',
-    db.Column('dish_id', db.Integer, db.ForeignKey('dish.id'), primary_key=True),
-    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True),
+    db.Column('dish_id', db.Integer, db.ForeignKey('tb_dish.id'), primary_key=True),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tb_tag.id'), primary_key=True),
 )
 
 
 class Dish(BaseModel):
     '''Dish model'''
 
-    __tablename__ = "dish"
+    __tablename__ = "tb_dish"
 
     name = db.Column(db.String(128), nullable=False)
     price = db.Column(db.Float, default=0.01)
     amount = db.Column(db.Integer, default=0)  # 销量
     description = db.Column(db.String(256))
 
-    discount_id = db.Column(db.Integer, db.ForeignKey('discount.id'))
+    discount_id = db.Column(db.Integer, db.ForeignKey('tb_discount.id'))
 
     tags = db.relationship(
         'Tag', secondary=tags, lazy='subquery', backref=db.backref('dishes', lazy=True)
@@ -67,7 +67,7 @@ class Dish(BaseModel):
 class Tag(BaseModel):
     '''Tag model'''
 
-    __tablename__ = 'tag'
+    __tablename__ = 'tb_tag'
 
     weight = db.Column(db.Integer, default=1)  # 权重:选的人越多, 权重越高
     name = db.Column(db.String(32), unique=True)  # 标签字数不能超过8个字
@@ -94,7 +94,7 @@ class Tag(BaseModel):
 class Discount(BaseModel):
     '''Discount model'''
 
-    __tablename__ = 'discount'
+    __tablename__ = 'tb_discount'
 
     # 0-没有折扣/1-折扣/2-买一送一/3-第二件半价
     discount_type = db.Column(db.Integer, nullable=False)
@@ -112,11 +112,11 @@ class Discount(BaseModel):
 class DishImg(BaseModel):
     '''Dish image Model'''
 
-    __tablename__ = 'dishimg'
+    __tablename__ = 'tb_dishimg'
 
     is_index = db.Column(db.Boolean, default=0)
     uri = db.Column(db.String(512), nullable=False)
-    dish_id = db.Column(db.Integer, db.ForeignKey('dish.id'))
+    dish_id = db.Column(db.Integer, db.ForeignKey('tb_dish.id'))
 
     def __init__(self, **kwargs):
         super(Discount, self).__init__(**kwargs)

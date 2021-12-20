@@ -22,15 +22,14 @@ service.interceptors.request.use(config => {
 })
 
 // 响应拦截
-service.interceptors.response.use(res => {
+service.interceptors.response.use(resp => {
   const {
-    success,
     code
-  } = res.data
+  } = resp.data
   if (code === 10010 || code === 10011) {
     // 1. 提示
-    if (code === 10010) vue.$toast.fail('登录过期, 请重新登录')
-    else if (code === 10011) vue.$toast.fail('口令无效, 请重新登录')
+    if (code === 10010) vue.$message.error('登录过期, 请重新登录')
+    else if (code === 10011) vue.$message.error('口令无效, 请重新登录')
 
     // 2. 删除本地token 和 user_info
     vue.$store.dispatch("common/setToken", null);
@@ -39,8 +38,10 @@ service.interceptors.response.use(res => {
     // 3. 跳转 login
     vue.$router.replace('/login')
     return
+  } else if (code != 200) {
+    vue.$message.error(resp.data.msg)
   }
-  return res
+  return resp
 }, (error) => {
   Promise.reject(error)
 })

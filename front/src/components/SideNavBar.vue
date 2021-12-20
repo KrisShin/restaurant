@@ -1,16 +1,20 @@
 <template>
   <el-menu
-    default-active="1-4-1"
+    :default-active="chosenItem"
     class="el-menu-vertical-demo"
     @open="handleOpen"
     @close="handleClose"
     @select="handleCollapse"
     :collapse="isCollapse"
   >
-    <el-submenu index="1">
+    <el-menu-item index="1">
+      <i class="el-icon-menu"></i>
+      <span slot="title">菜品列表</span>
+    </el-menu-item>
+    <el-submenu index="2">
       <template slot="title">
         <i class="el-icon-location"></i>
-        <span slot="title">导航一</span>
+        <span slot="title">导航二</span>
       </template>
       <el-menu-item-group>
         <span slot="title">分组一</span>
@@ -25,10 +29,6 @@
         <el-menu-item index="1-4-1">选项1</el-menu-item>
       </el-submenu>
     </el-submenu>
-    <el-menu-item index="2">
-      <i class="el-icon-menu"></i>
-      <span slot="title">导航二</span>
-    </el-menu-item>
     <el-menu-item index="3" disabled>
       <i class="el-icon-document"></i>
       <span slot="title">导航三</span>
@@ -49,7 +49,8 @@ export default {
   props: {},
   data() {
     return {
-      isCollapse: true,
+      chosenItem: "1",
+      isCollapse: false,
     };
   },
   methods: {
@@ -60,7 +61,9 @@ export default {
       console.log(key, keyPath);
     },
     handleCollapse(key) {
+      console.log(key);
       if (key === "10") this.isCollapse = !this.isCollapse;
+      else this.chosenItem = key;
     },
   },
 };
@@ -68,7 +71,7 @@ export default {
 
 
 <style>
-.el-menu-vertical-demo{
+.el-menu-vertical-demo {
   height: 100%;
 }
 .el-menu-vertical-demo:not(.el-menu--collapse) {

@@ -98,7 +98,7 @@ export default {
       loading: false,
       finished: false,
       refreshing: false,
-      point: 0,
+      page: 1,
       cart: {},
       myBadge: localStorage.getItem("myBadge")
         ? JSON.parse(localStorage.getItem("myBadge"))
@@ -126,7 +126,7 @@ export default {
       this.$router.push("/profile");
     },
     onLoad() {
-      dishListAPI({ point: this.point })
+      dishListAPI({ page: this.page })
         .then((resp) => {
           if (resp.data.code === 200) {
             if (resp.data.data) {
@@ -134,7 +134,7 @@ export default {
                 dish.count = this.cart[dish.id];
                 this.dishes.push(dish);
               });
-              this.point += resp.data.data.length;
+              this.page += resp.data.data.length;
               if (resp.data.data.length < 5) {
                 this.finished = true;
               }
@@ -152,7 +152,7 @@ export default {
     onRefresh() {
       // 清空列表数据
       this.finished = false;
-      this.point = 0;
+      this.page = 0;
       this.dishes = [];
 
       // 重新加载数据
