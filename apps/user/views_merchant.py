@@ -163,7 +163,7 @@ def user_reset_pwd():
 @merchant.route('/list/', methods=['GET'])
 def get_customer_list():
     data = request.args
-    page = int(data.get('page', 1))
+    page = int(data.get('page', 1)) or 1
     pageSize = int(data.get('pageSize', 10))
     resp = [
         dict(user)

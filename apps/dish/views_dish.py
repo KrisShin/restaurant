@@ -128,12 +128,11 @@ def push_dishes():
 def post_dish_list():
     '''All dishes list. Order by dish's update time. and return 5 dishes on per refresh.'''
     data = request.get_json()
-    point = data.get('point', 0)
+    page = data.get('page', 1) or 1
     dishes = (
         Dish.query.order_by(Dish.update_time.desc(), Dish.create_time.desc())
-        .offset(point)
-        .limit(5)
-        .all()
+        .paginate(page, 5)
+        .items
     )
 
     dishes = [dict(dish) for dish in dishes]

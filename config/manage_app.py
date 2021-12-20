@@ -6,6 +6,7 @@ from apps.order.views_order import order as customer_order
 from apps.user.views_addr import address as customer_addr
 from apps.user.views_user import user as customer_user
 from apps.user.views_merchant import merchant as merchant_user
+from apps.dish.views_dish_merchant import dish as merchant_dish
 from .db_config import DBConfig
 from .global_params import db, redis
 from .settings import REDIS_HOST, REDIS_PORT, REDIS_USER, REDIS_PWD, REDIS_DB, STATIC_FOLDER, STATIC_PATH
@@ -39,3 +40,4 @@ def register_blueprint(app):
     app.register_blueprint(customer_dish)
     app.register_blueprint(customer_order)
     app.register_blueprint(merchant_user)
+    app.register_blueprint(merchant_dish)

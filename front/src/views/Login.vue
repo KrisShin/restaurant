@@ -96,11 +96,11 @@ export default {
   name: "Login",
   data() {
     return {
-      phone: "",
-      password: "",
+      phone: "13433334444",
+      password: "wer4",
       disableSumbmit: true,
       disableChangePwd: true,
-      dialogFormVisible: true,
+      dialogFormVisible: false,
       form: {
         email: "",
         captcha: "",
@@ -136,14 +136,6 @@ export default {
           this.$message.success("登陆成功");
           this.$store.dispatch("common/setToken", resp.data.token);
           this.$router.push("/home");
-        }
-        if (resp.data.code == 1001) {
-          // 用户不存在
-          this.$message.error("用户不存在");
-        } else if (resp.data.code == 1004) {
-          // 密码错误
-          this.password = "";
-          this.$message.error("密码错误");
         }
       });
     },
