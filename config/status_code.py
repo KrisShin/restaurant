@@ -55,9 +55,15 @@ ADDR_DATA_ERROR = 1101
 # 地址不存在
 ADDR_NOT_EXISIT = 1102
 
+
 # order module
 # 提交订单没有菜品
-ORDER_EMPTY_CART = 1201
+ORDER_EMPTY_CART = 1200
+
+
+# dish module
+# 菜品不存在
+DISH_NOT_EXISIT = 1300
 
 
 # Common

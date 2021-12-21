@@ -149,18 +149,3 @@ def post_dish_cart():
         return jsonify({'code': status_code.OK, 'data': None})
     dishes = [dict(dish) for dish in Dish.query.filter(Dish.id.in_(dish_ids)).all()]
     return jsonify({'code': status_code.OK, 'data': dishes})
-
-
-@dish.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
-@auth
-def operate_dish():
-    if request.method == 'GET':
-        data = request.args
-        return jsonify({'code': status_code.OK})
-    data = request.get_json()
-    if request.method == 'POST':
-        return jsonify({'code': status_code.OK})
-    if request.method == 'PUT':
-        return jsonify({'code': status_code.OK})
-    if request.method == 'DELETE':
-        return jsonify({'code': status_code.OK})

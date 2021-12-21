@@ -18,3 +18,7 @@ class BaseModel(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+        
+def bulk_create(obj_list):
+    db.session.bulk_save_objects(obj_list)
+    db.session.commit()
