@@ -58,6 +58,42 @@ def operate_dish():
             img.save()
         return jsonify({'code': status_code.OK})
     if request.method == 'PUT':
+        dish_id = data.get('dish_id')
+        name = data.get('name')
+        price = data.get('price')
+        description = data.get('description')
+        discount_id = data.get('discount_id')
+        tag_id_list = data.get('tag_id_list')
+        images = data.get('images')
+        dish_obj = Dish.query.filter_by(id=dish_id).first()
+        if not dish_obj:
+            return jsonify({'code': status_code.DISH_NOT_EXISIT, 'msg': '菜品不存在'})
+
+        if tag_id_list:
+            tags = Tag.query.filter(Tag.id.in_(tag_id_list)).all()
+            dish_obj.tags = tags
+        if name:
+            dish_obj.name = name
+        if price:
+            dish_obj.price = price
+        if description:
+            dish_obj.description = description
+        if discount_id:
+            dish_obj.discount_id = discount_id
+        if images:
+            for index, img_base64 in enumerate(images):
+                img_uri = save_img('dish', img_base64)
+                img = DishImg.query.create(
+                    uri=img_uri, is_index=index == 0, dish_id=dish_obj.id
+                )
+                img.save()
+        dish_obj.save()
+        
         return jsonify({'code': status_code.OK})
     if request.method == 'DELETE':
+        dish_id = data.get('dish_id')
+        dish_obj = Dish.query.filter_by(id=dish_id).first()
+        if not dish_obj:
+            return jsonify({'code': status_code.DISH_NOT_EXISIT, 'msg': '菜品不存在'})
+        dish_obj.delete()
         return jsonify({'code': status_code.OK})
