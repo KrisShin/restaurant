@@ -1,5 +1,4 @@
 from datetime import datetime
-from utils.util import gen_uuid_name
 from config.global_params import db
 from config.settings import TAG_COLOR
 from apps.models import BaseModel

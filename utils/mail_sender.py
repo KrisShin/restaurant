@@ -38,19 +38,21 @@ class SendServer(object):
 
     def send(self, receiver, mail) -> bool:
         '''Email sender. Can call by outside.'''
-        server = self._authLogin()
-        if not server:
-            return 0
+        # server = self._authLogin()
+        # if not server:
+        #     return 0
 
-        msg = self._compContent(receiver, mail)
+        # msg = self._compContent(receiver, mail)
 
-        try:
-            server.sendmail(self.email, receiver, msg.as_string())
-            server.quit()
-            return True
-        except smtplib.SMTPException as e:
-            print(e)
-            return -1
+        # try:
+        #     server.sendmail(self.email, receiver, msg.as_string())
+        #     server.quit()
+        #     return True
+        # except smtplib.SMTPException as e:
+        #     print(e)
+        #     return -1
+        # TODO: config the mail account and token
+        return True
 
 
 sender = SendServer()

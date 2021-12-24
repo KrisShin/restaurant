@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from config.global_params import db
 from config.settings import HTTP_HOST
 from apps.models import BaseModel
