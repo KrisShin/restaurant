@@ -111,7 +111,7 @@ export default {
     };
   },
   created() {
-    this.phone = this.$route.query.phone;
+    // this.phone = this.$route.query.phone;
   },
   methods: {
     inputCheck() {

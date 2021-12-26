@@ -3,7 +3,12 @@
     <el-container>
       <el-aside style="width: auto"><SideNavBar /></el-aside>
       <el-container>
-        <el-header>恰了木有-管理端</el-header>
+        <el-header>
+          <el-row type="flex" justify="space-between" style="margin:0">
+            <el-col :span="6">恰了木有-管理端</el-col>
+            <el-col :span="6"> {{ userInfo }}123</el-col>
+          </el-row>
+        </el-header>
         <el-main>
           <el-table :data="dishes" border>
             <el-table-column fixed prop="date" label="日期" width="150">
@@ -52,7 +57,9 @@ export default {
       page: 1,
     };
   },
-  created: function() {
+  created: function () {
+    this.userInfo = this.$store.state.common.userInfo;
+    this.defaultAvatar = this.$BASE_API + "/static/avatar/default.jpg";
     this.loadDishList();
   },
   methods: {
