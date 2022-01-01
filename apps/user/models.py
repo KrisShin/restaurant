@@ -60,11 +60,11 @@ class User(BaseModel):
         if item == 'user_id':
             return getattr(self, 'id')
         elif item == 'avatar':
-            return HTTP_HOST + getattr(self, item)
+            return getattr(self, item) and (HTTP_HOST + getattr(self, item))
         elif item == 'phone':
             return self.phone[:3] + '****' + self.phone[-4:]
         elif item == 'balance':
-            return self.account.balance
+            return self.account and self.account.balance
         elif item == 'tags':
             return [dict(tag) for tag in self.tags]
         elif item == 'default_addr':

@@ -187,3 +187,36 @@ def get_customer_list():
             'total': users.count(),
         }
     )
+
+@merchant.route('/profile/', methods=['GET', 'PUT'])
+@auth
+def user_profile():
+    '''check user profile'''
+    user = get_current_user(request)
+    if request.method == 'GET':
+        '''Get user profile.'''
+        resp = dict(user)
+        return jsonify({'code': status_code.OK, 'data': resp})
+    # elif request.method == 'PUT':
+    #     '''Modify user.'''
+    #     data = request.get_json()
+    #     # Get base64 code and tranform to picture and save.
+    #     base64_str = data.get('avatar')
+    #     avatar_path = None
+    #     if base64_str:
+    #         avatar_path = save_img('avatar', base64_str)
+    #     age = data.get('age')
+    #     nickname = data.get('nickname')
+
+    #     if avatar_path:
+    #         del_invalify_image(user.avatar)
+    #         user.avatar = avatar_path
+    #     if age:
+    #         user.age = age
+    #     if nickname:
+    #         user.nickname = nickname
+    #     user.save()
+
+    #     return jsonify(
+    #         {'code': status_code.OK, 'data': {'avatar': HTTP_HOST + user.avatar}}
+    #     )

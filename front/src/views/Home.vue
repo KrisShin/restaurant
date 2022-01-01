@@ -4,9 +4,14 @@
       <el-aside style="width: auto"><SideNavBar /></el-aside>
       <el-container>
         <el-header>
-          <el-row type="flex" justify="space-between" style="margin:0">
+          <el-row type="flex" justify="space-between" style="margin: 0">
             <el-col :span="6">恰了木有-管理端</el-col>
-            <el-col :span="6"> {{ userInfo }}123</el-col>
+            <el-col :span="6">
+              <div @click="onClickAvatar">
+                <el-avatar size="large" :src="defaultAvatar"></el-avatar>
+                {{ userInfo.nickname }}
+              </div>
+            </el-col>
           </el-row>
         </el-header>
         <el-main>
@@ -45,6 +50,7 @@
 // @ is an alias to /src
 import SideNavBar from "@/components/SideNavBar.vue";
 import { dishListAPI } from "../apis/dish.apis";
+import { userInfoAPI } from "../apis/user.apis";
 
 export default {
   name: "Home",
@@ -55,12 +61,28 @@ export default {
     return {
       dishes: null,
       page: 1,
+      userInfo: {},
     };
   },
-  created: function () {
+  created() {
     this.userInfo = this.$store.state.common.userInfo;
     this.defaultAvatar = this.$BASE_API + "/static/avatar/default.jpg";
     this.loadDishList();
+    this.isLogin = this.$store.state.common.isLogin;
+
+    if (this.isLogin && !this.userInfo) {
+      userInfoAPI()
+        .then((resp) => {
+          if (resp.data.code === 200) {
+            var userInfo = resp.data.data;
+            this.$store.dispatch("common/setUserInfo", userInfo);
+            this.userInfo = userInfo;
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
   },
   methods: {
     loadDishList() {
@@ -71,7 +93,6 @@ export default {
               resp.data.data.forEach((dish) => {
                 this.dishes.push(dish);
               });
-              console.log(this.dishes);
               this.page += resp.data.data.length;
               if (resp.data.data.length < 5) {
                 this.finished = true;
@@ -86,6 +107,9 @@ export default {
         .catch((err) => {
           console.error(err);
         });
+    },
+    onClickAvatar() {
+      console.log("fuck");
     },
   },
 };
@@ -102,5 +126,8 @@ export default {
 }
 .home {
   height: 100%;
+}
+.img-avatar {
+  width: 40px;
 }
 </style>
