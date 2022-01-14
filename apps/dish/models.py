@@ -52,7 +52,7 @@ class Dish(BaseModel):
                 return None
             return self.discount.description
         elif item == 'discount':
-            return self.discount.discount
+            return self.discount and self.discount.discount
         elif item == 'tags':
             return [dict(tag) for tag in self.tags]
         elif item == 'images':
