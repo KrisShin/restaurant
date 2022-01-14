@@ -75,7 +75,7 @@ def tags():
 @dish.route('/push/', methods=['GET'])
 def push_dishes():
     '''Get the popular dishes.'''
-    user = get_current_user
+    user = get_current_user(request)
     push_swiper = []
     push = []
     tags_swiper = []
