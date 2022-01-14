@@ -29,3 +29,6 @@ dbstop
 **/*.njsproj
 **/*.sln
 **/*.sw?
+
+# Virtual Python environment
+.venv
