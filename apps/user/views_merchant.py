@@ -5,6 +5,7 @@ from config import status_code
 from utils.util import check_password, get_captcha, make_password
 from flask import Blueprint, jsonify, request
 from apps.user.models import User
+from apps.order.models import Order
 import jwt
 from utils.mail_sender import sender
 from utils.rest_redis import r
@@ -79,7 +80,7 @@ def send_captcha_email():
         <div>请在10分钟之内完成验证</div>''',
     }
     r.set_val(f'user_{user.id}:captcha', captcha, 600)
-    # sender.send(email, mail)
+    sender.send(email, mail)
     return jsonify({'code': status_code.OK})
 
 
@@ -165,10 +166,57 @@ def get_customer_list():
     data = request.args
     page = int(data.get('page', 1)) or 1
     pageSize = int(data.get('pageSize', 10))
-    resp = [
-        dict(user)
-        for user in User.query.filter(role='user')
-        .paginate(page=page, per_page=pageSize)
-        .items
-    ]
-    return jsonify({'code': status_code.OK, "data": resp})
+    resp = []
+    users = User.query.filter(role='user')
+    for user in users:
+        user = dict(user)
+        user.pop('balance')
+        user.pop('gender')
+        user.pop('is_new')
+        user.pop('default_addr')
+        user['phone'] = user['phone'][:3] + '*' * 4 + user['phone'][-4:]
+        user['order_count'] = Order.query.filter_by(user_id=user['user_id']).count()
+        resp.append(user)
+
+    return jsonify(
+        {
+            'code': status_code.OK,
+            "data": resp,
+            'page': page,
+            'pageSize': pageSize,
+            'total': users.count(),
+        }
+    )
+
+@merchant.route('/profile/', methods=['GET', 'PUT'])
+@auth
+def user_profile():
+    '''check user profile'''
+    user = get_current_user(request)
+    if request.method == 'GET':
+        '''Get user profile.'''
+        resp = dict(user)
+        return jsonify({'code': status_code.OK, 'data': resp})
+    # elif request.method == 'PUT':
+    #     '''Modify user.'''
+    #     data = request.get_json()
+    #     # Get base64 code and tranform to picture and save.
+    #     base64_str = data.get('avatar')
+    #     avatar_path = None
+    #     if base64_str:
+    #         avatar_path = save_img('avatar', base64_str)
+    #     age = data.get('age')
+    #     nickname = data.get('nickname')
+
+    #     if avatar_path:
+    #         del_invalify_image(user.avatar)
+    #         user.avatar = avatar_path
+    #     if age:
+    #         user.age = age
+    #     if nickname:
+    #         user.nickname = nickname
+    #     user.save()
+
+    #     return jsonify(
+    #         {'code': status_code.OK, 'data': {'avatar': HTTP_HOST + user.avatar}}
+    #     )

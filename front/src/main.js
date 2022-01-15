@@ -6,6 +6,7 @@ import {
   Pagination,
   Dialog,
   Autocomplete,
+  Avatar,
   Dropdown,
   DropdownMenu,
   DropdownItem,
@@ -155,6 +156,7 @@ Vue.use(Calendar);
 Vue.use(Backtop);
 Vue.use(PageHeader);
 Vue.use(CascaderPanel);
+Vue.use(Avatar);
 
 Vue.use(Loading.directive);
 
@@ -165,6 +167,7 @@ Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$prompt = MessageBox.prompt;
 Vue.prototype.$notify = Notification;
 Vue.prototype.$message = Message;
+Vue.prototype.$BASE_API = 'http://127.0.0.1:9096'
 
 Vue.config.productionTip = false
 

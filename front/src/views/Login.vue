@@ -98,7 +98,7 @@ export default {
     return {
       phone: "13433334444",
       password: "wer4",
-      disableSumbmit: true,
+      disableSumbmit: false,
       disableChangePwd: true,
       dialogFormVisible: false,
       form: {
@@ -111,7 +111,7 @@ export default {
     };
   },
   created() {
-    this.phone = this.$route.query.phone;
+    // this.phone = this.$route.query.phone;
   },
   methods: {
     inputCheck() {
