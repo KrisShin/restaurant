@@ -8,7 +8,7 @@
             <el-col :span="6">恰了木有-管理端</el-col>
             <el-col :span="6">
               <div @click="onClickAvatar">
-                <el-avatar size="large" :src="defaultAvatar"></el-avatar>
+                <el-avatar size="large" :src="userInfo.avatar"></el-avatar>
                 {{ userInfo.nickname }}
               </div>
             </el-col>
@@ -16,27 +16,42 @@
         </el-header>
         <el-main>
           <el-table :data="dishes" border>
-            <el-table-column fixed prop="date" label="日期" width="150">
+            <el-table-column fixed prop="name" label="菜品名称" width="150">
             </el-table-column>
-            <el-table-column prop="name" label="姓名" width="120">
-            </el-table-column>
-            <el-table-column prop="province" label="省份" width="120">
-            </el-table-column>
-            <el-table-column prop="city" label="市区" width="120">
-            </el-table-column>
-            <el-table-column prop="address" label="地址" width="300">
-            </el-table-column>
-            <el-table-column prop="zip" label="邮编" width="120">
-            </el-table-column>
-            <el-table-column fixed="right" label="操作" width="100">
+            <el-table-column label="图片" width="200">
               <template slot-scope="scope">
+                <img class="dishImg" :src="scope.row.index_img" alt="" />
+              </template>
+            </el-table-column>
+            <el-table-column prop="price" label="单价" width="120">
+            </el-table-column>
+            <el-table-column prop="amount" label="销量" width="120">
+            </el-table-column>
+            <el-table-column prop="description" label="简介" width="500">
+            </el-table-column>
+            <el-table-column prop="discount_desc" label="折扣" width="120">
+            </el-table-column>
+            <el-table-column prop="tags" label="标签" width="120">
+              <template slot-scope="scope">
+                <el-tag
+                  v-for="(tag, index) in scope.row.tags"
+                  :key="index"
+                  effect="plain"
+                  size="mini"
+                  >{{ tag.name }}</el-tag
+                >
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="100">
+              <template slot-scope="scope">
+                <el-button type="text" size="small">编辑</el-button>
                 <el-button
-                  @click="handleClick(scope.row)"
+                  @click="onClickDeleteDish(scope.row)"
                   type="text"
                   size="small"
-                  >查看</el-button
+                  style="color: red"
+                  >删除</el-button
                 >
-                <el-button type="text" size="small">编辑</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -59,57 +74,54 @@ export default {
   },
   data() {
     return {
-      dishes: null,
+      dishes: Array(),
       page: 1,
-      userInfo: {},
+      userInfo: null,
     };
   },
   created() {
-    this.userInfo = this.$store.state.common.userInfo;
+    this.userInfo = this.$store.state.userInfo;
     this.defaultAvatar = this.$BASE_API + "/static/avatar/default.jpg";
-    this.loadDishList();
-    this.isLogin = this.$store.state.common.isLogin;
 
-    if (this.isLogin && !this.userInfo) {
-      userInfoAPI()
-        .then((resp) => {
-          if (resp.data.code === 200) {
-            var userInfo = resp.data.data;
-            this.$store.dispatch("common/setUserInfo", userInfo);
-            this.userInfo = userInfo;
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+    if (!this.userInfo) {
+      userInfoAPI().then((resp) => {
+        if (resp.data.code === 200) {
+          var userInfo = resp.data.data;
+          this.$store.dispatch("setUserInfo", userInfo);
+          this.userInfo = userInfo;
+        }
+        this.loadDishList();
+      });
+    } else {
+      this.userInfo = this.$store.state.userInfo;
+      this.loadDishList();
     }
   },
   methods: {
     loadDishList() {
-      dishListAPI({ page: this.page })
-        .then((resp) => {
-          if (resp.data.code === 200) {
-            if (resp.data.data) {
-              resp.data.data.forEach((dish) => {
-                this.dishes.push(dish);
-              });
-              this.page += resp.data.data.length;
-              if (resp.data.data.length < 5) {
-                this.finished = true;
-              }
-            } else {
+      dishListAPI({ page: this.page }).then((resp) => {
+        if (resp.data.code === 200) {
+          if (resp.data.data) {
+            resp.data.data.forEach((dish) => {
+              this.dishes.push(dish);
+            });
+            this.page += resp.data.data.length;
+            if (resp.data.data.length < 5) {
               this.finished = true;
             }
+          } else {
+            this.finished = true;
           }
-          this.loading = false;
-          this.finished = true;
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+        }
+        this.loading = false;
+        this.finished = true;
+      });
     },
     onClickAvatar() {
       console.log("fuck");
+    },
+    onClickDeleteDish() {
+      console.log("delete");
     },
   },
 };
@@ -129,5 +141,8 @@ export default {
 }
 .img-avatar {
   width: 40px;
+}
+.dishImg {
+  max-width: 180px;
 }
 </style>

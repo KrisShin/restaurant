@@ -14,7 +14,7 @@ service.interceptors.request.use(config => {
   config.headers = {
     // 'Content-Type': 'application/x-www-form-urlencoded' //配置请求头
     'Content-Type': 'application/json;charset=utf-8', //配置请求头
-    "Authorization": store.state.common.token
+    "Authorization": store.state.token
   }
   return config
 }, error => {
@@ -32,8 +32,8 @@ service.interceptors.response.use(resp => {
     else if (code === 10011) vue.$message.error('口令无效, 请重新登录')
 
     // 2. 删除本地token 和 user_info
-    vue.$store.dispatch("common/setToken", null);
-    vue.$store.dispatch("common/setUserInfo", null);
+    vue.$store.dispatch("setToken", null);
+    vue.$store.dispatch("setUserInfo", null);
 
     // 3. 跳转 login
     vue.$router.replace('/login')
