@@ -14,48 +14,7 @@
             </el-col>
           </el-row>
         </el-header>
-        <el-main>
-          <el-table :data="dishes" border>
-            <el-table-column fixed prop="name" label="菜品名称" width="150">
-            </el-table-column>
-            <el-table-column label="图片" width="200">
-              <template slot-scope="scope">
-                <img class="dishImg" :src="scope.row.index_img" alt="" />
-              </template>
-            </el-table-column>
-            <el-table-column prop="price" label="单价" width="120">
-            </el-table-column>
-            <el-table-column prop="amount" label="销量" width="120">
-            </el-table-column>
-            <el-table-column prop="description" label="简介" width="500">
-            </el-table-column>
-            <el-table-column prop="discount_desc" label="折扣" width="120">
-            </el-table-column>
-            <el-table-column prop="tags" label="标签" width="120">
-              <template slot-scope="scope">
-                <el-tag
-                  v-for="(tag, index) in scope.row.tags"
-                  :key="index"
-                  effect="plain"
-                  size="mini"
-                  >{{ tag.name }}</el-tag
-                >
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" width="100">
-              <template slot-scope="scope">
-                <el-button type="text" size="small">编辑</el-button>
-                <el-button
-                  @click="onClickDeleteDish(scope.row)"
-                  type="text"
-                  size="small"
-                  style="color: red"
-                  >删除</el-button
-                >
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-main>
+        <router-view name="Views" />
       </el-container>
     </el-container>
   </div>
@@ -64,8 +23,7 @@
 <script>
 // @ is an alias to /src
 import SideNavBar from "@/components/SideNavBar.vue";
-import { dishListAPI } from "../apis/dish.apis";
-import { userInfoAPI } from "../apis/user.apis";
+import { userInfoAPI } from "@/apis/user.apis";
 
 export default {
   name: "Home",
@@ -90,38 +48,15 @@ export default {
           this.$store.dispatch("setUserInfo", userInfo);
           this.userInfo = userInfo;
         }
-        this.loadDishList();
+        this.$router.replace("/dish");
       });
     } else {
-      this.userInfo = this.$store.state.userInfo;
-      this.loadDishList();
+      this.$router.replace("/dish");
     }
   },
   methods: {
-    loadDishList() {
-      dishListAPI({ page: this.page }).then((resp) => {
-        if (resp.data.code === 200) {
-          if (resp.data.data) {
-            resp.data.data.forEach((dish) => {
-              this.dishes.push(dish);
-            });
-            this.page += resp.data.data.length;
-            if (resp.data.data.length < 5) {
-              this.finished = true;
-            }
-          } else {
-            this.finished = true;
-          }
-        }
-        this.loading = false;
-        this.finished = true;
-      });
-    },
     onClickAvatar() {
       console.log("fuck");
-    },
-    onClickDeleteDish() {
-      console.log("delete");
     },
   },
 };
@@ -141,8 +76,5 @@ export default {
 }
 .img-avatar {
   width: 40px;
-}
-.dishImg {
-  max-width: 180px;
 }
 </style>

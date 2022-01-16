@@ -12,8 +12,15 @@ const routes = [{
 }, {
   path: '/home',
   name: 'Home',
-  component: Home
-}]
+  component: Home,
+  children: [{
+    path: '/dish',
+    name: 'Dish',
+    components: {
+      Views: () => import('@/views/page/Dish.vue')
+    }
+  }]
+}, ]
 
 const router = new VueRouter({
   // mode: 'history',

@@ -99,10 +99,11 @@ export default {
       finished: false,
       refreshing: false,
       page: 1,
+      pageSize: 5,
       cart: {},
       myBadge: localStorage.getItem("myBadge")
         ? JSON.parse(localStorage.getItem("myBadge"))
-        : null
+        : null,
     };
   },
   created: function () {
@@ -126,7 +127,7 @@ export default {
       this.$router.push("/profile");
     },
     onLoad() {
-      dishListAPI({ page: this.page })
+      dishListAPI({ page: this.page, pageSize: this.pageSize })
         .then((resp) => {
           if (resp.data.code === 200) {
             if (resp.data.data) {
@@ -134,7 +135,7 @@ export default {
                 dish.count = this.cart[dish.id];
                 this.dishes.push(dish);
               });
-              this.page += resp.data.data.length;
+              this.page = resp.data.data.page + 1;
               if (resp.data.data.length < 5) {
                 this.finished = true;
               }
