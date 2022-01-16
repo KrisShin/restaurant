@@ -53,7 +53,6 @@ export default {
       this.$router.go(-1);
     },
     onClickTaggleTag(tag, index) {
-      console.log(this.tags.length);
       var ex_index = this.ex_tags.indexOf(tag.id);
       if (tag.is_chosen) {
         tag.is_chosen = false;

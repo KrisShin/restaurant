@@ -116,7 +116,8 @@
           <el-tag
             v-for="(tag, index) in allTags"
             :key="index"
-            effect="plain"
+            :effect="tag.is_chosen ? 'dark' : 'plain'"
+            @click="onClickTaggleTag(tag, index)"
             size="mini"
             >{{ tag.name }}</el-tag
           >
@@ -203,6 +204,18 @@ export default {
     onClickEditDish(type) {
       this.editType = type;
       this.dialogTitle = type === "add" ? "新增菜品" : "编辑菜品";
+      if (!this.showDishEditDialog && type === "add") {
+        this.dishForm = {
+          name: "",
+          price: 0,
+          description: "",
+          discountId: "0",
+          discountDate: [],
+          tags: [],
+          images: [],
+        };
+        this.allTags = [];
+      }
       if (!this.allTags.length) {
         tagListAPI().then((resp) => {
           if (resp.data.code == 200) {
@@ -223,6 +236,24 @@ export default {
     },
     handlePreview(file) {
       console.log(file);
+    },
+    onClickTaggleTag(tag, index) {
+      var ex_index = this.dishForm.tags.indexOf(tag.id);
+      if (tag.is_chosen) {
+        tag.is_chosen = false;
+        if (ex_index != -1) {
+          this.dishForm.tags.splice(index, 1);
+          this.allTags.splice(index, 1);
+          this.allTags.push(tag);
+        }
+      } else {
+        tag.is_chosen = true;
+        if (ex_index == -1) {
+          this.dishForm.tags.push(tag.id);
+          this.allTags.splice(index, 1);
+          this.allTags.unshift(tag);
+        }
+      }
     },
   },
 };
