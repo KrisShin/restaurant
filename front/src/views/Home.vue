@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <el-container>
+    <el-container style="height: 100%">
       <el-aside style="width: auto"><SideNavBar /></el-aside>
       <el-container>
         <el-header>

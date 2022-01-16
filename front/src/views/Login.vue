@@ -134,7 +134,7 @@ export default {
       }).then((resp) => {
         if (resp.data.code === 200) {
           this.$message.success("登陆成功");
-          this.$store.dispatch("common/setToken", resp.data.token);
+          this.$store.dispatch("setToken", resp.data.token);
           this.$router.push("/home");
         }
       });
