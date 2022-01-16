@@ -8,3 +8,7 @@ export function dishTagsAPI(data) {
 export function dishListAPI(data) {
     return axios.post(`customer/dish/list/`, data)
 }
+
+export function tagListAPI(data) {
+    return axios.get(`customer/dish/tags/`, data)
+}

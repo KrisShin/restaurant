@@ -33,6 +33,10 @@ export function userChangePwdAPI(data) {
     return axios.put(`merchant/user/change_pwd/`, data)
 }
 
+export function userResetPwdAPI(data) {
+    return axios.put(`merchant/user/reset_pwd/`, data)
+}
+
 // export function uploadAvatarAPI(params) {
 //     return axios.post(`/user/upload_avatar`, params)
 // }

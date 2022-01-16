@@ -130,7 +130,10 @@ def post_dish_list():
     data = request.get_json()
     page = data.get('page', 1) or 1
     page_size = data.get('pageSize', 5) or 5
+    search = data.get('search')
     dishes = Dish.query.order_by(Dish.update_time.desc(), Dish.create_time.desc())
+    if search:
+        dishes = dishes.filter(Dish.name.like(f'%{search}%'))
     total = dishes.count()
 
     dishes = [dict(dish) for dish in dishes.paginate(page, page_size).items]
