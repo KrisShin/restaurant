@@ -17,7 +17,7 @@ class Redis(object):
 
     def set_val(self, key: str, val, ex=0):
         try:
-            if not isinstance(val, str):
+            if isinstance(val, dict):
                 val = json.dumps(val)
             return redis.set(key, val, ex=ex)
         except:

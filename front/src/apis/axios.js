@@ -4,8 +4,8 @@ import store from '../store'
 import vue from '../main'
 
 const service = axios.create({
-  baseURL: 'http://127.0.0.1:9096/merchant', // 'http://3.36.97.169:9096/customer',
-  timeout: 5000 // 超时
+  baseURL: 'http://127.0.0.1:9096/', // 'http://3.36.97.169:9096/customer',
+  timeout: 60000 // 超时
 })
 
 // 请求拦截
@@ -14,7 +14,7 @@ service.interceptors.request.use(config => {
   config.headers = {
     // 'Content-Type': 'application/x-www-form-urlencoded' //配置请求头
     'Content-Type': 'application/json;charset=utf-8', //配置请求头
-    "Authorization": store.state.common.token
+    "Authorization": store.state.token
   }
   return config
 }, error => {
@@ -32,8 +32,8 @@ service.interceptors.response.use(resp => {
     else if (code === 10011) vue.$message.error('口令无效, 请重新登录')
 
     // 2. 删除本地token 和 user_info
-    vue.$store.dispatch("common/setToken", null);
-    vue.$store.dispatch("common/setUserInfo", null);
+    store.dispatch("setToken", null);
+    store.dispatch("setUserInfo", null);
 
     // 3. 跳转 login
     vue.$router.replace('/login')

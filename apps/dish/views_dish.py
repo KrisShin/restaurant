@@ -129,14 +129,14 @@ def post_dish_list():
     '''All dishes list. Order by dish's update time. and return 5 dishes on per refresh.'''
     data = request.get_json()
     page = data.get('page', 1) or 1
-    dishes = (
-        Dish.query.order_by(Dish.update_time.desc(), Dish.create_time.desc())
-        .paginate(page, 5)
-        .items
-    )
+    page_size = data.get('pageSize', 5) or 5
+    dishes = Dish.query.order_by(Dish.update_time.desc(), Dish.create_time.desc())
+    total = dishes.count()
 
-    dishes = [dict(dish) for dish in dishes]
-    return jsonify({'code': status_code.OK, 'data': dishes})
+    dishes = [dict(dish) for dish in dishes.paginate(page, page_size).items]
+    return jsonify(
+        {'code': status_code.OK, 'data': dishes, 'page': page, 'total': total}
+    )
 
 
 @dish.route('/cart/', methods=['POST'])

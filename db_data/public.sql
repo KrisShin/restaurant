@@ -1,18 +1,18 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : WSL_postgresql
+ Source Server         : myserver_postgres
  Source Server Type    : PostgreSQL
- Source Server Version : 140000
- Source Host           : localhost:35432
+ Source Server Version : 130004
+ Source Host           : 101.35.152.20:35432
  Source Catalog        : restaurant
  Source Schema         : public
 
  Target Server Type    : PostgreSQL
- Target Server Version : 140000
+ Target Server Version : 130004
  File Encoding         : 65001
 
- Date: 28/11/2021 22:45:44
+ Date: 16/01/2022 14:30:10
 */
 
 
@@ -177,6 +177,11 @@ CREATE TABLE "public"."rs_dish_tag" (
 -- ----------------------------
 -- Records of rs_dish_tag
 -- ----------------------------
+INSERT INTO "public"."rs_dish_tag" VALUES (1, 1);
+INSERT INTO "public"."rs_dish_tag" VALUES (3, 4);
+INSERT INTO "public"."rs_dish_tag" VALUES (2, 8);
+INSERT INTO "public"."rs_dish_tag" VALUES (4, 5);
+INSERT INTO "public"."rs_dish_tag" VALUES (2, 5);
 
 -- ----------------------------
 -- Table structure for rs_user_tag
@@ -211,6 +216,8 @@ CREATE TABLE "public"."tb_account" (
 -- ----------------------------
 -- Records of tb_account
 -- ----------------------------
+INSERT INTO "public"."tb_account" VALUES (2, NULL, NULL, 1, NULL, NULL, NULL, 0);
+INSERT INTO "public"."tb_account" VALUES (4, '2022-01-14 19:42:25.361314', NULL, 3, 'f', NULL, NULL, 0);
 
 -- ----------------------------
 -- Table structure for tb_address
@@ -270,6 +277,7 @@ CREATE TABLE "public"."tb_discount" (
 -- ----------------------------
 -- Records of tb_discount
 -- ----------------------------
+INSERT INTO "public"."tb_discount" VALUES (4, NULL, NULL, 0, '', NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for tb_dish
@@ -290,6 +298,10 @@ CREATE TABLE "public"."tb_dish" (
 -- ----------------------------
 -- Records of tb_dish
 -- ----------------------------
+INSERT INTO "public"."tb_dish" VALUES (1, '2022-01-14 19:31:44', NULL, '佛跳墙', 299, 100, '微辣，孜然味浓郁', 4);
+INSERT INTO "public"."tb_dish" VALUES (3, '2022-01-14 22:47:59', NULL, '鱼香茄子', 43.5, 10, '香', 4);
+INSERT INTO "public"."tb_dish" VALUES (2, '2022-01-14 22:48:09', NULL, '回锅肉', 98.88, 59, '回', 4);
+INSERT INTO "public"."tb_dish" VALUES (4, '2022-01-14 22:48:51', NULL, '土豆丝', 35, 20, '青椒土豆丝', 4);
 
 -- ----------------------------
 -- Table structure for tb_dishimg
@@ -308,6 +320,13 @@ CREATE TABLE "public"."tb_dishimg" (
 -- ----------------------------
 -- Records of tb_dishimg
 -- ----------------------------
+INSERT INTO "public"."tb_dishimg" VALUES (3, '2022-01-14 22:44:55', NULL, 't', '/static/dish/ftq.jpg', 1);
+INSERT INTO "public"."tb_dishimg" VALUES (4, '2022-01-14 22:49:41', NULL, 't', '/static/dish/hgr.jpg', 2);
+INSERT INTO "public"."tb_dishimg" VALUES (5, '2022-01-14 22:50:40', NULL, 't', '/static/dish/tds.jpg', 4);
+INSERT INTO "public"."tb_dishimg" VALUES (6, '2022-01-14 22:51:15', NULL, 't', '/static/dish/yxqz.jpg', 3);
+INSERT INTO "public"."tb_dishimg" VALUES (7, '2022-01-14 22:53:04', NULL, 'f', '/static/dish/yxqz2.jpg', 3);
+INSERT INTO "public"."tb_dishimg" VALUES (8, '2022-01-14 22:53:25', NULL, 'f', '/static/dish/yxqz3.jpg', 3);
+INSERT INTO "public"."tb_dishimg" VALUES (9, '2022-01-14 22:53:48', NULL, 'f', '/static/dish/yxqz4.jpg', 3);
 
 -- ----------------------------
 -- Table structure for tb_order
@@ -365,6 +384,7 @@ INSERT INTO "public"."tb_tag" VALUES (16, '2021-11-27 22:13:43.068094', NULL, 1,
 INSERT INTO "public"."tb_tag" VALUES (17, '2021-11-27 22:13:43.071835', NULL, 1, '生鲜');
 INSERT INTO "public"."tb_tag" VALUES (18, '2021-11-27 22:13:43.076095', NULL, 1, '五香');
 INSERT INTO "public"."tb_tag" VALUES (19, '2021-11-27 22:13:43.080005', NULL, 1, '糖醋');
+
 -- ----------------------------
 -- Table structure for tb_user
 -- ----------------------------
@@ -389,7 +409,9 @@ CREATE TABLE "public"."tb_user" (
 -- ----------------------------
 -- Records of tb_user
 -- ----------------------------
-INSERT INTO "public"."tb_user" VALUES (1, NULL, '2021-11-21 13:07:17.758135', 'admin', 20, '13433334444', NULL, '2855829886@qq.com', '7RaqFOMZmUozaG/li5ojQg==
+INSERT INTO "public"."tb_user" VALUES (3, '2022-01-14 19:42:25.349771', NULL, '隔壁大王', 120, '18228598311', '/static/avatar/default.jpg', 'liuyang@163.com', '95irFL94EdrlGa7DvayiEBoC30a1ninkTPZWb7xT2pY=
+', 't', 't', 'f', 'user');
+INSERT INTO "public"."tb_user" VALUES (1, NULL, '2021-12-19 15:59:29.467883', 'admin', 20, '13433334444', '/static/avatar/6ea1ebed100443f697d6921594d9f19a.jpeg', 'test@email.com', '95irFL94EdrlGa7DvayiEO0WqhTjGZlKM2hv5YuaI0I=
 ', 't', 't', 't', 'admin');
 
 -- ----------------------------
@@ -397,63 +419,63 @@ INSERT INTO "public"."tb_user" VALUES (1, NULL, '2021-11-21 13:07:17.758135', 'a
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_account_id_seq"
 OWNED BY "public"."tb_account"."id";
-SELECT setval('"public"."tb_account_id_seq"', 2, false);
+SELECT setval('"public"."tb_account_id_seq"', 5, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_address_id_seq"
 OWNED BY "public"."tb_address"."id";
-SELECT setval('"public"."tb_address_id_seq"', 2, false);
+SELECT setval('"public"."tb_address_id_seq"', 4, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_comment_id_seq"
 OWNED BY "public"."tb_comment"."id";
-SELECT setval('"public"."tb_comment_id_seq"', 2, false);
+SELECT setval('"public"."tb_comment_id_seq"', 4, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_discount_id_seq"
 OWNED BY "public"."tb_discount"."id";
-SELECT setval('"public"."tb_discount_id_seq"', 2, false);
+SELECT setval('"public"."tb_discount_id_seq"', 5, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_dish_id_seq"
 OWNED BY "public"."tb_dish"."id";
-SELECT setval('"public"."tb_dish_id_seq"', 2, false);
+SELECT setval('"public"."tb_dish_id_seq"', 5, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_dishimg_id_seq"
 OWNED BY "public"."tb_dishimg"."id";
-SELECT setval('"public"."tb_dishimg_id_seq"', 2, false);
+SELECT setval('"public"."tb_dishimg_id_seq"', 10, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_order_id_seq"
 OWNED BY "public"."tb_order"."id";
-SELECT setval('"public"."tb_order_id_seq"', 2, false);
+SELECT setval('"public"."tb_order_id_seq"', 4, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_tag_id_seq"
 OWNED BY "public"."tb_tag"."id";
-SELECT setval('"public"."tb_tag_id_seq"', 2, false);
+SELECT setval('"public"."tb_tag_id_seq"', 4, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_user_id_seq"
 OWNED BY "public"."tb_user"."id";
-SELECT setval('"public"."tb_user_id_seq"', 2, false);
+SELECT setval('"public"."tb_user_id_seq"', 4, true);
 
 -- ----------------------------
 -- Primary Key structure for table alembic_version
