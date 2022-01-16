@@ -42,25 +42,21 @@ def tags():
     '''All Operations of tag.'''
     if request.method == 'GET':
         '''Get all tags infomation'''
-        ex_tags = []
         user = get_current_user(request)
         ex_ids = []
         if user:
             '''If user logined, add user's tags at head of the list'''
-            ex_tags = [dict(tag) for tag in user.tags]
-            ex_ids = [tag['id'] for tag in ex_tags]
+            ex_ids = [tag.id for tag in user.tags]
 
         # Parse all Tags object to dict. And remind tags order by weight.
-        res = [
-            dict(tag)
-            for tag in Tag.query.filter(Tag.id.notin_(ex_ids))
-            .order_by(Tag.weight.desc())
-            .all()
-        ]
+        tags = []
+        for tag in Tag.query.order_by(Tag.weight.desc()).all():
+            line = dict(tag)
+            if tag.id in ex_ids:
+                line.update({'is_chosen': True})
+            tags.append(line)
 
-        return jsonify(
-            {'code': status_code.OK, 'data': {'tags': res, 'exist_tags': ex_tags}}
-        )
+        return jsonify({'code': status_code.OK, 'data': {'tags': tags}})
     if request.method == 'POST':
         '''Create a tag.'''
         data = request.get_json()
