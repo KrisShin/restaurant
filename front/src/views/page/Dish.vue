@@ -6,7 +6,11 @@
           <el-button slot="append" icon="el-icon-search"></el-button>
         </el-input>
       </el-col>
-      <el-col :span="3"><el-button type="primary">新增菜品</el-button></el-col>
+      <el-col :span="3"
+        ><el-button type="primary" @click="onClickEditDish('add')"
+          >新增菜品</el-button
+        ></el-col
+      >
     </el-row>
     <el-table :data="dishes" border>
       <el-table-column fixed prop="name" label="菜品名称" width="150">
@@ -54,6 +58,15 @@
       :page-size="pageSize"
     >
     </el-pagination>
+    <el-dialog title="提示" :visible.sync="showDishEditDialog" width="30%">
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showDishEditDialog = false">取 消</el-button>
+        <el-button type="primary" @click="showDishEditDialog = false"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </el-main>
 </template>
 
@@ -70,6 +83,8 @@ export default {
       pageSize: 5,
       total: 0,
       searchDish: "",
+      showDishEditDialog: false,
+      editType: "add",
     };
   },
   created() {
@@ -83,9 +98,8 @@ export default {
             resp.data.data.forEach((dish) => {
               this.dishes.push(dish);
             });
-            this.page = resp.data.data.page;
-            this.pageSize = resp.data.data.pageSize;
-            this.total = resp.data.data.total;
+            this.page = resp.data.page;
+            this.total = resp.data.total;
           }
         }
         this.loading = false;
@@ -94,6 +108,10 @@ export default {
     },
     onClickDeleteDish() {
       console.log("delete");
+    },
+    onClickEditDish(type) {
+      this.editType = type;
+      this.showDishEditDialog = !this.showDishEditDialog;
     },
   },
 };

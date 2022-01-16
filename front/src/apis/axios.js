@@ -4,7 +4,7 @@ import store from '../store'
 import vue from '../main'
 
 const service = axios.create({
-  baseURL: 'http://127.0.0.1:9096/merchant', // 'http://3.36.97.169:9096/customer',
+  baseURL: 'http://127.0.0.1:9096/', // 'http://3.36.97.169:9096/customer',
   timeout: 60000 // 超时
 })
 

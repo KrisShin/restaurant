@@ -7,9 +7,9 @@
           <el-row type="flex" justify="space-between" style="margin: 0">
             <el-col :span="6">恰了木有-管理端</el-col>
             <el-col :span="6">
-              <div @click="onClickAvatar">
+              <div @click="onClickAvatar" style="display: flex">
                 <el-avatar size="large" :src="userInfo.avatar"></el-avatar>
-                {{ userInfo.nickname }}
+                <span> {{ userInfo.nickname }} </span>
               </div>
             </el-col>
           </el-row>
