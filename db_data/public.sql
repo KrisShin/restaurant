@@ -12,7 +12,7 @@
  Target Server Version : 130004
  File Encoding         : 65001
 
- Date: 16/01/2022 14:30:10
+ Date: 19/01/2022 22:05:32
 */
 
 
@@ -148,7 +148,7 @@ CREATE TABLE "public"."alembic_version" (
 -- ----------------------------
 -- Records of alembic_version
 -- ----------------------------
-INSERT INTO "public"."alembic_version" VALUES ('61e1fde597f3');
+INSERT INTO "public"."alembic_version" VALUES ('7beccd47c4a3');
 
 -- ----------------------------
 -- Table structure for rs_dish_order
@@ -218,6 +218,7 @@ CREATE TABLE "public"."tb_account" (
 -- ----------------------------
 INSERT INTO "public"."tb_account" VALUES (2, NULL, NULL, 1, NULL, NULL, NULL, 0);
 INSERT INTO "public"."tb_account" VALUES (4, '2022-01-14 19:42:25.361314', NULL, 3, 'f', NULL, NULL, 0);
+INSERT INTO "public"."tb_account" VALUES (5, '2022-01-16 21:23:21.54315', NULL, 4, 'f', NULL, NULL, 0);
 
 -- ----------------------------
 -- Table structure for tb_address
@@ -277,7 +278,10 @@ CREATE TABLE "public"."tb_discount" (
 -- ----------------------------
 -- Records of tb_discount
 -- ----------------------------
-INSERT INTO "public"."tb_discount" VALUES (4, NULL, NULL, 0, '', NULL, NULL, NULL);
+INSERT INTO "public"."tb_discount" VALUES (1, '2022-01-19 22:00:56', NULL, 0, '无折扣', NULL, NULL, NULL);
+INSERT INTO "public"."tb_discount" VALUES (2, '2022-01-19 22:00:56', NULL, 0, '无折扣', NULL, NULL, NULL);
+INSERT INTO "public"."tb_discount" VALUES (3, '2022-01-19 22:00:56', NULL, 0, '无折扣', NULL, NULL, NULL);
+INSERT INTO "public"."tb_discount" VALUES (4, '2022-01-19 22:00:56', NULL, 1, '95折', '2022-01-19 22:02:15', '2022-02-06 22:02:17', 0.95);
 
 -- ----------------------------
 -- Table structure for tb_dish
@@ -298,10 +302,10 @@ CREATE TABLE "public"."tb_dish" (
 -- ----------------------------
 -- Records of tb_dish
 -- ----------------------------
-INSERT INTO "public"."tb_dish" VALUES (1, '2022-01-14 19:31:44', NULL, '佛跳墙', 299, 100, '微辣，孜然味浓郁', 4);
-INSERT INTO "public"."tb_dish" VALUES (3, '2022-01-14 22:47:59', NULL, '鱼香茄子', 43.5, 10, '香', 4);
-INSERT INTO "public"."tb_dish" VALUES (2, '2022-01-14 22:48:09', NULL, '回锅肉', 98.88, 59, '回', 4);
+INSERT INTO "public"."tb_dish" VALUES (1, '2022-01-14 19:31:44', NULL, '佛跳墙', 299, 100, '微辣，孜然味浓郁', 1);
 INSERT INTO "public"."tb_dish" VALUES (4, '2022-01-14 22:48:51', NULL, '土豆丝', 35, 20, '青椒土豆丝', 4);
+INSERT INTO "public"."tb_dish" VALUES (3, '2022-01-14 22:47:59', NULL, '鱼香茄子', 43.5, 10, '酸甜鱼香茄子, 又耙又糯', 2);
+INSERT INTO "public"."tb_dish" VALUES (2, '2022-01-14 22:48:09', NULL, '回锅肉', 98.88, 59, '香辣不腻, 好吃的很', 3);
 
 -- ----------------------------
 -- Table structure for tb_dishimg
@@ -413,13 +417,15 @@ INSERT INTO "public"."tb_user" VALUES (3, '2022-01-14 19:42:25.349771', NULL, '�
 ', 't', 't', 'f', 'user');
 INSERT INTO "public"."tb_user" VALUES (1, NULL, '2021-12-19 15:59:29.467883', 'admin', 20, '13433334444', '/static/avatar/6ea1ebed100443f697d6921594d9f19a.jpeg', 'test@email.com', '95irFL94EdrlGa7DvayiEO0WqhTjGZlKM2hv5YuaI0I=
 ', 't', 't', 't', 'admin');
+INSERT INTO "public"."tb_user" VALUES (4, '2022-01-16 21:23:21.526575', NULL, 'JQK', 23, '13533335555', '/static/avatar/default.jpg', 'email@test.com', '95irFL94EdrlGa7DvayiECG3DhN30wkNzDCGPXyVsXk=
+', 'f', 't', 'f', 'user');
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_account_id_seq"
 OWNED BY "public"."tb_account"."id";
-SELECT setval('"public"."tb_account_id_seq"', 5, true);
+SELECT setval('"public"."tb_account_id_seq"', 6, true);
 
 -- ----------------------------
 -- Alter sequences owned by
@@ -475,7 +481,7 @@ SELECT setval('"public"."tb_tag_id_seq"', 4, false);
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_user_id_seq"
 OWNED BY "public"."tb_user"."id";
-SELECT setval('"public"."tb_user_id_seq"', 4, true);
+SELECT setval('"public"."tb_user_id_seq"', 5, true);
 
 -- ----------------------------
 -- Primary Key structure for table alembic_version

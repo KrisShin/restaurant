@@ -96,14 +96,14 @@ class Discount(BaseModel):
 
     __tablename__ = 'tb_discount'
 
-    # 0-没有折扣/1-折扣/2-买一送一/3-第二件半价
+    # 0-没有折扣/1-折扣
     discount_type = db.Column(db.Integer, nullable=False)
     description = db.Column(db.String(200), nullable=False)
     start_time = db.Column(db.DateTime, default=datetime.now)
     end_time = db.Column(db.DateTime)
     discount = db.Column(db.Float, default=0.01)
 
-    dishes = db.relationship("Dish", backref="discount", lazy=True)
+    dish = db.relationship("Dish", backref="discount", lazy=True, uselist=False)
 
     def __init__(self, *args, **kwargs):
         super(Discount, self).__init__(**kwargs)
