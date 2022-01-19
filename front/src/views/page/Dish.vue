@@ -242,7 +242,7 @@ export default {
       if (tag.is_chosen) {
         tag.is_chosen = false;
         if (ex_index != -1) {
-          this.dishForm.tags.splice(index, 1);
+          this.dishForm.tags.splice(ex_index, 1);
           this.allTags.splice(index, 1);
           this.allTags.push(tag);
         }
