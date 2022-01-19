@@ -81,3 +81,10 @@ def operate_dish():
             return jsonify({'code': status_code.DISH_NOT_EXISIT, 'msg': '菜品不存在'})
         dish_obj.delete()
         return jsonify({'code': status_code.OK})
+
+
+@dish.route('/image/upload/', methods=['POST'])
+# @auth
+def dish_image_upload():
+    data = request.form
+    return jsonify({'msg': 'ok'})

@@ -90,27 +90,45 @@
 
         <el-form-item label="菜品折扣">
           <el-select v-model="dishForm.discountId" placeholder="请选择活动区域">
-            <el-option label="区域一" value="0"></el-option>
-            <el-option label="区域二" value="1"></el-option>
+            <el-option label="无折扣" value="0"></el-option>
+            <el-option label="打折" value="1"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="折扣时间" v-if="dishForm.discountId != '0'">
-          <el-col :span="11">
-            <el-date-picker
-              type="date"
-              placeholder="选择日期"
-              v-model="dishForm.discountDate1"
-              style="width: 100%"
-            ></el-date-picker>
-          </el-col>
-          <el-col class="line" :span="2">-</el-col>
-          <el-col :span="11">
-            <el-time-picker
-              placeholder="选择时间"
-              v-model="dishForm.discountDate2"
-              style="width: 100%"
-            ></el-time-picker>
-          </el-col>
+        <el-form-item label="打折信息" v-if="dishForm.discountId != '0'">
+          <el-row>
+            <el-col>
+              <el-input
+                type="number"
+                v-model="dishForm.discount"
+                placeholder="0.1-1折"
+              ></el-input>
+            </el-col>
+            <el-col>
+              <el-input
+                type="number"
+                v-model="dishForm.discount_desc"
+                placeholder="打折宣传信息"
+              ></el-input>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-date-picker
+                type="date"
+                placeholder="开始日期"
+                v-model="dishForm.discountDate1"
+                style="width: 100%"
+              ></el-date-picker>
+            </el-col>
+            <el-col class="line" :span="2">-</el-col>
+            <el-col :span="11">
+              <el-date-picker
+                placeholder="结束日期"
+                v-model="dishForm.discountDate2"
+                style="width: 100%"
+              ></el-date-picker>
+            </el-col>
+          </el-row>
         </el-form-item>
         <el-form-item label="菜品标签">
           <el-tag
@@ -125,16 +143,24 @@
         <el-form-item label="菜品图片">
           <el-upload
             class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :on-preview="handlePreview"
+            ref="upload"
+            :action="host + '/merchant/dish/image/upload/'"
             :on-remove="handleRemove"
             :file-list="dishForm.images"
-            list-type="picture"
+            :auto-upload="false"
+            :multiple="true"
+            name="images"
           >
-            <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">
-              只能上传jpg/png文件，且不超过500kb
-            </div>
+            <el-button slot="trigger" size="small" type="primary">
+              选取文件
+            </el-button>
+            <el-button
+              style="margin-left: 10px"
+              size="small"
+              type="success"
+              @click="submitUpload"
+              >上传到服务器
+            </el-button>
           </el-upload>
         </el-form-item>
         <el-form-item>
@@ -164,20 +190,30 @@ export default {
       editType: "add",
       searchDish: null,
       dishForm: {
-        name: "",
-        price: 0,
-        description: "",
+        name: "红烧肉",
+        price: 68.88,
+        description: "非常红的红烧肉",
         discountId: "0",
         discountDate: [],
         tags: [],
         images: [],
+        // name: "",
+        // price: 0,
+        // description: "",
+        // discountId: "0",
+        // discountDate: [],
+        // tags: [],
+        // images: [],
       },
       dialogTitle: "新增菜品",
       allTags: [],
       allDiscount: [],
+      host: "",
     };
   },
   created() {
+    this.host = this.$BASE_API;
+    console.log(this.host)
     this.loadDishList();
   },
   onmounted() {
@@ -205,16 +241,16 @@ export default {
       this.editType = type;
       this.dialogTitle = type === "add" ? "新增菜品" : "编辑菜品";
       if (!this.showDishEditDialog && type === "add") {
-        this.dishForm = {
-          name: "",
-          price: 0,
-          description: "",
-          discountId: "0",
-          discountDate: [],
-          tags: [],
-          images: [],
-        };
-        this.allTags = [];
+        // this.dishForm = {
+        //   name: "",
+        //   price: 0,
+        //   description: "",
+        //   discountId: "0",
+        //   discountDate: [],
+        //   tags: [],
+        //   images: [],
+        // };
+        // this.allTags = [];
       }
       if (!this.allTags.length) {
         tagListAPI().then((resp) => {
@@ -229,13 +265,10 @@ export default {
       this.loadDishList();
     },
     onClickSubmitDish() {
-      console.log("submit");
+      console.log(this.dishForm);
     },
     handleRemove(file, fileList) {
       console.log(file, fileList);
-    },
-    handlePreview(file) {
-      console.log(file);
     },
     onClickTaggleTag(tag, index) {
       var ex_index = this.dishForm.tags.indexOf(tag.id);
@@ -254,6 +287,10 @@ export default {
           this.allTags.unshift(tag);
         }
       }
+    },
+    submitUpload() {
+      var resp = this.$refs.upload.submit();
+      console.log(resp);
     },
   },
 };
