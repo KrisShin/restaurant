@@ -142,24 +142,15 @@
         </el-form-item>
         <el-form-item label="菜品图片">
           <el-upload
-            class="upload-demo"
             ref="upload"
-            :action="host + '/merchant/dish/image/upload/'"
-            :on-remove="handleRemove"
-            :file-list="dishForm.images"
+            action="string"
+            accept="image/jpeg,image/jpg,image/png"
             :auto-upload="false"
             :multiple="true"
             name="images"
           >
             <el-button slot="trigger" size="small" type="primary">
               选取文件
-            </el-button>
-            <el-button
-              style="margin-left: 10px"
-              size="small"
-              type="success"
-              @click="submitUpload"
-              >上传到服务器
             </el-button>
           </el-upload>
         </el-form-item>
@@ -176,7 +167,7 @@
 
 <script>
 // @ is an alias to /src
-import { dishListAPI, tagListAPI } from "@/apis/dish.apis";
+import { dishListAPI, tagListAPI, dishOperateAPI } from "@/apis/dish.apis";
 
 export default {
   name: "Dish",
@@ -203,17 +194,14 @@ export default {
         // discountId: "0",
         // discountDate: [],
         // tags: [],
-        // images: [],
+        // images:[]
       },
       dialogTitle: "新增菜品",
       allTags: [],
       allDiscount: [],
-      host: "",
     };
   },
   created() {
-    this.host = this.$BASE_API;
-    console.log(this.host)
     this.loadDishList();
   },
   onmounted() {
@@ -237,20 +225,23 @@ export default {
     onClickDeleteDish() {
       console.log("delete");
     },
+    initDishForm() {
+      this.dishForm = {
+        name: "",
+        price: 0,
+        description: "",
+        discountId: "0",
+        discountDate: [],
+        tags: [],
+        images: [],
+      };
+      this.allTags = [];
+    },
     onClickEditDish(type) {
       this.editType = type;
       this.dialogTitle = type === "add" ? "新增菜品" : "编辑菜品";
       if (!this.showDishEditDialog && type === "add") {
-        // this.dishForm = {
-        //   name: "",
-        //   price: 0,
-        //   description: "",
-        //   discountId: "0",
-        //   discountDate: [],
-        //   tags: [],
-        //   images: [],
-        // };
-        // this.allTags = [];
+        // this.initDishForm();
       }
       if (!this.allTags.length) {
         tagListAPI().then((resp) => {
@@ -263,12 +254,6 @@ export default {
     },
     onClickSearchDish() {
       this.loadDishList();
-    },
-    onClickSubmitDish() {
-      console.log(this.dishForm);
-    },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
     },
     onClickTaggleTag(tag, index) {
       var ex_index = this.dishForm.tags.indexOf(tag.id);
@@ -288,9 +273,25 @@ export default {
         }
       }
     },
-    submitUpload() {
-      var resp = this.$refs.upload.submit();
-      console.log(resp);
+    onClickSubmitDish() {
+      // debugger;
+      this.$refs.upload.uploadFiles.forEach((file) => {
+        this.image2base64(file);
+      });
+      console.log(this.dishForm)
+      console.log(JSON.stringify(this.dishForm))
+      dishOperateAPI(JSON.stringify(this.dishForm)).then((resp) => {
+        console.log(resp.data);
+        this.initDishForm();
+      });
+    },
+    image2base64(file) {
+      var _this = this;
+      let reader = new FileReader();
+      reader.onload = () => {
+        _this.dishForm.images.push(reader.result);
+      };
+      return reader.readAsDataURL(file.raw);
     },
   },
 };

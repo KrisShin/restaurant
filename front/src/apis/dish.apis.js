@@ -12,3 +12,7 @@ export function dishListAPI(data) {
 export function tagListAPI(data) {
     return axios.get(`customer/dish/tags/`, data)
 }
+
+export function dishOperateAPI(data, type) {
+    return axios.post(`merchant/dish/`, data, type)
+}

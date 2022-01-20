@@ -13,7 +13,7 @@ service.interceptors.request.use(config => {
   config.data = JSON.stringify(config.data);
   config.headers = {
     // 'Content-Type': 'application/x-www-form-urlencoded' //配置请求头
-    'Content-Type': 'application/json;charset=utf-8', //配置请求头
+    'Content-Type': config.type != 'form' ? 'application/json;charset=utf-8' : "application/x-www-form-urlencoded", //配置请求头
     "Authorization": store.state.token
   }
   return config

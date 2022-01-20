@@ -33,13 +33,13 @@ def operate_dish():
         )
         tags = Tag.query.filter(Tag.id.in_(tag_id_list)).all()
         dish_obj.tags = tags
-        dish_obj.save()
+        # dish_obj.save()
         for index, img_base64 in enumerate(images):
             img_uri = save_img('dish', img_base64)
             img = DishImg.query.create(
                 uri=img_uri, is_index=index == 0, dish_id=dish_obj.id
             )
-            img.save()
+            # img.save()
         return jsonify({'code': status_code.OK})
     if request.method == 'PUT':
         dish_id = data.get('dish_id')
@@ -81,10 +81,3 @@ def operate_dish():
             return jsonify({'code': status_code.DISH_NOT_EXISIT, 'msg': '菜品不存在'})
         dish_obj.delete()
         return jsonify({'code': status_code.OK})
-
-
-@dish.route('/image/upload/', methods=['POST'])
-# @auth
-def dish_image_upload():
-    data = request.form
-    return jsonify({'msg': 'ok'})
