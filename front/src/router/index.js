@@ -19,6 +19,12 @@ const routes = [{
     components: {
       Views: () => import('@/views/page/Dish.vue')
     }
+  },{
+    path: '/tag',
+    name: 'Tag',
+    components: {
+      Views: () => import('@/views/page/Tag.vue')
+    }
   }]
 }, ]
 
