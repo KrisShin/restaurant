@@ -105,7 +105,6 @@
             </el-col>
             <el-col>
               <el-input
-                type="number"
                 v-model="dishForm.discount_desc"
                 placeholder="打折宣传信息"
               ></el-input>
@@ -275,23 +274,18 @@ export default {
     },
     onClickSubmitDish() {
       // debugger;
+      let dform = new FormData();
       this.$refs.upload.uploadFiles.forEach((file) => {
-        this.image2base64(file);
+        dform.append("images", file.raw);
       });
-      console.log(this.dishForm)
-      console.log(JSON.stringify(this.dishForm))
-      dishOperateAPI(JSON.stringify(this.dishForm)).then((resp) => {
+      dform.append("data", JSON.stringify(this.dishForm));
+      console.log(dform);
+      console.log(dform.get("data"), dform.getAll("images"));
+
+      dishOperateAPI(dform).then((resp) => {
         console.log(resp.data);
         this.initDishForm();
       });
-    },
-    image2base64(file) {
-      var _this = this;
-      let reader = new FileReader();
-      reader.onload = () => {
-        _this.dishForm.images.push(reader.result);
-      };
-      return reader.readAsDataURL(file.raw);
     },
   },
 };

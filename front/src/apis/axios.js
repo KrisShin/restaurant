@@ -9,11 +9,16 @@ const service = axios.create({
 })
 
 // 请求拦截
-service.interceptors.request.use(config => {
-  config.data = JSON.stringify(config.data);
+service.interceptors.request.use((config) => {
+  let contentType = 'application/json;charset=utf-8'
+  if (config.data instanceof FormData) {
+    contentType = 'application/x-www-form-urlencoded'
+  } else {
+    config.data = JSON.stringify(config.data);
+  }
   config.headers = {
     // 'Content-Type': 'application/x-www-form-urlencoded' //配置请求头
-    'Content-Type': config.type != 'form' ? 'application/json;charset=utf-8' : "application/x-www-form-urlencoded", //配置请求头
+    'Content-Type': contentType,
     "Authorization": store.state.token
   }
   return config

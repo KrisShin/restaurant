@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, jsonify, request
 
 from utils.util import save_img
@@ -18,14 +19,14 @@ def operate_dish():
         if not dish_obj:
             return jsonify({'code': status_code.DISH_NOT_EXISIT, 'msg': '菜品不存在'})
         return jsonify({'code': status_code.OK, 'data': dict(dish_obj)})
-    data = request.get_json()
     if request.method == 'POST':
+        data = json.loads(request.form.get('data'))
+        images = request.files.getlist('images')
         name = data.get('name')
         price = data.get('price')
         description = data.get('description')
-        discount_id = data.get('discount_id')
-        tag_id_list = data.get('tag_id_list')
-        images = data.get('images')
+        discount_id = int(data.get('discountId', 0))
+        tag_id_list = data.get('tags')
         if not all((name, price >= 0, images)):
             return jsonify({'code': status_code.PARAM_LACK, 'msg': '菜品名字, 价格, 首图必传'})
         dish_obj = Dish(
@@ -42,13 +43,14 @@ def operate_dish():
             # img.save()
         return jsonify({'code': status_code.OK})
     if request.method == 'PUT':
+        data = json.loads(request.form.get('data'))
+        images = request.files.getlist('images')
         dish_id = data.get('dish_id')
         name = data.get('name')
         price = data.get('price')
         description = data.get('description')
         discount_id = data.get('discount_id')
         tag_id_list = data.get('tag_id_list')
-        images = data.get('images')
         dish_obj = Dish.query.filter_by(id=dish_id).first()
         if not dish_obj:
             return jsonify({'code': status_code.DISH_NOT_EXISIT, 'msg': '菜品不存在'})
@@ -74,6 +76,7 @@ def operate_dish():
         dish_obj.save()
 
         return jsonify({'code': status_code.OK})
+    data = request.get_json()
     if request.method == 'DELETE':
         dish_id = data.get('dish_id')
         dish_obj = Dish.query.filter_by(id=dish_id).first()
