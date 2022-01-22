@@ -33,7 +33,7 @@
       </el-table-column>
       <el-table-column prop="description" label="简介" width="600">
       </el-table-column>
-      <el-table-column prop="discountDesc" label="折扣" width="120">
+      <el-table-column prop="discount_desc" label="折扣" width="120">
       </el-table-column>
       <el-table-column prop="tags" label="标签" width="120">
         <template slot-scope="scope">

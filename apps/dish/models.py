@@ -120,7 +120,7 @@ class DishImg(BaseModel):
     dish_id = db.Column(db.Integer, db.ForeignKey('tb_dish.id'))
 
     def __init__(self, **kwargs):
-        super(Discount, self).__init__(**kwargs)
+        super(DishImg, self).__init__(**kwargs)
 
     def keys(self):
         return ('id', 'is_index', 'uri')
