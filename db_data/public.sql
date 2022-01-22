@@ -12,7 +12,7 @@
  Target Server Version : 130004
  File Encoding         : 65001
 
- Date: 16/01/2022 14:30:10
+ Date: 22/01/2022 22:24:54
 */
 
 
@@ -148,7 +148,7 @@ CREATE TABLE "public"."alembic_version" (
 -- ----------------------------
 -- Records of alembic_version
 -- ----------------------------
-INSERT INTO "public"."alembic_version" VALUES ('61e1fde597f3');
+INSERT INTO "public"."alembic_version" VALUES ('0b8c4455a806');
 
 -- ----------------------------
 -- Table structure for rs_dish_order
@@ -182,6 +182,9 @@ INSERT INTO "public"."rs_dish_tag" VALUES (3, 4);
 INSERT INTO "public"."rs_dish_tag" VALUES (2, 8);
 INSERT INTO "public"."rs_dish_tag" VALUES (4, 5);
 INSERT INTO "public"."rs_dish_tag" VALUES (2, 5);
+INSERT INTO "public"."rs_dish_tag" VALUES (8, 4);
+INSERT INTO "public"."rs_dish_tag" VALUES (8, 20);
+INSERT INTO "public"."rs_dish_tag" VALUES (8, 21);
 
 -- ----------------------------
 -- Table structure for rs_user_tag
@@ -218,6 +221,7 @@ CREATE TABLE "public"."tb_account" (
 -- ----------------------------
 INSERT INTO "public"."tb_account" VALUES (2, NULL, NULL, 1, NULL, NULL, NULL, 0);
 INSERT INTO "public"."tb_account" VALUES (4, '2022-01-14 19:42:25.361314', NULL, 3, 'f', NULL, NULL, 0);
+INSERT INTO "public"."tb_account" VALUES (5, '2022-01-16 21:23:21.54315', NULL, 4, 'f', NULL, NULL, 0);
 
 -- ----------------------------
 -- Table structure for tb_address
@@ -270,14 +274,19 @@ CREATE TABLE "public"."tb_discount" (
   "description" varchar(200) COLLATE "pg_catalog"."default" NOT NULL,
   "start_time" timestamp(6),
   "end_time" timestamp(6),
-  "discount" float8
+  "discount" float8,
+  "dish_id" int4
 )
 ;
 
 -- ----------------------------
 -- Records of tb_discount
 -- ----------------------------
-INSERT INTO "public"."tb_discount" VALUES (4, NULL, NULL, 0, '', NULL, NULL, NULL);
+INSERT INTO "public"."tb_discount" VALUES (1, '2022-01-19 22:00:56', NULL, 0, '无折扣', NULL, NULL, NULL, 1);
+INSERT INTO "public"."tb_discount" VALUES (2, '2022-01-19 22:00:56', NULL, 0, '无折扣', NULL, NULL, NULL, 2);
+INSERT INTO "public"."tb_discount" VALUES (3, '2022-01-19 22:00:56', NULL, 0, '无折扣', NULL, NULL, NULL, 3);
+INSERT INTO "public"."tb_discount" VALUES (4, '2022-01-19 22:00:56', NULL, 1, '95折', '2022-01-19 22:02:15', '2022-02-06 22:02:17', 0.95, 4);
+INSERT INTO "public"."tb_discount" VALUES (15, '2022-01-22 22:09:45.793478', NULL, 1, '本周7折', '2022-01-22 22:09:45.793499', NULL, 0.7, 8);
 
 -- ----------------------------
 -- Table structure for tb_dish
@@ -290,18 +299,18 @@ CREATE TABLE "public"."tb_dish" (
   "name" varchar(128) COLLATE "pg_catalog"."default" NOT NULL,
   "price" float8,
   "amount" int4,
-  "description" varchar(256) COLLATE "pg_catalog"."default",
-  "discount_id" int4
+  "description" varchar(256) COLLATE "pg_catalog"."default"
 )
 ;
 
 -- ----------------------------
 -- Records of tb_dish
 -- ----------------------------
-INSERT INTO "public"."tb_dish" VALUES (1, '2022-01-14 19:31:44', NULL, '佛跳墙', 299, 100, '微辣，孜然味浓郁', 4);
-INSERT INTO "public"."tb_dish" VALUES (3, '2022-01-14 22:47:59', NULL, '鱼香茄子', 43.5, 10, '香', 4);
-INSERT INTO "public"."tb_dish" VALUES (2, '2022-01-14 22:48:09', NULL, '回锅肉', 98.88, 59, '回', 4);
-INSERT INTO "public"."tb_dish" VALUES (4, '2022-01-14 22:48:51', NULL, '土豆丝', 35, 20, '青椒土豆丝', 4);
+INSERT INTO "public"."tb_dish" VALUES (1, '2022-01-14 19:31:44', NULL, '佛跳墙', 299, 100, '微辣，孜然味浓郁');
+INSERT INTO "public"."tb_dish" VALUES (4, '2022-01-14 22:48:51', NULL, '土豆丝', 35, 20, '青椒土豆丝');
+INSERT INTO "public"."tb_dish" VALUES (3, '2022-01-14 22:47:59', NULL, '鱼香茄子', 43.5, 10, '酸甜鱼香茄子, 又耙又糯');
+INSERT INTO "public"."tb_dish" VALUES (2, '2022-01-14 22:48:09', NULL, '回锅肉', 98.88, 59, '香辣不腻, 好吃的很');
+INSERT INTO "public"."tb_dish" VALUES (8, '2022-01-22 22:09:45.728407', NULL, '红烧肉', 68.88, 0, '非常红的红烧肉');
 
 -- ----------------------------
 -- Table structure for tb_dishimg
@@ -327,6 +336,8 @@ INSERT INTO "public"."tb_dishimg" VALUES (6, '2022-01-14 22:51:15', NULL, 't', '
 INSERT INTO "public"."tb_dishimg" VALUES (7, '2022-01-14 22:53:04', NULL, 'f', '/static/dish/yxqz2.jpg', 3);
 INSERT INTO "public"."tb_dishimg" VALUES (8, '2022-01-14 22:53:25', NULL, 'f', '/static/dish/yxqz3.jpg', 3);
 INSERT INTO "public"."tb_dishimg" VALUES (9, '2022-01-14 22:53:48', NULL, 'f', '/static/dish/yxqz4.jpg', 3);
+INSERT INTO "public"."tb_dishimg" VALUES (10, '2022-01-22 22:09:45.841407', NULL, 't', '/static/dish/hsr.jpg', 8);
+INSERT INTO "public"."tb_dishimg" VALUES (11, '2022-01-22 22:09:45.888118', NULL, 'f', '/static/dish/hsr2.jpg', 8);
 
 -- ----------------------------
 -- Table structure for tb_order
@@ -365,25 +376,27 @@ CREATE TABLE "public"."tb_tag" (
 -- ----------------------------
 -- Records of tb_tag
 -- ----------------------------
-INSERT INTO "public"."tb_tag" VALUES (1, '2021-11-27 22:13:42.991576', NULL, 1, '蛋糕');
 INSERT INTO "public"."tb_tag" VALUES (2, '2021-11-27 22:13:43.004755', NULL, 1, '奶茶');
-INSERT INTO "public"."tb_tag" VALUES (3, '2021-11-27 22:13:43.010333', NULL, 1, '碳酸饮料');
 INSERT INTO "public"."tb_tag" VALUES (4, '2021-11-27 22:13:43.014163', NULL, 1, '偏甜');
-INSERT INTO "public"."tb_tag" VALUES (5, '2021-11-27 22:13:43.018164', NULL, 1, '咸香');
-INSERT INTO "public"."tb_tag" VALUES (6, '2021-11-27 22:13:43.022146', NULL, 1, '香辣');
 INSERT INTO "public"."tb_tag" VALUES (7, '2021-11-27 22:13:43.026788', NULL, 1, '麻辣');
 INSERT INTO "public"."tb_tag" VALUES (8, '2021-11-27 22:13:43.030805', NULL, 1, '特辣');
 INSERT INTO "public"."tb_tag" VALUES (9, '2021-11-27 22:13:43.035913', NULL, 1, '微辣');
-INSERT INTO "public"."tb_tag" VALUES (10, '2021-11-27 22:13:43.040861', NULL, 1, '中辣');
 INSERT INTO "public"."tb_tag" VALUES (11, '2021-11-27 22:13:43.046859', NULL, 1, '广东辣');
 INSERT INTO "public"."tb_tag" VALUES (12, '2021-11-27 22:13:43.051077', NULL, 1, '少油');
-INSERT INTO "public"."tb_tag" VALUES (13, '2021-11-27 22:13:43.055596', NULL, 1, '少盐');
-INSERT INTO "public"."tb_tag" VALUES (14, '2021-11-27 22:13:43.059639', NULL, 1, '少糖');
-INSERT INTO "public"."tb_tag" VALUES (15, '2021-11-27 22:13:43.063922', NULL, 1, '甜点');
 INSERT INTO "public"."tb_tag" VALUES (16, '2021-11-27 22:13:43.068094', NULL, 1, '海鲜');
-INSERT INTO "public"."tb_tag" VALUES (17, '2021-11-27 22:13:43.071835', NULL, 1, '生鲜');
-INSERT INTO "public"."tb_tag" VALUES (18, '2021-11-27 22:13:43.076095', NULL, 1, '五香');
-INSERT INTO "public"."tb_tag" VALUES (19, '2021-11-27 22:13:43.080005', NULL, 1, '糖醋');
+INSERT INTO "public"."tb_tag" VALUES (1, '2021-11-27 22:13:42.991576', NULL, 2, '蛋糕');
+INSERT INTO "public"."tb_tag" VALUES (3, '2021-11-27 22:13:43.010333', NULL, 5, '碳酸饮料');
+INSERT INTO "public"."tb_tag" VALUES (5, '2021-11-27 22:13:43.018164', NULL, 4, '咸香');
+INSERT INTO "public"."tb_tag" VALUES (6, '2021-11-27 22:13:43.022146', NULL, 3, '香辣');
+INSERT INTO "public"."tb_tag" VALUES (10, '2021-11-27 22:13:43.040861', NULL, 7, '中辣');
+INSERT INTO "public"."tb_tag" VALUES (13, '2021-11-27 22:13:43.055596', NULL, 9, '少盐');
+INSERT INTO "public"."tb_tag" VALUES (14, '2021-11-27 22:13:43.059639', NULL, 2, '少糖');
+INSERT INTO "public"."tb_tag" VALUES (15, '2021-11-27 22:13:43.063922', NULL, 6, '甜点');
+INSERT INTO "public"."tb_tag" VALUES (17, '2021-11-27 22:13:43.071835', NULL, 5, '生鲜');
+INSERT INTO "public"."tb_tag" VALUES (18, '2021-11-27 22:13:43.076095', NULL, 4, '五香');
+INSERT INTO "public"."tb_tag" VALUES (19, '2021-11-27 22:13:43.080005', NULL, 4, '糖醋');
+INSERT INTO "public"."tb_tag" VALUES (20, '2022-01-22 21:20:43.69637', NULL, 1, '软糯');
+INSERT INTO "public"."tb_tag" VALUES (21, '2022-01-22 21:22:00.947192', NULL, 1, '大油');
 
 -- ----------------------------
 -- Table structure for tb_user
@@ -413,13 +426,15 @@ INSERT INTO "public"."tb_user" VALUES (3, '2022-01-14 19:42:25.349771', NULL, '�
 ', 't', 't', 'f', 'user');
 INSERT INTO "public"."tb_user" VALUES (1, NULL, '2021-12-19 15:59:29.467883', 'admin', 20, '13433334444', '/static/avatar/6ea1ebed100443f697d6921594d9f19a.jpeg', 'test@email.com', '95irFL94EdrlGa7DvayiEO0WqhTjGZlKM2hv5YuaI0I=
 ', 't', 't', 't', 'admin');
+INSERT INTO "public"."tb_user" VALUES (4, '2022-01-16 21:23:21.526575', NULL, 'JQK', 23, '13533335555', '/static/avatar/default.jpg', 'email@test.com', '95irFL94EdrlGa7DvayiECG3DhN30wkNzDCGPXyVsXk=
+', 'f', 't', 'f', 'user');
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_account_id_seq"
 OWNED BY "public"."tb_account"."id";
-SELECT setval('"public"."tb_account_id_seq"', 5, true);
+SELECT setval('"public"."tb_account_id_seq"', 6, true);
 
 -- ----------------------------
 -- Alter sequences owned by
@@ -440,42 +455,42 @@ SELECT setval('"public"."tb_comment_id_seq"', 4, false);
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_discount_id_seq"
 OWNED BY "public"."tb_discount"."id";
-SELECT setval('"public"."tb_discount_id_seq"', 5, true);
+SELECT setval('"public"."tb_discount_id_seq"', 16, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_dish_id_seq"
 OWNED BY "public"."tb_dish"."id";
-SELECT setval('"public"."tb_dish_id_seq"', 5, true);
+SELECT setval('"public"."tb_dish_id_seq"', 9, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_dishimg_id_seq"
 OWNED BY "public"."tb_dishimg"."id";
-SELECT setval('"public"."tb_dishimg_id_seq"', 10, true);
+SELECT setval('"public"."tb_dishimg_id_seq"', 12, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_order_id_seq"
 OWNED BY "public"."tb_order"."id";
-SELECT setval('"public"."tb_order_id_seq"', 4, false);
+SELECT setval('"public"."tb_order_id_seq"', 1, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_tag_id_seq"
 OWNED BY "public"."tb_tag"."id";
-SELECT setval('"public"."tb_tag_id_seq"', 4, false);
+SELECT setval('"public"."tb_tag_id_seq"', 22, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."tb_user_id_seq"
 OWNED BY "public"."tb_user"."id";
-SELECT setval('"public"."tb_user_id_seq"', 4, true);
+SELECT setval('"public"."tb_user_id_seq"', 5, true);
 
 -- ----------------------------
 -- Primary Key structure for table alembic_version
@@ -588,9 +603,9 @@ ALTER TABLE "public"."tb_comment" ADD CONSTRAINT "tb_comment_order_id_fkey" FORE
 ALTER TABLE "public"."tb_comment" ADD CONSTRAINT "tb_comment_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."tb_user" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- ----------------------------
--- Foreign Keys structure for table tb_dish
+-- Foreign Keys structure for table tb_discount
 -- ----------------------------
-ALTER TABLE "public"."tb_dish" ADD CONSTRAINT "tb_dish_discount_id_fkey" FOREIGN KEY ("discount_id") REFERENCES "public"."tb_discount" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "public"."tb_discount" ADD CONSTRAINT "tb_discount_dish_id_fkey" FOREIGN KEY ("dish_id") REFERENCES "public"."tb_dish" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- ----------------------------
 -- Foreign Keys structure for table tb_dishimg

@@ -2,8 +2,6 @@
   <el-menu
     :default-active="chosenItem"
     class="el-menu-vertical-demo"
-    @open="handleOpen"
-    @close="handleClose"
     @select="handleCollapse"
     :collapse="isCollapse"
   >
@@ -13,7 +11,7 @@
         <span slot="title">菜单管理</span>
       </template>
       <el-menu-item-group>
-        <el-menu-item index="1-1">编辑菜单</el-menu-item>
+        <el-menu-item index="/dish">编辑菜单</el-menu-item>
         <el-menu-item index="1-2">折扣管理</el-menu-item>
       </el-menu-item-group>
     </el-submenu>
@@ -37,7 +35,17 @@
         <el-menu-item index="3-2">会员管理</el-menu-item>
       </el-menu-item-group>
     </el-submenu>
-    <el-menu-item index="10" class="menu-button-more">
+    <el-menu-item index="/tag">标签管理</el-menu-item>
+    <!-- <el-submenu index="4">
+      <template slot="title">
+        <i class="el-icon-document"></i>
+        <span slot="title">标签管理</span>
+      </template>
+      <el-menu-item-group>
+        <el-menu-item index="3-2">会员管理</el-menu-item>
+      </el-menu-item-group>
+    </el-submenu> -->
+    <el-menu-item index="collapse" class="menu-button-more">
       <i class="el-icon-more"></i>
     </el-menu-item>
   </el-menu>
@@ -54,16 +62,9 @@ export default {
     };
   },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
-    },
     handleCollapse(key) {
-      console.log(key);
-      if (key === "10") this.isCollapse = !this.isCollapse;
-      else this.chosenItem = key;
+      if (key === "collapse") this.isCollapse = !this.isCollapse;
+      else this.$router.push(key)
     },
   },
 };

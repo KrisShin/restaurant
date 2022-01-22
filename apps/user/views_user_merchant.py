@@ -10,10 +10,10 @@ import jwt
 from utils.mail_sender import sender
 from utils.rest_redis import r
 
-merchant = Blueprint('Merchant', __name__, url_prefix='/merchant/user')
+user = Blueprint('Merchant', __name__, url_prefix='/merchant/user')
 
 
-@merchant.route('/login/', methods=['POST'])
+@user.route('/login/', methods=['POST'])
 def login():
     '''
     Function: Merchant login view.
@@ -51,7 +51,7 @@ def login():
     return jsonify({'code': status_code.OK, "info": "", 'token': Authorization})
 
 
-@merchant.route('/email_captcha/', methods=['POST'])
+@user.route('/email_captcha/', methods=['POST'])
 def send_captcha_email():
     '''
     Send captcha email to user.
@@ -84,7 +84,7 @@ def send_captcha_email():
     return jsonify({'code': status_code.OK})
 
 
-@merchant.route('/change_pwd/', methods=['PUT'])
+@user.route('/change_pwd/', methods=['PUT'])
 @auth
 def user_change_pwd():
     '''user change password'''
@@ -125,7 +125,7 @@ def user_change_pwd():
     return jsonify({'code': status_code.OK, "msg": "修改密码成功, 请重新登录"})
 
 
-@merchant.route('/reset_pwd/', methods=['PUT'])
+@user.route('/reset_pwd/', methods=['PUT'])
 def user_reset_pwd():
     '''user reset password'''
     data = request.get_json()
@@ -161,7 +161,7 @@ def user_reset_pwd():
     return jsonify({'code': status_code.OK, "msg": "重置密码成功"})
 
 
-@merchant.route('/list/', methods=['GET'])
+@user.route('/list/', methods=['GET'])
 def get_customer_list():
     data = request.args
     page = int(data.get('page', 1)) or 1
@@ -188,7 +188,7 @@ def get_customer_list():
         }
     )
 
-@merchant.route('/profile/', methods=['GET', 'PUT'])
+@user.route('/profile/', methods=['GET', 'PUT'])
 @auth
 def user_profile():
     '''check user profile'''

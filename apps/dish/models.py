@@ -21,7 +21,7 @@ class Dish(BaseModel):
     amount = db.Column(db.Integer, default=0)  # 销量
     description = db.Column(db.String(256))
 
-    discount_id = db.Column(db.Integer, db.ForeignKey('tb_discount.id'))
+    discount = db.relationship("Discount", backref="dish", lazy=True, uselist=False)
 
     tags = db.relationship(
         'Tag', secondary=tags, lazy='subquery', backref=db.backref('dishes', lazy=True)
@@ -76,7 +76,7 @@ class Tag(BaseModel):
         super(Tag, self).__init__(**kwargs)
 
     def keys(self):
-        return ('id', 'weight', 'name', 'color')
+        return ('id', 'weight', 'name', 'color', 'create_time', 'update_time')
 
     @classmethod
     def update_weight(cls):
@@ -96,14 +96,15 @@ class Discount(BaseModel):
 
     __tablename__ = 'tb_discount'
 
-    # 0-没有折扣/1-折扣/2-买一送一/3-第二件半价
+    # 0-没有折扣/1-折扣
     discount_type = db.Column(db.Integer, nullable=False)
     description = db.Column(db.String(200), nullable=False)
     start_time = db.Column(db.DateTime, default=datetime.now)
     end_time = db.Column(db.DateTime)
     discount = db.Column(db.Float, default=0.01)
 
-    dishes = db.relationship("Dish", backref="discount", lazy=True)
+    dish_id = db.Column(db.Integer, db.ForeignKey('tb_dish.id'))
+    
 
     def __init__(self, *args, **kwargs):
         super(Discount, self).__init__(**kwargs)
@@ -119,7 +120,7 @@ class DishImg(BaseModel):
     dish_id = db.Column(db.Integer, db.ForeignKey('tb_dish.id'))
 
     def __init__(self, **kwargs):
-        super(Discount, self).__init__(**kwargs)
+        super(DishImg, self).__init__(**kwargs)
 
     def keys(self):
         return ('id', 'is_index', 'uri')

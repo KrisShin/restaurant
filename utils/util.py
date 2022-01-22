@@ -3,6 +3,7 @@ import random
 import string
 from base64 import b64decode, decodebytes, encodebytes
 from uuid import uuid4
+from werkzeug.datastructures import FileStorage
 
 from config.settings import KEY
 from Crypto.Cipher import AES
@@ -30,13 +31,19 @@ def gen_uuid_name(ext=''):
 
 
 def save_img(path, base64_str):
-    undeal_str, img_content = base64_str.split(',')
-    ext = r'.' + undeal_str[11:-7]
-    filename = gen_uuid_name(ext)
-    path = f'statics/{path}/{filename}'
-    with open(path, 'wb') as fp:
-        img = b64decode(img_content)
-        fp.write(img)
+    if isinstance(base64_str, FileStorage):
+        ext = os.path.splitext(base64_str.filename[11:-7])[-1]
+        filename = gen_uuid_name(ext)
+        path = f'statics/{path}/{filename}'
+        base64_str.save(path)
+    else:
+        undeal_str, img_content = base64_str.split(',')
+        ext = r'.' + undeal_str[11:-7]
+        filename = gen_uuid_name(ext)
+        path = f'statics/{path}/{filename}'
+        with open(path, 'wb') as fp:
+            img = b64decode(img_content)
+            fp.write(img)
     return path.replace('statics', '/static')
 
 
