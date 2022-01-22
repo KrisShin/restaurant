@@ -32,7 +32,9 @@ def gen_uuid_name(ext=''):
 
 def save_img(path, base64_str):
     if isinstance(base64_str, FileStorage):
-        path = f'statics/{path}/{base64_str.filename}'
+        ext = os.path.splitext(base64_str.filename[11:-7])[-1]
+        filename = gen_uuid_name(ext)
+        path = f'statics/{path}/{filename}'
         base64_str.save(path)
     else:
         undeal_str, img_content = base64_str.split(',')
