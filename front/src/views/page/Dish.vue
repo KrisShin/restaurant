@@ -33,7 +33,7 @@
       </el-table-column>
       <el-table-column prop="description" label="简介" width="600">
       </el-table-column>
-      <el-table-column prop="discount_desc" label="折扣" width="120">
+      <el-table-column prop="discountDesc" label="折扣" width="120">
       </el-table-column>
       <el-table-column prop="tags" label="标签" width="120">
         <template slot-scope="scope">
@@ -105,7 +105,7 @@
             </el-col>
             <el-col>
               <el-input
-                v-model="dishForm.discount_desc"
+                v-model="dishForm.discountDesc"
                 placeholder="打折宣传信息"
               ></el-input>
             </el-col>
@@ -184,7 +184,10 @@ export default {
         price: 68.88,
         description: "非常红的红烧肉",
         discountId: "0",
-        discountDate: [],
+        discountDate1: "",
+        discountDate2: "",
+        discount: 0,
+        discountDesc: '',
         tags: [],
         images: [],
         // name: "",
@@ -197,7 +200,6 @@ export default {
       },
       dialogTitle: "新增菜品",
       allTags: [],
-      allDiscount: [],
     };
   },
   created() {

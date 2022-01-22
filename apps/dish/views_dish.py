@@ -51,7 +51,7 @@ def tags():
 
         # Parse all Tags object to dict. And remind tags order by weight.
         tags = []
-        for tag in Tag.query.filter(Tag.name.like(f'%{search}%')).order_by(Tag.weight.desc()).all():
+        for tag in Tag.query.filter(Tag.name.like(f'%{search or ""}%')).order_by(Tag.weight.desc()).all():
             line = dict(tag)
             if tag.id in ex_ids:
                 line.update({'is_chosen': True})

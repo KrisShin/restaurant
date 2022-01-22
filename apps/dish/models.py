@@ -21,7 +21,7 @@ class Dish(BaseModel):
     amount = db.Column(db.Integer, default=0)  # 销量
     description = db.Column(db.String(256))
 
-    discount_id = db.Column(db.Integer, db.ForeignKey('tb_discount.id'))
+    discount = db.relationship("Discount", backref="dish", lazy=True, uselist=False)
 
     tags = db.relationship(
         'Tag', secondary=tags, lazy='subquery', backref=db.backref('dishes', lazy=True)
@@ -103,7 +103,8 @@ class Discount(BaseModel):
     end_time = db.Column(db.DateTime)
     discount = db.Column(db.Float, default=0.01)
 
-    dish = db.relationship("Dish", backref="discount", lazy=True, uselist=False)
+    dish_id = db.Column(db.Integer, db.ForeignKey('tb_dish.id'))
+    
 
     def __init__(self, *args, **kwargs):
         super(Discount, self).__init__(**kwargs)
