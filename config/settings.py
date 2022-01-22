@@ -12,17 +12,23 @@ UPLOAD_DIR = os.path.join(BASE_DIR, 'static', 'upload')
 SALT = r'0.3qxl9vc_j7kv!ja'
 KEY = r'734&jai<,oqe).ac'
 
+
 REDIS_USER = ''
 REDIS_PWD = r"R3D1Su@er"
 REDIS_HOST = r'101.35.152.20'
 REDIS_PORT = r'16379'
 REDIS_DB = 0
 
+REDIS_URL=f"redis://{REDIS_USER}:{REDIS_PWD}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
+
+
 EMAIL_NICKNAME = r'恰了木有APP'
 EMAIL_ACCOUNT = r'2855829886@qq.com'
 EMAIL_AUTH = r'tdlzctihcooodgbc'
 
+
 HTTP_HOST = 'http://127.0.0.1:9096'
+
 
 TAG_COLOR = {
     0: '#cccccc',

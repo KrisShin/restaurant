@@ -76,7 +76,7 @@ class Tag(BaseModel):
         super(Tag, self).__init__(**kwargs)
 
     def keys(self):
-        return ('id', 'weight', 'name', 'color')
+        return ('id', 'weight', 'name', 'color', 'create_time', 'update_time')
 
     @classmethod
     def update_weight(cls):

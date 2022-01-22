@@ -47,10 +47,11 @@ def tags():
         if user:
             '''If user logined, add user's tags at head of the list'''
             ex_ids = [tag.id for tag in user.tags]
+        search = request.args.get('search')
 
         # Parse all Tags object to dict. And remind tags order by weight.
         tags = []
-        for tag in Tag.query.order_by(Tag.weight.desc()).all():
+        for tag in Tag.query.filter(Tag.name.like(f'%{search}%')).order_by(Tag.weight.desc()).all():
             line = dict(tag)
             if tag.id in ex_ids:
                 line.update({'is_chosen': True})

@@ -13,6 +13,10 @@ export function tagListAPI(data) {
     return axios.get(`customer/dish/tags/`, data)
 }
 
+export function tagAddAPI(data) {
+    return axios.post(`customer/dish/tags/`, data)
+}
+
 export function dishOperateAPI(data) {
     return axios.post(`merchant/dish/`, data)
 }
