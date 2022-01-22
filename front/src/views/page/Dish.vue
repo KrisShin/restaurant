@@ -157,7 +157,7 @@
           <el-button type="primary" @click="onClickSubmitDish"
             >立即创建</el-button
           >
-          <el-button>取消</el-button>
+          <el-button @click="showDishEditDialog = false">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -180,23 +180,15 @@ export default {
       editType: "add",
       searchDish: null,
       dishForm: {
-        name: "红烧肉",
-        price: 68.88,
-        description: "非常红的红烧肉",
+        name: "",
+        price: 0,
+        description: "",
         discountId: "0",
         discountDate1: "",
         discountDate2: "",
         discount: 0,
-        discountDesc: '',
+        discountDesc: "",
         tags: [],
-        images: [],
-        // name: "",
-        // price: 0,
-        // description: "",
-        // discountId: "0",
-        // discountDate: [],
-        // tags: [],
-        // images:[]
       },
       dialogTitle: "新增菜品",
       allTags: [],
@@ -232,9 +224,11 @@ export default {
         price: 0,
         description: "",
         discountId: "0",
-        discountDate: [],
+        discountDate1: "",
+        discountDate2: "",
+        discount: 0,
+        discountDesc: "",
         tags: [],
-        images: [],
       };
       this.allTags = [];
     },
