@@ -9,14 +9,6 @@ export function userLogoutAPI(data) {
     return axios.post(`merchant/user/logout/`, data)
 }
 
-export function userInfoAPI(data) {
-    return axios.get(`merchant/user/profile/`, data)
-}
-
-export function userEditInfoAPI(data) {
-    return axios.put(`merchant/user/profile/`, data)
-}
-
 export function userChangeEmailAPI(data) {
     return axios.put(`merchant/user/change_email/`, data)
 }

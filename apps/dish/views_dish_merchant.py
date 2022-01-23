@@ -10,12 +10,10 @@ from utils.wraps import auth
 dish = Blueprint('DishMerchant', __name__, url_prefix='/merchant/dish')
 
 
-@dish.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@dish.route('/<string:dish_id>/', methods=['GET', 'POST', 'PUT', 'DELETE'])
 @auth
-def operate_dish():
+def operate_dish(dish_id):
     if request.method == 'GET':
-        data = request.args
-        dish_id = data.get('id')
         dish_obj = Dish.query.filter_by(id=dish_id).first()
         if not dish_obj:
             return jsonify({'code': status_code.DISH_NOT_EXISIT, 'msg': '菜品不存在'})

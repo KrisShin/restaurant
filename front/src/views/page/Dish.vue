@@ -19,7 +19,7 @@
     <el-table :data="dishes" border>
       <el-table-column fixed prop="name" label="菜品名称" width="150">
       </el-table-column>
-      <el-table-column label="图片" width="200">
+      <el-table-column label="图片" width="210">
         <template slot-scope="scope">
           <img class="dishImg" :src="scope.row.index_img" alt="" />
         </template>
@@ -48,7 +48,7 @@
       </el-table-column>
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="onClickEditDish('edit')"
+          <el-button type="text" size="small" @click="onClickEditDish('edit', scope.row)"
             >编辑</el-button
           >
           <el-button
@@ -147,6 +147,7 @@
             :auto-upload="false"
             :multiple="true"
             name="images"
+            :limit="5"
           >
             <el-button slot="trigger" size="small" type="primary">
               选取文件
@@ -166,7 +167,12 @@
 
 <script>
 // @ is an alias to /src
-import { dishListAPI, tagListAPI, dishOperateAPI } from "@/apis/dish.apis";
+import {
+  dishListAPI,
+  tagListAPI,
+  dishOperateAPI,
+  dishGetDetailAPI,
+} from "@/apis/dish.apis";
 
 export default {
   name: "Dish",
@@ -232,11 +238,15 @@ export default {
       };
       this.allTags = [];
     },
-    onClickEditDish(type) {
+    onClickEditDish(type, dish) {
       this.editType = type;
       this.dialogTitle = type === "add" ? "新增菜品" : "编辑菜品";
       if (!this.showDishEditDialog && type === "add") {
-        // this.initDishForm();
+        this.initDishForm();
+      } else {
+        dishGetDetailAPI(dish).then(resp=>{
+          console.log(resp.data.data)
+        })
       }
       if (!this.allTags.length) {
         tagListAPI().then((resp) => {
@@ -275,12 +285,16 @@ export default {
         dform.append("images", file.raw);
       });
       dform.append("data", JSON.stringify(this.dishForm));
-      console.log(dform);
-      console.log(dform.get("data"), dform.getAll("images"));
+      // console.log(dform.get("data"), dform.getAll("images"));
 
       dishOperateAPI(dform).then((resp) => {
-        console.log(resp.data);
+        if (resp.data.code == 200) {
+          this.$message.success("添加成功");
+        }
         this.initDishForm();
+        this.$refs.upload.clearFiles();
+        this.showDishEditDialog = false;
+        this.loadDishList();
       });
     },
   },

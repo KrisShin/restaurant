@@ -18,5 +18,9 @@ export function tagAddAPI(data) {
 }
 
 export function dishOperateAPI(data) {
-    return axios.post(`merchant/dish/`, data)
+    return axios.post(`merchant/dish/0/`, data)
+}
+
+export function dishGetDetailAPI(data) {
+    return axios.get(`merchant/dish/${data.id}/`, data)
 }
