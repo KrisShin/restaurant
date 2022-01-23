@@ -66,5 +66,10 @@ ORDER_EMPTY_CART = 1200
 DISH_NOT_EXISIT = 1300
 
 
+# tag module
+# 标签已存在
+TAG_ALREADY_EXISIT = 1400
+
+
 # Common
 PARAM_LACK = 9999

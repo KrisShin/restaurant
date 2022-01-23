@@ -10,11 +10,11 @@
           ></el-button>
         </el-input>
       </el-col>
-      <el-col :span="3"
-        ><el-button type="primary" @click="onClickAddTag('add')"
-          >新增菜品</el-button
-        ></el-col
-      >
+      <el-col :span="3">
+        <el-button type="primary" @click="onClickAddTag('add')">
+          新增标签
+        </el-button>
+      </el-col>
     </el-row>
     <el-table :data="allTags" border>
       <el-table-column fixed sortable prop="name" label="标签名称" width="250">
@@ -50,15 +50,19 @@
         width="250"
       >
       </el-table-column>
-      <el-table-column label="操作" width="100">
+      <el-table-column label="操作" width="200">
         <template slot-scope="scope">
-          <el-button
-            v-if="scope.row.type == 'add'"
-            @click="onClickSubmitTag(scope.row)"
-            type="success"
-            size="mini"
-            >新增</el-button
-          >
+          <span v-if="scope.row.type == 'add'">
+            <el-button
+              @click="onClickSubmitTag(scope.row)"
+              type="success"
+              size="mini"
+              >新增</el-button
+            >
+            <el-button @click="onClickCancel" type="primary" size="mini"
+              >取消</el-button
+            >
+          </span>
           <el-button
             v-else
             @click="onClickDeleteTag(scope.row)"
@@ -122,6 +126,9 @@ export default {
       });
     },
     onClickDeleteTag() {},
+    onClickCancel() {
+      this.allTags.shift();
+    },
   },
 };
 </script>

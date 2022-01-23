@@ -99,7 +99,7 @@ class Discount(BaseModel):
     # 0-没有折扣/1-折扣
     discount_type = db.Column(db.Integer, nullable=False)
     description = db.Column(db.String(200), nullable=False)
-    start_time = db.Column(db.DateTime, default=datetime.now)
+    start_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
     discount = db.Column(db.Float, default=0.01)
 

@@ -24,7 +24,7 @@ def operate_dish():
         data = json.loads(request.form.get('data'))
         images = request.files.getlist('images')
         name = data.get('name')
-        price = data.get('price')
+        price = float(data.get('price', 0))
         description = data.get('description')
         discount_id = int(data.get('discountId', 0))
         tag_id_list = data.get('tags')
@@ -33,24 +33,24 @@ def operate_dish():
         dish_obj = Dish(name=name, price=price, description=description)
         dish_obj.tags = Tag.query.filter(Tag.id.in_(tag_id_list)).all()
         dish_obj.save()
+
+        discount_obj = Discount(
+            description='无折扣',
+            discount_type=0,
+            dish_id=dish_obj.id,
+        )
         if discount_id:
-            discount_desc = data.get('discountDesc')
-            start_time = data.get('disconutDate1')
-            end_time = data.get('disconutDate2')
-            discount = data.get('discount')
-            discount_obj = Discount(
-                start_time=start_time,
-                end_time=end_time,
-                description=discount_desc,
-                discount_type=1,
-                discount=discount,
-                dish_id=dish_obj.id,
-            )
-            discount_obj.save()
+            discount_obj.description = data.get('discountDesc')
+            discount_obj.start_time = data.get('disconutDate1')
+            discount_obj.end_time = data.get('disconutDate2')
+            discount_obj.discount = data.get('discount')
+            discount_obj.discount_type = 1
+        discount_obj.save()
+        
         for index, img_base64 in enumerate(images):
             img_uri = save_img('dish', img_base64)
             img = DishImg(
-                uri=img_uri, is_index=index == int(index == 0), dish_id=dish_obj.id
+                uri=img_uri, is_index=int(index == 0), dish_id=dish_obj.id
             )
             img.save()
         return jsonify({'code': status_code.OK})
@@ -81,8 +81,8 @@ def operate_dish():
         if images:
             for index, img_base64 in enumerate(images):
                 img_uri = save_img('dish', img_base64)
-                img = DishImg.query.create(
-                    uri=img_uri, is_index=index == 0, dish_id=dish_obj.id
+                img = DishImg(
+                    uri=img_uri, is_index=int(index == 0), dish_id=dish_obj.id
                 )
                 img.save()
         dish_obj.save()
