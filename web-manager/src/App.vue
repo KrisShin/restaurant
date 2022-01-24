@@ -1,12 +1,24 @@
+<!--
+ * @Author: windyGu
+ * @Date: 2022-01-16 20:18:52
+ * @LastEditors: windyGu
+ * @LastEditTime: 2022-01-22 23:17:16
+ * @FilePath: \restaurant\web-manager\src\App.vue
+ * @Description: 
+-->
 <template>
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
+
+<script>
+export default {};
+</script>
 
 <style>
 #app {
