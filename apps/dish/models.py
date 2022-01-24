@@ -40,6 +40,8 @@ class Dish(BaseModel):
             'amount',
             'description',
             'discount',
+            'start_time',
+            'end_time',
             'discount_desc',
             'tags',
             'images',
@@ -48,11 +50,15 @@ class Dish(BaseModel):
 
     def __getitem__(self, item):
         if item == 'discount_desc':
-            if self.discount.discount_type == 0:
-                return None
             return self.discount.description
+        elif item == 'start_time':
+            return self.discount.start_time
+        elif item == 'endt_time':
+            return self.discount.endt_time
         elif item == 'discount':
-            return self.discount and self.discount.discount
+            return self.discount.discount
+        elif item == 'discount_type':
+            return self.discount.discount_type
         elif item == 'tags':
             return [dict(tag) for tag in self.tags]
         elif item == 'images':

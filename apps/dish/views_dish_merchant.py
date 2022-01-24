@@ -24,7 +24,7 @@ def operate_dish(dish_id):
         name = data.get('name')
         price = float(data.get('price', 0))
         description = data.get('description')
-        discount_id = int(data.get('discountId', 0))
+        discount_type = int(data.get('discountType', 0))
         tag_id_list = data.get('tags')
         if not all((name, price >= 0, images)):
             return jsonify({'code': status_code.PARAM_LACK, 'msg': '菜品名字, 价格, 首图必传'})
@@ -34,15 +34,14 @@ def operate_dish(dish_id):
 
         discount_obj = Discount(
             description='无折扣',
-            discount_type=0,
+            discount_type=discount_type,
             dish_id=dish_obj.id,
         )
-        if discount_id:
+        if discount_type:
             discount_obj.description = data.get('discountDesc')
-            discount_obj.start_time = data.get('disconutDate1')
-            discount_obj.end_time = data.get('disconutDate2')
+            discount_obj.start_time = data.get('startTime')
+            discount_obj.end_time = data.get('endTime')
             discount_obj.discount = data.get('discount')
-            discount_obj.discount_type = 1
         discount_obj.save()
         
         for index, img_base64 in enumerate(images):
@@ -54,13 +53,11 @@ def operate_dish(dish_id):
         return jsonify({'code': status_code.OK})
     if request.method == 'PUT':
         data = json.loads(request.form.get('data'))
-        images = request.files.getlist('images')
-        dish_id = data.get('dish_id')
+        dish_id = data.get('id')
         name = data.get('name')
         price = data.get('price')
         description = data.get('description')
-        discount_id = data.get('discount_id')
-        tag_id_list = data.get('tag_id_list')
+        tag_id_list = data.get('tags')
         dish_obj = Dish.query.filter_by(id=dish_id).first()
         if not dish_obj:
             return jsonify({'code': status_code.DISH_NOT_EXISIT, 'msg': '菜品不存在'})
@@ -71,18 +68,9 @@ def operate_dish(dish_id):
         if name:
             dish_obj.name = name
         if price:
-            dish_obj.price = price
+            dish_obj.price = float(price)
         if description:
             dish_obj.description = description
-        if discount_id:
-            dish_obj.discount_id = discount_id
-        if images:
-            for index, img_base64 in enumerate(images):
-                img_uri = save_img('dish', img_base64)
-                img = DishImg(
-                    uri=img_uri, is_index=int(index == 0), dish_id=dish_obj.id
-                )
-                img.save()
         dish_obj.save()
 
         return jsonify({'code': status_code.OK})
