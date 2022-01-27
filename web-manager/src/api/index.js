@@ -2,7 +2,7 @@
  * @Author: windyGu
  * @Date: 2022-01-16 20:18:52
  * @LastEditors: windyGu
- * @LastEditTime: 2022-01-25 00:20:08
+ * @LastEditTime: 2022-01-28 00:53:44
  * @FilePath: \restaurant\web-manager\src\api\index.js
  * @Description: 
  */
@@ -10,6 +10,7 @@
 import Axios from "axios";
 import { baseUrl } from '../../env.config'
 import store from "@/store/index"
+import statusCode from "@/config/error.config"
 
 
 
@@ -35,31 +36,33 @@ let axios = Axios.create({
 
 // TODO:interceptors for request && response
 
-// service.interceptors.request.use(
-//     config => {
-//         // do something before request is sent
+axios.interceptors.request.use(
+    config => {
+        //do something with request config
 
-//         if (store.getters.token) {
-//             // let each request carry token
-//             // ['X-Token'] is a custom headers key
-//             // please modify it according to the actual situation
-//             config.headers['Authorization'] = getToken()
-//         }
-//         return config
-//     },
-//     error => {
-//         // do something with request error
-//         console.log(error) // for debug
-//         return Promise.reject(error)
-//     }
-// )
+        return config
+    },
+    error => {
+        // do something with request error
+        return Promise.reject(error)
+    }
+)
 
 
-// axios.interceptors.response.use(function (response) {
+axios.interceptors.response.use(
+    response => {
+        //do something with response config
+    },
+    error => {
 
-// }, function (error) {
+        // do something with response error
+        if (statusCode[error.response.status]) {
+            ElementUI.Message.error(statusCode[error.response.status])
 
-// })
+        }
+        else
+            ElementUI.Message.error("出错啦，请联系管理员！")
+    })
 
 // 封装请求（预留） 
 export default function httpRequest(config) {
